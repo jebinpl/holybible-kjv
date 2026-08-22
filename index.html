@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bible - King James Version</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Georgia, "Times New Roman", serif;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #fffdf5 0%,
+            #f5ecd5 50%,
+            #e7d3a9 100%
+        );
+
+    color: #3b2817;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 105px;
+    z-index: 1000;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b210d,
+            #70451e,
+            #3b210d
+        );
+
+    color: white;
+
+    padding: 10px 20px;
+
+    border-bottom: 4px solid #d4af37;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,0.25);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* LOGO — TOP LEFT */
+.header-logo {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 70px;
+    height: 70px;
+
+    object-fit: contain;
+}
+
+
+/* TITLE */
+.header h1 {
+    font-size: clamp(30px, 6vw, 48px);
+    letter-spacing: 2px;
+}
+
+
+/* SUBTITLE */
+.header-subtitle {
+    margin-top: 6px;
+    color: #f4d982;
+    font-size: 16px;
+    letter-spacing: 3px;
+}
+
+/* =========================
+   TOP RIGHT HEADER CONTROLS
+========================= */
+
+.header-controls {
+    position: absolute;
+
+    right: 25px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+/* AUDIO VERSION */
+
+.audio-version {
+    color: #f4d982;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    white-space: nowrap;
+}
+
+
+/* HOME BUTTON */
+
+.home-header-button {
+    border: 1px solid #d4af37;
+
+    border-radius: 20px;
+
+    padding: 6px 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f4d982,
+            #c99b2e
+        );
+
+    color: #3b210d;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 3px 8px rgba(0,0,0,0.25);
+
+    transition: 0.2s;
+}
+
+
+.home-header-button:hover {
+
+    transform: translateY(-2px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe99a,
+            #d4af37
+        );
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,0.35);
+}
+
+
+.home-header-button:active {
+
+    transform: scale(0.95);
+
+}
+/* =========================
+   MAIN
+========================= */
+
+.main {
+    padding: 125px 20px 40px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+.page {
+    display: none;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 34px;
+    margin: 0;
+    padding: 12px 10px 5px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fffdf5,
+            #f5ecd5
+        );
+
+    border-bottom: none;
+}
+
+
+.page-subtitle {
+    text-align: center;
+    margin: 0 0 25px;
+    padding: 0 10px 12px;
+
+    color: #76582e;
+
+    background: #f5ecd5;
+
+    border-bottom: 2px solid #c7a85b;
+}
+
+/* =========================
+   TESTAMENT BUTTONS
+========================= */
+
+.testaments {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+
+    max-width: 900px;
+
+    margin: 60px auto;
+}
+
+.testament-button {
+    min-height: 250px;
+
+    border: none;
+    border-radius: 22px;
+
+    cursor: pointer;
+
+    color: white;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.20);
+
+    transition: 0.25s;
+}
+
+.testament-button:hover {
+    transform: translateY(-8px);
+
+    box-shadow:
+        0 18px 35px rgba(0,0,0,0.30);
+}
+
+.testament-button:active {
+    transform: scale(0.97);
+}
+
+.old-testament {
+    background:
+        linear-gradient(
+            135deg,
+            #674016,
+            #a66d2c,
+            #75491d
+        );
+}
+
+.new-testament {
+    background:
+        linear-gradient(
+            135deg,
+            #1d4851,
+            #327582,
+            #235964
+        );
+}
+
+.book-icon {
+    font-size: 58px;
+    margin-bottom: 15px;
+}
+
+.testament-button h2 {
+    font-size: 30px;
+}
+
+.book-count {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+
+/* =========================
+   BOOK GRID
+========================= */
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.book-button {
+    background: rgba(255,255,255,0.78);
+
+    border: 2px solid #c7a85b;
+
+    border-radius: 12px;
+
+    padding: 18px 12px;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 18px;
+
+    color: #4a321c;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,0.08);
+
+    transition: 0.2s;
+}
+
+.book-button:hover {
+    background: #fff8df;
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 15px rgba(0,0,0,0.15);
+}
+
+.book-number {
+    display: block;
+
+    font-size: 13px;
+
+    color: #98752d;
+
+    margin-bottom: 5px;
+}
+
+.book-chapters {
+    display: block;
+
+    margin-top: 6px;
+
+    font-size: 12px;
+
+    color: #98752d;
+}
+
+
+/* =========================
+   CHAPTER GRID
+========================= */
+
+.chapter-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, 1fr);
+
+    gap: 12px;
+
+    max-width: 900px;
+
+    margin: auto;
+}
+
+.chapter-button {
+    height: 58px;
+
+    border: 2px solid #c7a85b;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fffdf5,
+            #f5e8c5
+        );
+
+    color: #4b3018;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 9px rgba(0,0,0,0.08);
+
+    transition: 0.2s;
+}
+
+.chapter-button:hover {
+    background: #d4af37;
+
+    color: white;
+
+    transform: translateY(-3px);
+}
+
+
+/* =========================
+   VIDEO BUTTON
+========================= */
+
+.video-list {
+    width: 100%;
+    max-width: 700px;
+
+    margin: 25px auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.video-button {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    text-align: left;
+
+    padding: 20px;
+
+    border: 2px solid #c7a85b;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fffdf5,
+            #f3e3bd
+        );
+
+    color: #4b3018;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,0.12);
+
+    transition: 0.2s;
+}
+
+.video-button:hover {
+    transform: translateY(-3px);
+
+    background: #fff7dc;
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,0.16);
+}
+
+.video-icon {
+    flex-shrink: 0;
+
+    margin-right: 15px;
+
+    font-size: 28px;
+}
+
+.video-content {
+    text-align: left;
+}
+
+
+/* =========================
+   YOUTUBE PLAYER
+========================= */
+
+.video-player-container {
+    display: none;
+
+    max-width: 650px;
+
+    margin: 25px auto;
+
+    background: #181818;
+
+    padding: 10px;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.30);
+}
+
+.video-player {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+}
+
+.video-player iframe {
+    width: 100%;
+    height: 100%;
+
+    border: none;
+
+    border-radius: 8px;
+}
+
+.close-video {
+    display: block;
+
+    margin: 12px auto 3px;
+
+    padding: 8px 20px;
+
+    border: none;
+
+    border-radius: 20px;
+
+    background: #555;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 15px;
+}
+
+.close-video:hover {
+    background: #777;
+}
+
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+.back-button {
+    display: block;
+
+    margin: 35px auto 10px;
+
+    border: none;
+
+    border-radius: 30px;
+
+    background: #4b3018;
+
+    color: white;
+
+    padding: 13px 30px;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 17px;
+
+    cursor: pointer;
+}
+
+.back-button:hover {
+    background: #70451e;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+    .header {
+        height: 95px;
+    }
+
+    .main {
+        padding-top: 115px;
+    }
+
+    .header-controls {
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+    }
+
+    .audio-version {
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .home-header-button {
+        padding: 5px 11px;
+        font-size: 12px;
+    }
+
+    .testaments {
+        grid-template-columns: 1fr;
+        margin: 30px 30px;
+    }
+
+    .testament-button {
+        min-height: 200px;
+    }
+
+    .book-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chapter-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .book-button {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 450px) {
+
+    .header {
+        height: 90px;
+    }
+
+    .main {
+        padding-top: 110px;
+    }
+
+    .header-controls {
+        top: 50%;
+        right: 7px;
+        transform: translateY(-50%);
+    }
+
+    .audio-version {
+        font-size: 9px;
+        letter-spacing: 0.3px;
+    }
+
+    .home-header-button {
+        padding: 4px 9px;
+        font-size: 11px;
+    }
+
+    .chapter-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .chapter-button {
+        height: 52px;
+        font-size: 18px;
+    }
+
+    .header h1 {
+        font-size: 28px;
+    }
+
+    .header-subtitle {
+        font-size: 13px;
+    }
+
+    .video-button {
+        font-size: 17px;
+    }
+}
+
+@media (max-width: 330px) {
+
+    .chapter-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
+
+    <img
+        src="logo.png"
+        alt="Holy Bible Logo"
+        class="header-logo"
+    >
+
+    <h1>
+        HOLY BIBLE
+    </h1>
+
+    <div class="header-subtitle">
+        KING JAMES VERSION
+    </div>
+    <!-- TOP RIGHT CONTROLS -->
+    <div class="header-controls">
+
+        <div class="audio-version">
+            🔊 AUDIO VERSION
+        </div>
+
+        <button
+            class="home-header-button"
+            onclick="goHome()">
+
+            🏠 HOME
+
+        </button>
+
+    </div>
+</header>
+
+<main class="main">
+
+<!-- =========================
+     HOME PAGE
+========================= -->
+
+<section
+    id="homePage"
+    class="page"
+    style="display:block;">
+
+    <div class="testaments">
+
+        <button
+            class="testament-button old-testament"
+            onclick="showBooks('old')">
+
+            <div class="book-icon">
+                📜
+            </div>
+
+            <h2>
+                OLD TESTAMENT
+            </h2>
+
+            <div class="book-count">
+                39 BOOKS
+            </div>
+
+        </button>
+
+
+        <button
+            class="testament-button new-testament"
+            onclick="showBooks('new')">
+
+            <div class="book-icon">
+                ✝️
+            </div>
+
+            <h2>
+                NEW TESTAMENT
+            </h2>
+
+            <div class="book-count">
+                27 BOOKS
+            </div>
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     BOOK PAGE
+========================= -->
+
+<section 
+    id="bookPage" 
+    class="page"> 
+
+    <div class="sticky-page-header">
+
+        <h2 
+            id="bookPageTitle" 
+            class="page-title"> 
+        </h2> 
+
+        <p 
+            id="bookPageSubtitle" 
+            class="page-subtitle"> 
+        </p> 
+
+    </div>
+
+    <div 
+        id="bookGrid" 
+        class="book-grid"> 
+    </div>
+
+    <button
+        class="back-button"
+        onclick="goHome()">
+
+        ← BACK
+
+    </button>
+
+</section>
+
+
+<!-- =========================
+     CHAPTER PAGE
+========================= -->
+
+<section
+    id="chapterPage"
+    class="page">
+
+<div class="sticky-page-header">
+
+    <h2 
+        id="chapterPageTitle" 
+        class="page-title"> 
+    </h2> 
+
+    <p 
+        id="chapterPageSubtitle" 
+        class="page-subtitle"> 
+    </p>
+
+</div>
+
+    <div
+        id="chapterGrid"
+        class="chapter-grid">
+    </div>
+
+    <button
+        class="back-button"
+        onclick="backToBooks()">
+
+        ← BACK TO BOOKS
+
+    </button>
+
+</section>
+
+
+<!-- =========================
+     VIDEO PAGE
+========================= -->
+
+<!-- =========================
+     VIDEO PAGE
+========================= -->
+
+<section
+    id="videoPage"
+    class="page">
+
+    <h2
+        id="videoPageTitle"
+        class="page-title">
+    </h2>
+
+    <p
+        class="page-subtitle">
+        Bible Videos
+    </p>
+
+
+    <!-- =========================
+         COMMON VIDEO PLAYER
+    ========================= -->
+
+    <div
+        id="videoPlayerContainer"
+        class="video-player-container">
+
+        <div class="video-player">
+
+            <iframe
+                id="youtubePlayer"
+                src=""
+                title="Bible Video"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+        <button
+            class="close-video"
+            onclick="closeBibleVideo()">
+
+            ✕ Close Video
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         VIDEO LIST
+    ========================= -->
+
+    <div
+        id="videoList"
+        class="video-list">
+    </div>
+
+
+    <button
+        class="back-button"
+        onclick="backToMatthewChapter()">
+
+        ← BACK TO CHAPTERS
+
+    </button>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   BIBLE BOOKS
+========================================================= */
+
+const bible = {
+
+    /* =====================
+       OLD TESTAMENT
+    ===================== */
+
+    old: [
+
+        ["Genesis", 50],
+        ["Exodus", 40],
+        ["Leviticus", 27],
+        ["Numbers", 36],
+        ["Deuteronomy", 34],
+
+        ["Joshua", 24],
+        ["Judges", 21],
+        ["Ruth", 4],
+
+        ["1 Samuel", 31],
+        ["2 Samuel", 24],
+
+        ["1 Kings", 22],
+        ["2 Kings", 25],
+
+        ["1 Chronicles", 29],
+        ["2 Chronicles", 36],
+
+        ["Ezra", 10],
+        ["Nehemiah", 13],
+        ["Esther", 10],
+
+        ["Job", 42],
+        ["Psalms", 150],
+        ["Proverbs", 31],
+        ["Ecclesiastes", 12],
+        ["Song of Solomon", 8],
+
+        ["Isaiah", 66],
+        ["Jeremiah", 52],
+        ["Lamentations", 5],
+        ["Ezekiel", 48],
+        ["Daniel", 12],
+
+        ["Hosea", 14],
+        ["Joel", 3],
+        ["Amos", 9],
+        ["Obadiah", 1],
+        ["Jonah", 4],
+        ["Micah", 7],
+        ["Nahum", 3],
+        ["Habakkuk", 3],
+        ["Zephaniah", 3],
+        ["Haggai", 2],
+        ["Zechariah", 14],
+
+        /* FIXED */
+        ["Malachi", 4]
+
+    ],
+
+
+    /* =====================
+       NEW TESTAMENT
+    ===================== */
+
+    new: [
+
+        ["Matthew", 28],
+        ["Mark", 16],
+        ["Luke", 24],
+        ["John", 21],
+
+        ["Acts", 28],
+
+        ["Romans", 16],
+
+        ["1 Corinthians", 16],
+        ["2 Corinthians", 13],
+
+        ["Galatians", 6],
+        ["Ephesians", 6],
+        ["Philippians", 4],
+        ["Colossians", 4],
+
+        ["1 Thessalonians", 5],
+        ["2 Thessalonians", 3],
+
+        ["1 Timothy", 6],
+        ["2 Timothy", 4],
+
+        ["Titus", 3],
+        ["Philemon", 1],
+
+        ["Hebrews", 13],
+        ["James", 5],
+
+        ["1 Peter", 5],
+        ["2 Peter", 3],
+
+        ["1 John", 5],
+        ["2 John", 1],
+        ["3 John", 1],
+
+        ["Jude", 1],
+
+        /* FIXED */
+        ["Revelation", 22]
+
+    ]
+
+};
+
+
+/* =========================================================
+   SHOW BOOKS
+========================================================= */
+
+function showBooks(testament) {
+
+    document.getElementById("homePage").style.display =
+        "none";
+
+    document.getElementById("chapterPage").style.display =
+        "none";
+
+    document.getElementById("videoPage").style.display =
+        "none";
+
+    document.getElementById("bookPage").style.display =
+        "block";
+
+
+    const title =
+        document.getElementById("bookPageTitle");
+
+    const subtitle =
+        document.getElementById("bookPageSubtitle");
+
+    const grid =
+        document.getElementById("bookGrid");
+
+
+    const books =
+        bible[testament];
+
+
+    if (testament === "old") {
+
+        title.textContent =
+            "Old Testament";
+
+        subtitle.textContent =
+            "39 Books";
+
+    } else {
+
+        title.textContent =
+            "New Testament";
+
+        subtitle.textContent =
+            "27 Books";
+
+    }
+
+
+    grid.innerHTML = "";
+
+
+    books.forEach(function(book, index) {
+
+        const button =
+            document.createElement("button");
+
+
+        button.className =
+            "book-button";
+
+
+        button.innerHTML = `
+
+            <span class="book-number">
+                BOOK ${index + 1}
+            </span>
+
+            ${book[0]}
+
+            <span class="book-chapters">
+                ${book[1]}
+                ${book[1] === 1 ? "Chapter" : "Chapters"}
+            </span>
+
+        `;
+
+
+        button.onclick = function() {
+
+            showChapters(
+                book[0],
+                book[1]
+            );
+
+        };
+
+
+        grid.appendChild(button);
+
+    });
+
+}
+
+
+/* =========================================================
+   SHOW CHAPTERS
+========================================================= */
+
+function showChapters(bookName, chapterCount) {
+
+    document.getElementById("bookPage").style.display =
+        "none";
+
+    document.getElementById("videoPage").style.display =
+        "none";
+
+    document.getElementById("chapterPage").style.display =
+        "block";
+
+
+    document.getElementById("chapterPageTitle")
+        .textContent =
+        bookName;
+
+
+    document.getElementById("chapterPageSubtitle")
+        .textContent =
+        chapterCount +
+        (chapterCount === 1
+            ? " Chapter"
+            : " Chapters");
+
+
+    const grid =
+        document.getElementById("chapterGrid");
+
+
+    grid.innerHTML = "";
+
+
+    for (
+        let chapter = 1;
+        chapter <= chapterCount;
+        chapter++
+    ) {
+
+        const button =
+            document.createElement("button");
+
+
+        button.className =
+            "chapter-button";
+
+
+        button.textContent =
+            chapter;
+
+
+        button.onclick = function() {
+
+            openChapter(
+                bookName,
+                chapter
+            );
+
+        };
+
+
+        grid.appendChild(button);
+
+    }
+
+}
+
+
+/* =========================================================
+   OPEN CHAPTER
+========================================================= */
+
+function openChapter(book, chapter) {
+
+    document.getElementById("chapterPage").style.display =
+        "none";
+
+    document.getElementById("videoPage").style.display =
+        "block";
+
+    document.getElementById("videoPlayerContainer").style.display =
+        "none";
+
+    document.getElementById("youtubePlayer").src = "";
+
+    document.getElementById("videoPageTitle").textContent =
+        book + " - Chapter " + chapter;
+
+    document.querySelector("#videoPage .page-subtitle").textContent =
+        "Bible Videos";
+
+    loadChapterVideos(book, chapter);
+}
+
+
+function loadChapterVideos(book, chapter) {
+
+    const videoList =
+        document.getElementById("videoList");
+
+    videoList.innerHTML = "";
+
+    if (
+        book === "Matthew" &&
+        chapter === 4
+    ) {
+
+        addVideoButton(
+            "Jesus Temptation at the Wilderness",
+            "Matthew 4:1-11",
+            "f8L3SjsLMLU"
+        );
+
+
+        addVideoButton(
+            "Jesus Begins His Ministry",
+            "Matthew 4:12-17",
+            "YOUR_VIDEO_ID"
+        );
+
+
+        addVideoButton(
+            "Jesus Calls His Disciples",
+            "Matthew 4:18-22",
+            "YOUR_VIDEO_ID"
+        );
+
+    }
+
+}
+function addVideoButton(
+    title,
+    reference,
+    videoId
+) {
+
+    const videoList =
+        document.getElementById("videoList");
+
+
+    const button =
+        document.createElement("button");
+
+
+    button.className =
+        "video-button";
+
+
+    button.innerHTML = `
+
+        <span class="video-icon">
+            ▶️
+        </span>
+
+        <span class="video-content">
+
+            ${title}
+
+            <br>
+
+            ${reference}
+
+        </span>
+
+    `;
+
+
+    button.onclick = function() {
+
+        openBibleVideo(videoId);
+
+    };
+
+
+    videoList.appendChild(button);
+
+}
+
+function openBibleVideo(videoId) {
+
+    const player =
+        document.getElementById("youtubePlayer");
+
+    const container =
+        document.getElementById("videoPlayerContainer");
+
+    player.src =
+        "https://www.youtube.com/embed/" +
+        videoId +
+        "?autoplay=1&origin=" +
+        encodeURIComponent(window.location.origin);
+
+    container.style.display =
+        "block";
+
+    container.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+
+/* =========================================================
+   OPEN YOUTUBE VIDEO
+========================================================= */
+
+
+
+
+/* =========================================================
+   CLOSE VIDEO
+========================================================= */
+
+function closeBibleVideo() {
+
+    const player =
+        document.getElementById(
+            "youtubePlayer"
+        );
+
+
+    const container =
+        document.getElementById(
+            "videoPlayerContainer"
+        );
+
+
+    player.src = "";
+
+
+    container.style.display =
+        "none";
+
+}
+
+
+/* =========================================================
+   BACK TO MATTHEW CHAPTERS
+========================================================= */
+
+function backToMatthewChapter() {
+
+    closeBibleVideo();
+
+
+    document.getElementById(
+        "videoPage"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "chapterPage"
+    ).style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   BACK TO BOOKS
+========================================================= */
+
+function backToBooks() {
+
+    closeBibleVideo();
+
+
+    document.getElementById(
+        "chapterPage"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "videoPage"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "bookPage"
+    ).style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   BACK TO HOME
+========================================================= */
+
+function goHome() {
+
+    closeBibleVideo();
+
+
+    document.getElementById(
+        "bookPage"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "chapterPage"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "videoPage"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "homePage"
+    ).style.display =
+        "block";
+
+}
+
+</script>
+
+</body>
+</html>
