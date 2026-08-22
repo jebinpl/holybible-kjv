@@ -1348,7 +1348,9 @@ function loadChapterVideos(book, chapter) {
         document.getElementById("videoList");
 
     videoList.innerHTML = "";
-
+    /* =========================
+       MATTHEW CHAPTER 4
+    ========================= */
     if (
         book === "Matthew" &&
         chapter === 4
@@ -1381,7 +1383,21 @@ function loadChapterVideos(book, chapter) {
         );
 
     }
+ /* =========================
+       MATTHEW CHAPTER 5
+    ========================= */
 
+    if (
+        book === "Matthew" &&
+        chapter === 5
+    ) {
+
+        addVideoButton(
+            "Mountain Teaching - 1",
+            "Matthew 5:1-12",
+            "cA9WtUr_PbA"
+        );
+    }
 }
 function addVideoButton(
     title,
