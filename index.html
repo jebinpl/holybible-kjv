@@ -82,17 +82,36 @@ body {
 
 /* TITLE */
 .header h1 {
-    font-size: clamp(30px, 6vw, 48px);
-    letter-spacing: 2px;
+    font-size: clamp(20px, 5vw, 48px);
+    letter-spacing: clamp(0.5px, 0.4vw, 2px);
+
+    max-width: calc(100% - 190px);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    text-align: center;
 }
 
 
 /* SUBTITLE */
 .header-subtitle {
     margin-top: 6px;
+
     color: #f4d982;
-    font-size: 16px;
-    letter-spacing: 3px;
+
+    font-size: clamp(9px, 2.2vw, 16px);
+
+    letter-spacing: clamp(0.5px, 0.6vw, 3px);
+
+    max-width: calc(100% - 190px);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    text-align: center;
 }
 
 /* =========================
@@ -695,6 +714,14 @@ body {
     .book-button {
         font-size: 16px;
     }
+
+    #videoPage .video-player-container {
+    top: 95px;
+}
+
+#videoPage .page-title {
+    font-size: 20px;
+}
 }
 
 @media (max-width: 450px) {
@@ -732,17 +759,17 @@ body {
         font-size: 18px;
     }
 
-    .header h1 {
-        font-size: 28px;
-    }
-
-    .header-subtitle {
-        font-size: 13px;
-    }
-
     .video-button {
         font-size: 17px;
     }
+
+    #videoPage .video-player-container {
+    top: 90px;
+}
+
+#videoPage .page-title {
+    font-size: 18px;
+}
 }
 
 @media (max-width: 330px) {
