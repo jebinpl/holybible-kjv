@@ -1628,6 +1628,32 @@ window.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
+       HIDE ALL PAGES FIRST
+    ========================= */
+
+    document.getElementById("homePage").style.display = "none";
+
+    document.getElementById("bookPage").style.display = "none";
+
+    document.getElementById("chapterPage").style.display = "none";
+
+    document.getElementById("videoPage").style.display = "none";
+
+
+    /* =========================
+       NO SAVED PAGE
+       SHOW HOME
+    ========================= */
+
+    if (!savedPage) {
+
+        document.getElementById("homePage").style.display = "block";
+
+        return;
+    }
+
+
+    /* =========================
        RESTORE BOOK PAGE
     ========================= */
 
@@ -1651,12 +1677,10 @@ window.addEventListener("DOMContentLoaded", function () {
         savedBook
     ) {
 
-        const allBooks =
-            [
-                ...bible.old,
-                ...bible.new
-            ];
-
+        const allBooks = [
+            ...bible.old,
+            ...bible.new
+        ];
 
         const book =
             allBooks.find(function (item) {
@@ -1672,6 +1696,10 @@ window.addEventListener("DOMContentLoaded", function () {
                 book[0],
                 book[1]
             );
+
+        } else {
+
+            document.getElementById("homePage").style.display = "block";
 
         }
 
@@ -1696,6 +1724,13 @@ window.addEventListener("DOMContentLoaded", function () {
 
         return;
     }
+
+
+    /* =========================
+       FALLBACK
+    ========================= */
+
+    document.getElementById("homePage").style.display = "block";
 
 });
 </script>
