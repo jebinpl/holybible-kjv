@@ -1015,7 +1015,7 @@ body {
 
     <button
         class="back-button"
-        onclick="backToMatthewChapter()">
+        onclick="backToChapters()">
 
         ← BACK TO CHAPTERS
 
@@ -1525,21 +1525,64 @@ function closeBibleVideo() {
    BACK TO MATTHEW CHAPTERS
 ========================================================= */
 
-function backToMatthewChapter() {
+/* =========================================================
+   BACK TO CHAPTERS
+========================================================= */
+
+function backToChapters() {
 
     closeBibleVideo();
 
+    const savedBook =
+        sessionStorage.getItem("book");
+
+
+    /* Hide current page */
 
     document.getElementById(
         "videoPage"
-    ).style.display =
-        "none";
+    ).style.display = "none";
 
+    document.getElementById(
+        "bookPage"
+    ).style.display = "none";
 
     document.getElementById(
         "chapterPage"
-    ).style.display =
-        "block";
+    ).style.display = "block";
+
+    document.getElementById(
+        "homePage"
+    ).style.display = "none";
+
+
+    /* Rebuild the chapter list */
+
+    if (savedBook) {
+
+        const allBooks = [
+            ...bible.old,
+            ...bible.new
+        ];
+
+        const book =
+            allBooks.find(function (item) {
+
+                return item[0] === savedBook;
+
+            });
+
+
+        if (book) {
+
+            showChapters(
+                book[0],
+                book[1]
+            );
+
+        }
+
+    }
 
 }
 
@@ -1552,23 +1595,33 @@ function backToBooks() {
 
     closeBibleVideo();
 
+    const savedTestament =
+        sessionStorage.getItem("testament");
 
     document.getElementById(
         "chapterPage"
-    ).style.display =
-        "none";
-
+    ).style.display = "none";
 
     document.getElementById(
         "videoPage"
-    ).style.display =
-        "none";
-
+    ).style.display = "none";
 
     document.getElementById(
         "bookPage"
-    ).style.display =
-        "block";
+    ).style.display = "block";
+
+    document.getElementById(
+        "homePage"
+    ).style.display = "none";
+
+
+    /* Rebuild the book list */
+
+    if (savedTestament) {
+
+        showBooks(savedTestament);
+
+    }
 
 }
 
