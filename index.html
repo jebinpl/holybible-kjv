@@ -60,22 +60,11 @@ body {
         0 5px 20px rgba(0,0,0,0.25);
 
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
 }
 
-
 /* LOGO — TOP LEFT */
 .header-logo {
-    position: absolute;
-
-    left: clamp(10px, 2vw, 30px);
-
-    top: 50%;
-
-    transform: translateY(-50%);
-
     width: clamp(48px, 9vw, 90px);
     height: clamp(48px, 9vw, 90px);
 
@@ -84,19 +73,30 @@ body {
 
 
 /* TITLE */
+.header-title {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    min-width: 0;
+}
+
 .header h1 {
     font-size: clamp(20px, 5vw, 48px);
     letter-spacing: clamp(0.5px, 0.4vw, 2px);
 
     white-space: nowrap;
     text-align: center;
+    margin: 0;
 }
 
 
 /* SUBTITLE */
 .header-subtitle {
-    margin-top: 6px;
-
     color: #f4d982;
 
     font-size: clamp(9px, 2.2vw, 16px);
@@ -105,6 +105,7 @@ body {
 
     white-space: nowrap;
     text-align: center;
+    margin-top: 6px;
 }
 
 /* =========================
@@ -112,13 +113,7 @@ body {
 ========================= */
 
 .header-controls {
-    position: absolute;
-
-    right: clamp(4px, 2vw, 25px);
-
-    top: 50%;
-
-    transform: translateY(-50%);
+    margin-left: auto;
 
     display: flex;
     flex-direction: column;
@@ -672,12 +667,6 @@ body {
         padding-top: 115px;
     }
 
-    .header-controls {
-        top: 50%;
-        right: 10px;
-        transform: translateY(-50%);
-    }
-
     .audio-version {
         font-size: 10px;
         letter-spacing: 0.5px;
@@ -728,11 +717,6 @@ body {
         padding-top: 110px;
     }
 
-    .header-controls {
-        top: 50%;
-        right: 7px;
-        transform: translateY(-50%);
-    }
 
     .audio-version {
         font-size: 9px;
@@ -792,14 +776,18 @@ body {
         class="header-logo"
     >
 
-    <h1>
-        HOLY BIBLE
-    </h1>
+    <!-- CENTER HEADER TEXT -->
+    <div class="header-title">
 
-    <div class="header-subtitle">
-        KING JAMES VERSION
+        <h1>HOLY BIBLE</h1>
+
+        <div class="header-subtitle">
+            KING JAMES VERSION
+        </div>
+
     </div>
-    <!-- TOP RIGHT CONTROLS -->
+
+    <!-- RIGHT HEADER CONTROLS -->
     <div class="header-controls">
 
         <div class="audio-version">
@@ -815,6 +803,7 @@ body {
         </button>
 
     </div>
+
 </header>
 
 <main class="main">
