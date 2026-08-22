@@ -1152,6 +1152,9 @@ const bible = {
 
 function showBooks(testament) {
 
+    sessionStorage.setItem("testament", testament);
+    sessionStorage.setItem("page", "books");
+
     document.getElementById("homePage").style.display =
         "none";
 
@@ -1250,6 +1253,9 @@ function showBooks(testament) {
 
 function showChapters(bookName, chapterCount) {
 
+    sessionStorage.setItem("book", bookName);
+    sessionStorage.setItem("page", "chapters");
+
     document.getElementById("bookPage").style.display =
         "none";
 
@@ -1320,6 +1326,10 @@ function showChapters(bookName, chapterCount) {
 ========================================================= */
 
 function openChapter(book, chapter) {
+
+    sessionStorage.setItem("book", book);
+    sessionStorage.setItem("chapter", chapter);
+    sessionStorage.setItem("page", "videos");
 
     document.getElementById("chapterPage").style.display =
         "none";
@@ -1396,6 +1406,12 @@ function loadChapterVideos(book, chapter) {
             "Mountain Teaching - 1",
             "Matthew 5:1-12",
             "cA9WtUr_PbA"
+        );
+
+         addVideoButton(
+            "Mountain Teaching - 2",
+            "Matthew 5:13-16",
+            "uxu2XA0fnoQ"
         );
     }
 }
@@ -1563,6 +1579,8 @@ function backToBooks() {
 
 function goHome() {
 
+    sessionStorage.clear();
+
     closeBibleVideo();
 
 
@@ -1590,7 +1608,96 @@ function goHome() {
         "block";
 
 }
+/* =========================================================
+   RESTORE PAGE AFTER REFRESH
+========================================================= */
 
+window.addEventListener("DOMContentLoaded", function () {
+
+    const savedPage =
+        sessionStorage.getItem("page");
+
+    const savedTestament =
+        sessionStorage.getItem("testament");
+
+    const savedBook =
+        sessionStorage.getItem("book");
+
+    const savedChapter =
+        sessionStorage.getItem("chapter");
+
+
+    /* =========================
+       RESTORE BOOK PAGE
+    ========================= */
+
+    if (
+        savedPage === "books" &&
+        savedTestament
+    ) {
+
+        showBooks(savedTestament);
+
+        return;
+    }
+
+
+    /* =========================
+       RESTORE CHAPTER PAGE
+    ========================= */
+
+    if (
+        savedPage === "chapters" &&
+        savedBook
+    ) {
+
+        const allBooks =
+            [
+                ...bible.old,
+                ...bible.new
+            ];
+
+
+        const book =
+            allBooks.find(function (item) {
+
+                return item[0] === savedBook;
+
+            });
+
+
+        if (book) {
+
+            showChapters(
+                book[0],
+                book[1]
+            );
+
+        }
+
+        return;
+    }
+
+
+    /* =========================
+       RESTORE VIDEO PAGE
+    ========================= */
+
+    if (
+        savedPage === "videos" &&
+        savedBook &&
+        savedChapter
+    ) {
+
+        openChapter(
+            savedBook,
+            Number(savedChapter)
+        );
+
+        return;
+    }
+
+});
 </script>
 
 </body>
