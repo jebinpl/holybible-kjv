@@ -260,14 +260,6 @@ body {
     margin: 0 0 12px;
 }
 
-#videoPage .video-player-container {
-    position: sticky;
-    top: 105px;
-    z-index: 900;
-
-    margin: 10px auto 20px;
-}
-
 /* =========================
    TESTAMENT BUTTONS
 ========================= */
@@ -556,12 +548,25 @@ body {
    YOUTUBE PLAYER
 ========================= */
 
+/* =========================
+   PERSISTENT VIDEO PLAYER
+========================= */
+
 .video-player-container {
+
     display: none;
+
+    position: sticky;
+
+    top: 105px;
+
+    z-index: 950;
+
+    width: 100%;
 
     max-width: 650px;
 
-    margin: 25px auto;
+    margin: 10px auto 20px;
 
     background: #181818;
 
@@ -571,6 +576,62 @@ body {
 
     box-shadow:
         0 10px 30px rgba(0,0,0,0.30);
+}
+
+
+.video-player {
+
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+}
+
+
+.video-player iframe {
+
+    width: 100%;
+
+    height: 100%;
+
+    border: none;
+
+    border-radius: 8px;
+}
+
+
+.close-video {
+
+    display: block;
+
+    margin: 12px auto 3px;
+
+    padding: 8px 20px;
+
+    border: none;
+
+    border-radius: 20px;
+
+    background: #555;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 15px;
+}
+
+
+.close-video:hover {
+
+    background: #777;
+
 }
 
 .video-player {
@@ -699,10 +760,6 @@ body {
         font-size: 16px;
     }
 
-    #videoPage .video-player-container {
-    top: 95px;
-}
-
 #videoPage .page-title {
     font-size: 20px;
 }
@@ -741,10 +798,6 @@ body {
     .video-button {
         font-size: 17px;
     }
-
-    #videoPage .video-player-container {
-    top: 90px;
-}
 
 #videoPage .page-title {
     font-size: 18px;
@@ -808,6 +861,37 @@ body {
 </header>
 
 <main class="main">
+
+    <!-- =========================
+         COMMON VIDEO PLAYER
+    ========================= -->
+
+    <div
+        id="videoPlayerContainer"
+        class="video-player-container">
+
+        <div class="video-player">
+
+            <iframe
+                id="youtubePlayer"
+                src=""
+                title="Bible Video"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+        <button
+            class="close-video"
+            onclick="closeBibleVideo()">
+
+            ✕ Close Video
+
+        </button>
+
+    </div>
 
 <!-- =========================
      HOME PAGE
@@ -967,38 +1051,6 @@ body {
         class="page-subtitle">
         Bible Videos
     </p>
-
-
-    <!-- =========================
-         COMMON VIDEO PLAYER
-    ========================= -->
-
-    <div
-        id="videoPlayerContainer"
-        class="video-player-container">
-
-        <div class="video-player">
-
-            <iframe
-                id="youtubePlayer"
-                src=""
-                title="Bible Video"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen>
-            </iframe>
-
-        </div>
-
-        <button
-            class="close-video"
-            onclick="closeBibleVideo()">
-
-            ✕ Close Video
-
-        </button>
-
-    </div>
 
 
     <!-- =========================
@@ -1335,11 +1387,6 @@ function openChapter(book, chapter) {
     document.getElementById("videoPage").style.display =
         "block";
 
-    document.getElementById("videoPlayerContainer").style.display =
-        "none";
-
-    document.getElementById("youtubePlayer").src = "";
-
     document.getElementById("videoPageTitle").textContent =
         book + " - Chapter " + chapter;
 
@@ -1646,8 +1693,6 @@ function closeBibleVideo() {
 
 function backToChapters() {
 
-    closeBibleVideo();
-
     const savedBook =
         sessionStorage.getItem("book");
 
@@ -1708,8 +1753,6 @@ function backToChapters() {
 
 function backToBooks() {
 
-    closeBibleVideo();
-
     const savedTestament =
         sessionStorage.getItem("testament");
 
@@ -1748,8 +1791,6 @@ function backToBooks() {
 function goHome() {
 
     sessionStorage.clear();
-
-    closeBibleVideo();
 
 
     document.getElementById(
