@@ -874,7 +874,7 @@ body {
 
             <iframe
                 id="youtubePlayer"
-                src=""
+                src="https://www.youtube.com/embed/?enablejsapi=1"
                 title="Bible Video"
                 referrerpolicy="strict-origin-when-cross-origin"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -1076,6 +1076,7 @@ body {
 
 </main>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
 
@@ -1594,6 +1595,8 @@ function addVideoButton(
     button.className =
         "video-button";
 
+    button.dataset.videoId =
+    videoId;
 
     button.innerHTML = `
 
@@ -1625,27 +1628,143 @@ function addVideoButton(
 
 }
 
+let youtubePlayer;
+let currentVideoIndex = -1;
+
+
+/* =========================================================
+   YOUTUBE PLAYER API
+========================================================= */
+
+function onYouTubeIframeAPIReady() {
+
+    youtubePlayer = new YT.Player("youtubePlayer", {
+
+        events: {
+
+            onStateChange: onPlayerStateChange
+
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   VIDEO FINISHED
+========================================================= */
+
+function onPlayerStateChange(event) {
+
+    if (
+        event.data ===
+        YT.PlayerState.ENDED
+    ) {
+
+        playNextVideo();
+
+    }
+
+}
+
+
+/* =========================================================
+   OPEN VIDEO
+========================================================= */
+
 function openBibleVideo(videoId) {
 
-    const player =
-        document.getElementById("youtubePlayer");
-
     const container =
-        document.getElementById("videoPlayerContainer");
+        document.getElementById(
+            "videoPlayerContainer"
+        );
 
-    player.src =
-        "https://www.youtube.com/embed/" +
-        videoId +
-        "?autoplay=1&origin=" +
-        encodeURIComponent(window.location.origin);
+
+    /* Find which video was clicked */
+
+    const buttons =
+        document.querySelectorAll(
+            "#videoList .video-button"
+        );
+
+
+    buttons.forEach(function(button, index) {
+
+        if (
+            button.dataset.videoId ===
+            videoId
+        ) {
+
+            currentVideoIndex = index;
+
+        }
+
+    });
+
 
     container.style.display =
         "block";
 
+
+    if (youtubePlayer) {
+
+        youtubePlayer.loadVideoById(
+            videoId
+        );
+
+    }
+
+
     container.scrollIntoView({
+
         behavior: "smooth",
+
         block: "start"
+
     });
+
+}
+
+
+/* =========================================================
+   PLAY NEXT VIDEO
+========================================================= */
+
+function playNextVideo() {
+
+    const buttons =
+        document.querySelectorAll(
+            "#videoList .video-button"
+        );
+
+
+    const nextIndex =
+        currentVideoIndex + 1;
+
+
+    if (
+        nextIndex >= buttons.length
+    ) {
+
+        return;
+
+    }
+
+
+    currentVideoIndex =
+        nextIndex;
+
+
+    const nextVideoId =
+        buttons[nextIndex]
+            .dataset.videoId;
+
+
+    youtubePlayer.loadVideoById(
+        nextVideoId
+    );
+
 }
 
 
