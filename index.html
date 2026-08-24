@@ -1372,7 +1372,7 @@ function showChapters(bookName, chapterCount) {
 ========================================================= */
 
 function openChapter(book, chapter) {
-
+    currentVideoIndex = -1;
     sessionStorage.setItem("book", book);
     sessionStorage.setItem("chapter", chapter);
     sessionStorage.setItem("page", "videos");
@@ -1719,14 +1719,11 @@ function openBibleVideo(videoId) {
         "block";
 
 
-    if (youtubePlayer) {
+if (youtubePlayer && youtubePlayer.loadVideoById) {
 
-        youtubePlayer.loadVideoById(
-            videoId
-        );
+    youtubePlayer.loadVideoById(videoId);
 
-    }
-
+}
 
     container.scrollIntoView({
 
@@ -1793,26 +1790,18 @@ function playNextVideo() {
 
 function closeBibleVideo() {
 
-    const player =
-        document.getElementById(
-            "youtubePlayer"
-        );
-
-
     const container =
         document.getElementById(
             "videoPlayerContainer"
         );
 
+    if (youtubePlayer) {
+        youtubePlayer.stopVideo();
+    }
 
-    player.src = "";
-
-
-    container.style.display =
-        "none";
+    container.style.display = "none";
 
 }
-
 
 /* =========================================================
    BACK TO MATTHEW CHAPTERS
