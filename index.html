@@ -714,6 +714,102 @@ body {
     background: #70451e;
 }
 
+/* =========================
+   VIDEO SEARCH
+========================= */
+
+.search-open-button {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin: 25px auto 0;
+    padding: 15px 20px;
+
+    border: 2px solid #c7a85b;
+    border-radius: 30px;
+
+    background: linear-gradient(
+        135deg,
+        #fffdf5,
+        #f3e3bd
+    );
+
+    color: #4b3018;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.search-open-button:hover {
+    background: #d4af37;
+    color: white;
+}
+
+
+.search-box-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 25px auto 15px;
+}
+
+#videoSearchInput {
+    width: 100%;
+    padding: 15px 20px;
+
+    border: 2px solid #c7a85b;
+    border-radius: 30px;
+
+    background: #fffdf5;
+    color: #4b3018;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18px;
+
+    outline: none;
+}
+
+#videoSearchInput:focus {
+    border-color: #70451e;
+}
+
+
+#searchResults {
+    width: 100%;
+    max-width: 700px;
+
+    margin: 15px auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+
+.close-search-button {
+    display: block;
+
+    margin: 30px auto;
+
+    padding: 12px 28px;
+
+    border: none;
+    border-radius: 30px;
+
+    background: #4b3018;
+    color: white;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+
+    cursor: pointer;
+}
+
+.close-search-button:hover {
+    background: #70451e;
+}
 
 /* =========================
    MOBILE
@@ -902,6 +998,14 @@ body {
     class="page"
     style="display:block;">
 
+    <button
+        class="search-open-button"
+        onclick="openSearchPage()">
+
+        🔍 SEARCH VIDEOS
+
+    </button>
+
     <div class="testaments">
 
         <button
@@ -953,6 +1057,47 @@ body {
 
 </section>
 
+<!-- =========================
+     SEARCH PAGE
+========================= -->
+
+<section
+    id="searchPage"
+    class="page">
+
+    <h2 class="page-title">
+        Search Bible Videos
+    </h2>
+
+    <p class="page-subtitle">
+        Search Old & New Testament Videos
+    </p>
+
+
+    <div class="search-box-container">
+
+        <input
+            type="text"
+            id="videoSearchInput"
+            placeholder="🔍 Type a video title or keyword..."
+            oninput="searchBibleVideos()">
+
+    </div>
+
+
+    <div id="searchResults">
+    </div>
+
+
+    <button
+        class="close-search-button"
+        onclick="closeSearchPage()">
+
+        ✕ CLOSE SEARCH
+
+    </button>
+
+</section>
 
 <!-- =========================
      BOOK PAGE
@@ -1191,6 +1336,13 @@ const bible = {
 
 };
 
+/* =========================================================
+   GLOBAL VIDEO SEARCH DATABASE
+========================================================= */
+
+let allBibleVideos = [];
+
+let buildingSearchIndex = false;
 
 /* =========================================================
    SHOW BOOKS
@@ -1626,6 +1778,40 @@ function addVideoButton(
     videoId
 ) {
 
+    /* =========================
+       REGISTER FOR SEARCH
+    ========================= */
+
+    if (buildingSearchIndex) {
+
+        const exists =
+            allBibleVideos.some(function(video) {
+
+                return video.videoId === videoId;
+
+            });
+
+
+        if (!exists) {
+
+            allBibleVideos.push({
+
+                title: title,
+                reference: reference,
+                videoId: videoId
+
+            });
+
+        }
+
+        return;
+    }
+
+
+    /* =========================
+       NORMAL CHAPTER BUTTON
+    ========================= */
+
     const videoList =
         document.getElementById("videoList");
 
@@ -1637,8 +1823,10 @@ function addVideoButton(
     button.className =
         "video-button";
 
+
     button.dataset.videoId =
-    videoId;
+        videoId;
+
 
     button.innerHTML = `
 
@@ -1667,6 +1855,275 @@ function addVideoButton(
 
 
     videoList.appendChild(button);
+
+}
+
+/* =========================================================
+   BUILD GLOBAL VIDEO SEARCH
+========================================================= */
+
+function buildVideoSearchIndex() {
+
+    allBibleVideos = [];
+
+    buildingSearchIndex = true;
+
+
+    const allBooks = [
+        ...bible.old,
+        ...bible.new
+    ];
+
+
+    allBooks.forEach(function(book) {
+
+        const bookName = book[0];
+        const chapterCount = book[1];
+
+
+        for (
+            let chapter = 1;
+            chapter <= chapterCount;
+            chapter++
+        ) {
+
+            loadChapterVideos(
+                bookName,
+                chapter
+            );
+
+        }
+
+    });
+
+
+    buildingSearchIndex = false;
+
+
+    /* Clear temporary chapter list */
+
+    document.getElementById("videoList").innerHTML = "";
+
+}
+
+
+/* =========================================================
+   OPEN SEARCH PAGE
+========================================================= */
+
+function openSearchPage() {
+
+
+    document.getElementById("homePage").style.display =
+        "none";
+
+    document.getElementById("bookPage").style.display =
+        "none";
+
+    document.getElementById("chapterPage").style.display =
+        "none";
+
+    document.getElementById("videoPage").style.display =
+        "none";
+
+    document.getElementById("searchPage").style.display =
+        "block";
+
+
+    buildVideoSearchIndex();
+
+
+    document.getElementById("videoSearchInput").value =
+        "";
+
+    document.getElementById("searchResults").innerHTML =
+        "";
+
+
+    document.getElementById("videoSearchInput").focus();
+
+}
+
+
+/* =========================================================
+   SEARCH VIDEOS
+========================================================= */
+
+function searchBibleVideos() {
+
+    const searchText =
+        document.getElementById("videoSearchInput")
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    const results =
+        document.getElementById("searchResults");
+
+
+    results.innerHTML = "";
+
+
+    if (searchText === "") {
+
+        return;
+
+    }
+
+
+    const matchedVideos =
+        allBibleVideos.filter(function(video) {
+
+            return (
+                video.title
+                    .toLowerCase()
+                    .includes(searchText)
+
+                ||
+
+                video.reference
+                    .toLowerCase()
+                    .includes(searchText)
+            );
+
+        });
+
+
+    matchedVideos.forEach(function(video) {
+
+        const button =
+            document.createElement("button");
+
+
+        button.className =
+            "video-button";
+
+
+        button.dataset.videoId =
+            video.videoId;
+
+
+        button.innerHTML = `
+
+            <span class="video-icon">
+                ▶️
+            </span>
+
+            <span class="video-content">
+
+                ${video.title}
+
+                <br>
+
+                ${video.reference}
+
+            </span>
+
+        `;
+
+
+        button.onclick = function() {
+
+            openSearchVideo(
+                video.videoId
+            );
+
+        };
+
+
+        results.appendChild(button);
+
+    });
+
+
+    if (matchedVideos.length === 0) {
+
+        results.innerHTML = `
+
+            <p style="
+                text-align:center;
+                padding:20px;
+                color:#76582e;
+            ">
+
+                No videos found
+
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   PLAY VIDEO FROM SEARCH
+========================================================= */
+
+function openSearchVideo(videoId) {
+
+    currentVideoIndex = -1;
+
+
+    const container =
+        document.getElementById(
+            "videoPlayerContainer"
+        );
+
+
+    container.style.display =
+        "block";
+
+
+    if (
+        youtubePlayer &&
+        youtubePlayer.loadVideoById
+    ) {
+
+        youtubePlayer.loadVideoById(
+            videoId
+        );
+
+    }
+
+
+    container.scrollIntoView({
+
+        behavior: "smooth",
+        block: "start"
+
+    });
+
+}
+
+
+/* =========================================================
+   CLOSE SEARCH
+========================================================= */
+
+function closeSearchPage() {
+
+
+    document.getElementById(
+        "searchPage"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "searchResults"
+    ).innerHTML = "";
+
+
+    document.getElementById(
+        "videoSearchInput"
+    ).value = "";
+
+
+    document.getElementById(
+        "homePage"
+    ).style.display = "block";
 
 }
 
@@ -1960,6 +2417,10 @@ function goHome() {
     ).style.display =
         "none";
 
+    document.getElementById(
+        "searchPage"
+    ).style.display = 
+        "none";
 
     document.getElementById(
         "homePage"
