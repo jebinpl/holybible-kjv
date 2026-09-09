@@ -858,17 +858,24 @@ body {
 
 .bible-reader-container {
     display: none;
+    position: relative;
+
     width: 100%;
     max-width: 850px;
     margin: 20px auto;
+
     background: linear-gradient(
         135deg,
         #fffdf5,
         #f7efd8
     );
+
     border: 2px solid #c9a227;
     border-radius: 14px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.15);
+
     padding: 20px;
     box-sizing: border-box;
 }
@@ -880,6 +887,7 @@ body {
     text-align: center;
     color: #5b3a00;
     margin-bottom: 18px;
+    padding: 0 45px;
 }
 
 .bible-text {
@@ -900,20 +908,48 @@ body {
 }
 
 .close-bible {
-    display: block;
-    margin: 20px auto 0;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    background: #6b1e1e;
-    color: white;
-    font-size: 14px;
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border: 2px solid #c7a85b;
+    border-radius: 50%;
+
+    background: linear-gradient(
+        135deg,
+        #fffdf5,
+        #f3e3bd
+    );
+
+    color: #4b3018;
+
+    font-family: Arial, sans-serif;
+    font-size: 18px;
     font-weight: bold;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     cursor: pointer;
+
+    box-shadow:
+        0 3px 8px rgba(0,0,0,0.18);
+
+    transition: 0.2s;
 }
 
 .close-bible:hover {
-    opacity: 0.9;
+    background: #d4af37;
+    color: white;
+
+    transform: scale(1.08);
 }
 
 /* ==============================
@@ -1306,13 +1342,14 @@ body {
         class="bible-text">
     </div>
 
-    <button
-        class="close-bible"
-        onclick="closeBibleReader()">
+<button
+    class="close-bible"
+    onclick="closeBibleReader()"
+    aria-label="Close Bible">
 
-        ✕ CLOSE BIBLE
+    ✕
 
-    </button>
+</button>
 
 </div>
 
