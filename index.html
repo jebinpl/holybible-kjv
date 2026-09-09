@@ -1872,7 +1872,7 @@ function openChapter(book, chapter) {
         "block"; 
  
     document.getElementById("videoPageTitle").textContent = 
-        book + " " + chapter; 
+        book + " - Ch " + chapter; 
  
     document.querySelector("#videoPage .page-subtitle").textContent = 
         "Bible Videos"; 
@@ -3060,7 +3060,7 @@ async function toggleBibleReader() {
  
  
     document.getElementById("bibleReaderTitle").textContent = 
-        book + " " + chapter; 
+        book + " - Ch " + chapter; 
  
  
     document.getElementById("bibleText").innerHTML = 
@@ -3118,7 +3118,7 @@ async function updateBibleReader(book, chapter) {
  
  
     document.getElementById("bibleReaderTitle").textContent = 
-        book + " " + chapter; 
+        book + " - Ch " + chapter; 
  
  
     textContainer.innerHTML = ""; 
