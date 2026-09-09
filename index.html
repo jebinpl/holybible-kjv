@@ -1100,8 +1100,19 @@ body {
         font-size: 16px;
     }
 
-        .chapter-heading-row {
+    .chapter-heading-row {
         min-height: 48px;
+        padding: 6px 125px 6px 10px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .chapter-heading-row .page-title {
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .read-bible-button {
@@ -1109,6 +1120,7 @@ body {
         width: auto;
         padding: 7px 10px;
         font-size: 12px;
+        white-space: nowrap;
     }
 
 }
@@ -2331,7 +2343,7 @@ function loadChapterVideos(book, chapter) {
         ); 
         addVideoButton( 
             "Land of Gennesaret", 
-            "Matthew 14:22-33", 
+            "Matthew 14:34-36", 
             "9LMae_c1y_U" 
         ); 
 } 
