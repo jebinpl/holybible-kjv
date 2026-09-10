@@ -852,17 +852,125 @@ body {
     background: #70451e;
 }
 
-/* ==============================
-   BIBLE READER
-   ============================== */
+/* =========================
+   BIBLE READER WRAPPER
+========================= */
+
+.bible-reader-wrapper {
+    display: none;
+    width: 100%;
+    max-width: 850px;
+    margin: 20px auto 25px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+
+/* =========================
+   TOP CONTROLS
+   OUTSIDE READING BOX
+========================= */
+
+.bible-reader-top-controls {
+    width: 100%;
+    min-height: 38px;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 6px;
+
+    margin-bottom: 6px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================
+   FONT CONTROLS
+========================= */
+
+.bible-reader-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.bible-reader-controls button {
+    min-width: 34px;
+    height: 32px;
+
+    padding: 4px 8px;
+
+    border: 1px solid #b8943d;
+    border-radius: 6px;
+
+    background: linear-gradient(
+        to bottom,
+        #fffdf5,
+        #ead9ad
+    );
+
+    color: #5b3a00;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+}
+
+.bible-reader-controls button:hover {
+    background: #f5e6bd;
+}
+
+
+/* =========================
+   CLOSE BUTTON
+========================= */
+
+.close-bible {
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+
+    border: 1px solid #b8943d;
+    border-radius: 6px;
+
+    background: linear-gradient(
+        to bottom,
+        #fffdf5,
+        #ead9ad
+    );
+
+    color: #6b0000;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+}
+
+.close-bible:hover {
+    background: #f0d9a0;
+}
+
+
+/* =========================
+   BIBLE READING BOX
+========================= */
 
 .bible-reader-container {
     display: none;
+
     position: relative;
 
     width: 100%;
-    max-width: 850px;
-    margin: 20px auto;
 
     background: linear-gradient(
         135deg,
@@ -871,104 +979,72 @@ body {
     );
 
     border: 2px solid #c9a227;
+
     border-radius: 14px;
 
     box-shadow:
         0 6px 18px rgba(0,0,0,0.15);
 
     padding: 20px;
+
     box-sizing: border-box;
+
+    overflow: hidden;
 }
 
-/* ==============================
-   BIBLE READER ZOOM CONTROLS
-============================== */
 
-.bible-reader-header {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 45px;
-
-    margin-bottom: 18px;
-}
+/* =========================
+   CHAPTER TITLE
+   INSIDE THE BOX
+========================= */
 
 .bible-reader-title {
-    margin: 0;
-    padding: 0 150px 0 10px;
+    width: 100%;
+
+    margin: 0 0 18px;
+
+    padding: 5px 10px 12px;
+
+    border-bottom: 2px solid #c7a85b;
 
     font-family: Georgia, "Times New Roman", serif;
+
     font-size: 24px;
+
     font-weight: bold;
+
+    line-height: 1.3;
 
     text-align: center;
 
     color: #5b3a00;
+
+    box-sizing: border-box;
 }
 
-.bible-reader-controls button {
-    min-width: 38px;
-    height: 34px;
 
-    padding: 4px 8px;
-
-    border: 1px solid #c7a85b;
-    border-radius: 7px;
-
-    background: linear-gradient(
-        135deg,
-        #fffdf5,
-        #f3e3bd
-    );
-
-    color: #4b3018;
-
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    font-size: 15px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 2px 6px rgba(0,0,0,0.12);
-}
-
-.bible-reader-controls button:hover {
-    background: #d4af37;
-    color: white;
-}
-
-.bible-reader-controls button:active {
-    transform: scale(0.94);
-}
-
-.bible-reader-controls {
-    position: absolute;
-
-    right: 45px;
-
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    display: flex;
-
-    gap: 5px;
-}
+/* =========================
+   BIBLE TEXT
+========================= */
 
 .bible-text {
+    width: 100%;
+
     font-family: Georgia, "Times New Roman", serif;
+
     font-size: 18px;
+
     line-height: 1.8;
+
     color: #292000;
+
+    box-sizing: border-box;
 }
+
+
+/* =========================
+   VERSES
+========================= */
 
 .bible-verse {
     margin-bottom: 12px;
@@ -976,53 +1052,100 @@ body {
 
 .verse-number {
     font-weight: bold;
+
     color: #8a6500;
+
     margin-right: 7px;
 }
 
-.close-bible {
-    position: absolute;
 
-    top: 10px;
-    right: 10px;
+/* =========================
+   MOBILE
+========================= */
 
-    width: 34px;
-    height: 34px;
+@media (max-width: 700px) {
 
-    padding: 0;
+    .bible-reader-wrapper {
+        margin: 15px auto 20px;
+    }
 
-    border: 2px solid #c7a85b;
-    border-radius: 50%;
+    .bible-reader-container {
+        padding: 15px;
+        border-radius: 12px;
+    }
 
-    background: linear-gradient(
-        135deg,
-        #fffdf5,
-        #f3e3bd
-    );
+    .bible-reader-title {
+        font-size: 21px;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+    }
 
-    color: #4b3018;
+    .bible-reader-top-controls {
+        min-height: 34px;
+        margin-bottom: 5px;
+    }
 
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    font-weight: bold;
+    .bible-reader-controls {
+        gap: 4px;
+    }
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    .bible-reader-controls button {
+        min-width: 34px;
+        height: 32px;
+        padding: 3px 6px;
+        font-size: 14px;
+    }
 
-    cursor: pointer;
+    .close-bible {
+        width: 32px;
+        height: 32px;
+        font-size: 15px;
+    }
 
-    box-shadow:
-        0 3px 8px rgba(0,0,0,0.18);
-
-    transition: 0.2s;
+    .bible-text {
+        font-size: 18px;
+        line-height: 1.75;
+    }
 }
 
-.close-bible:hover {
-    background: #d4af37;
-    color: white;
 
-    transform: scale(1.08);
+@media (max-width: 450px) {
+
+    .bible-reader-wrapper {
+        margin-top: 10px;
+    }
+
+    .bible-reader-container {
+        padding: 12px;
+    }
+
+    .bible-reader-title {
+        font-size: 19px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .bible-reader-top-controls {
+        gap: 4px;
+    }
+
+    .bible-reader-controls button {
+        min-width: 31px;
+        height: 30px;
+        padding: 2px 5px;
+        font-size: 13px;
+    }
+
+    .close-bible {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .bible-text {
+        font-size: 18px;
+        line-height: 1.7;
+    }
 }
 
 /* ==============================
@@ -1186,54 +1309,7 @@ body {
         translateY(calc(-50% - 2px));
 }
 
-@media (max-width: 700px) {
 
-    .bible-reader-container {
-        padding: 15px;
-    }
-
-    .bible-reader-title {
-        font-size: 21px;
-        padding-right: 135px;
-    }
-
-    .bible-reader-controls {
-        right: 42px;
-    }
-
-    .bible-reader-controls button {
-        min-width: 34px;
-        height: 32px;
-        padding: 3px 6px;
-        font-size: 14px;
-    }
-
-    .bible-text {
-        font-size: 18px;
-        line-height: 1.75;
-    }
-
-}
-
-@media (max-width: 450px) {
-
-.bible-text {
-    font-size: 18px;
-    line-height: 1.7;
-}
-
-        .chapter-heading-row {
-        min-height: 48px;
-    }
-
-    .read-bible-button {
-        right: 5px;
-        width: auto;
-        padding: 7px 10px;
-        font-size: 12px;
-    }
-
-}
 
 /* =========================
    MOBILE
@@ -1417,65 +1493,47 @@ body {
      BIBLE READER
 ========================= -->
 
-<div
-    id="bibleReaderContainer"
-    class="bible-reader-container">
+<div class="bible-reader-wrapper">
 
-    <div class="bible-reader-header">
-
-        <div
-            id="bibleReaderTitle"
-            class="bible-reader-title">
-        </div>
+    <!-- Controls OUTSIDE the box -->
+    <div class="bible-reader-top-controls">
 
         <div class="bible-reader-controls">
+            <button type="button"
+                    onclick="changeBibleFontSize(-1)"
+                    title="Zoom Out">A−</button>
 
-            <button
-                type="button"
-                onclick="changeBibleFontSize(-1)"
-                title="Zoom Out">
+            <button type="button"
+                    onclick="resetBibleFontSize()"
+                    title="Reset Text Size">A</button>
 
-                A−
+            <button type="button"
+                    onclick="changeBibleFontSize(1)"
+                    title="Zoom In">A+</button>
+        </div>
 
-            </button>
+        <button class="close-bible"
+                onclick="closeBibleReader()"
+                aria-label="Close Bible"
+                title="Close Bible">✕</button>
 
-            <button
-                type="button"
-                onclick="resetBibleFontSize()"
-                title="Reset Text Size">
+    </div>
 
-                A
+    <!-- Bible reading box -->
+    <div id="bibleReaderContainer"
+         class="bible-reader-container">
 
-            </button>
+        <!-- Chapter title INSIDE the box -->
+        <div id="bibleReaderTitle"
+             class="bible-reader-title">
+        </div>
 
-            <button
-                type="button"
-                onclick="changeBibleFontSize(1)"
-                title="Zoom In">
-
-                A+
-
-            </button>
-
+        <!-- Bible text -->
+        <div id="bibleText"
+             class="bible-text">
         </div>
 
     </div>
-
-
-    <div
-        id="bibleText"
-        class="bible-text">
-    </div>
-
-
-    <button
-        class="close-bible"
-        onclick="closeBibleReader()"
-        aria-label="Close Bible">
-
-        ✕
-
-    </button>
 
 </div>
 
@@ -2816,12 +2874,10 @@ function openSearchVideo(videoId) {
     } 
  
  
-    container.scrollIntoView({ 
- 
-        behavior: "smooth", 
-        block: "start" 
- 
-    }); 
+container.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+});
  
 } 
  
@@ -3235,61 +3291,79 @@ async function loadBibleBook(book) {
     } 
 } 
  
- 
-async function toggleBibleReader() { 
- 
-    const container = 
-        document.getElementById("bibleReaderContainer"); 
- 
-    if (bibleReaderOpen) { 
- 
-        closeBibleReader(); 
- 
-        return; 
-    } 
- 
- 
-    const book = 
-        sessionStorage.getItem("book"); 
- 
-    const chapter = 
-        sessionStorage.getItem("chapter"); 
- 
- 
-    if (!book || !chapter) { 
- 
-        return; 
-    } 
- 
- 
-    bibleReaderOpen = true; 
- 
-    container.style.display = "block"; 
- 
- 
-    document.getElementById("bibleReaderTitle").textContent = 
-        book + " - Ch " + chapter; 
- 
- 
-    document.getElementById("bibleText").innerHTML = 
-        "<p>Loading Bible text...</p>"; 
- 
- 
-    const button = 
-        document.getElementById("readBibleButton"); 
- 
-    if (button) { 
-        button.textContent = "✕ CLOSE BIBLE"; 
-    } 
- 
- 
-    await updateBibleReader(book, chapter); 
- 
- 
-    container.scrollIntoView({ 
-        behavior: "smooth", 
-        block: "start" 
-    }); 
+async function toggleBibleReader() {
+
+    const wrapper =
+        document.querySelector(".bible-reader-wrapper");
+
+    const container =
+        document.getElementById("bibleReaderContainer");
+
+    if (bibleReaderOpen) {
+
+        closeBibleReader();
+
+        return;
+    }
+
+
+    const book =
+        sessionStorage.getItem("book");
+
+    const chapter =
+        sessionStorage.getItem("chapter");
+
+
+    if (!book || !chapter) {
+
+        return;
+    }
+
+
+    bibleReaderOpen = true;
+
+
+    /* Show entire reader */
+    wrapper.style.display = "block";
+
+
+    /* Show reading box */
+    container.style.display = "block";
+
+
+    /* Chapter title */
+    document.getElementById("bibleReaderTitle").textContent =
+        book + " - Ch " + chapter;
+
+
+    /* Loading message */
+    document.getElementById("bibleText").innerHTML =
+        "<p>Loading Bible text...</p>";
+
+
+    /* Change READ BIBLE button */
+    const button =
+        document.getElementById("readBibleButton");
+
+    if (button) {
+
+        button.textContent =
+            "✕ CLOSE BIBLE";
+    }
+
+
+    /* Load chapter */
+    await updateBibleReader(book, chapter);
+
+
+    /* Scroll to reader */
+    wrapper.scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "start"
+
+    });
 } 
  
  
@@ -3353,32 +3427,44 @@ async function updateBibleReader(book, chapter) {
 } 
  
  
-function closeBibleReader() { 
- 
-    const container = 
-        document.getElementById("bibleReaderContainer"); 
- 
- 
-    container.style.display = "none"; 
- 
- 
-    document.getElementById("bibleReaderTitle").textContent = ""; 
- 
-    document.getElementById("bibleText").innerHTML = ""; 
- 
- 
-    const button = 
-        document.getElementById("readBibleButton"); 
- 
-    if (button) { 
-        button.textContent = "📖 READ BIBLE"; 
-    } 
- 
- 
-    bibleReaderOpen = false; 
- 
-    currentBibleData = null; 
-} 
+function closeBibleReader() {
+
+    const wrapper =
+        document.querySelector(".bible-reader-wrapper");
+
+    const container =
+        document.getElementById("bibleReaderContainer");
+
+
+    /* Hide entire reader */
+    wrapper.style.display = "none";
+
+    container.style.display = "none";
+
+
+    /* Clear title */
+    document.getElementById("bibleReaderTitle").textContent = "";
+
+
+    /* Clear Bible text */
+    document.getElementById("bibleText").innerHTML = "";
+
+
+    /* Restore READ BIBLE button */
+    const button =
+        document.getElementById("readBibleButton");
+
+    if (button) {
+
+        button.textContent =
+            "📖 READ BIBLE";
+    }
+
+
+    bibleReaderOpen = false;
+
+    currentBibleData = null;
+}
  
 /* ========================================================= 
    RESTORE PAGE AFTER REFRESH 
