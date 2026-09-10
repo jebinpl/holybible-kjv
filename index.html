@@ -191,10 +191,22 @@ body {
 }
 
 
-.home-header-button:active {
+.home-header-button:active,
+.home-header-button:focus,
+.home-header-button:focus-visible {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
 
-    transform: scale(0.95);
+.home-header-button:focus,
+.home-header-button:focus-visible {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25) !important;
+}
 
+.home-header-button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
 }
 /* =========================
    MAIN
