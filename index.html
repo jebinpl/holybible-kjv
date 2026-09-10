@@ -3700,7 +3700,37 @@ document.addEventListener("touchmove", function (event) {
         event.preventDefault();
     }
 }, { passive: false });
-    
+ 
+// =========================================================
+// OFFLINE BIBLE APP
+// =========================================================
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", function () {
+
+        navigator.serviceWorker.register("./sw.js")
+            .then(function (registration) {
+
+                console.log(
+                    "Bible offline mode enabled:",
+                    registration.scope
+                );
+
+            })
+            .catch(function (error) {
+
+                console.error(
+                    "Offline mode registration failed:",
+                    error
+                );
+
+            });
+
+    });
+
+}
+ 
 </script> 
  
 </body> 
