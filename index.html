@@ -29,6 +29,11 @@ body {
     color: #3b2817;
 }
 
+html,
+body {
+    touch-action: manipulation;
+    overscroll-behavior: none;
+}
 
 /* =========================
    HEADER
@@ -1458,7 +1463,7 @@ body {
             class="home-header-button"
             onclick="goHome()">
 
-            🏠 HOME
+            HOME
 
         </button>
 
@@ -3672,6 +3677,29 @@ document.addEventListener("wheel", function (e) {
     }
 
 }, { passive: false });    
+
+/* =========================================
+   PREVENT PINCH ZOOM
+========================================= */
+
+document.addEventListener("gesturestart", function (event) {
+    event.preventDefault();
+});
+
+document.addEventListener("gesturechange", function (event) {
+    event.preventDefault();
+});
+
+document.addEventListener("gestureend", function (event) {
+    event.preventDefault();
+});
+
+/* Prevent multi-touch pinch gestures */
+document.addEventListener("touchmove", function (event) {
+    if (event.touches.length > 1) {
+        event.preventDefault();
+    }
+}, { passive: false });
     
 </script> 
  
