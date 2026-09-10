@@ -880,14 +880,87 @@ body {
     box-sizing: border-box;
 }
 
+/* ==============================
+   BIBLE READER ZOOM CONTROLS
+============================== */
+
+.bible-reader-header {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 45px;
+
+    margin-bottom: 18px;
+}
+
 .bible-reader-title {
+    margin: 0;
+    padding: 0 150px 0 10px;
+
     font-family: Georgia, "Times New Roman", serif;
     font-size: 24px;
     font-weight: bold;
+
     text-align: center;
+
     color: #5b3a00;
-    margin-bottom: 18px;
-    padding: 0 45px;
+}
+
+.bible-reader-controls button {
+    min-width: 38px;
+    height: 34px;
+
+    padding: 4px 8px;
+
+    border: 1px solid #c7a85b;
+    border-radius: 7px;
+
+    background: linear-gradient(
+        135deg,
+        #fffdf5,
+        #f3e3bd
+    );
+
+    color: #4b3018;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.12);
+}
+
+.bible-reader-controls button:hover {
+    background: #d4af37;
+    color: white;
+}
+
+.bible-reader-controls button:active {
+    transform: scale(0.94);
+}
+
+.bible-reader-controls {
+    position: absolute;
+
+    right: 45px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    display: flex;
+
+    gap: 5px;
 }
 
 .bible-text {
@@ -1121,10 +1194,22 @@ body {
 
     .bible-reader-title {
         font-size: 21px;
+        padding-right: 135px;
+    }
+
+    .bible-reader-controls {
+        right: 42px;
+    }
+
+    .bible-reader-controls button {
+        min-width: 34px;
+        height: 32px;
+        padding: 3px 6px;
+        font-size: 14px;
     }
 
     .bible-text {
-        font-size: 17px;
+        font-size: 18px;
         line-height: 1.75;
     }
 
@@ -1132,9 +1217,10 @@ body {
 
 @media (max-width: 450px) {
 
-    .bible-text {
-        font-size: 16px;
-    }
+.bible-text {
+    font-size: 18px;
+    line-height: 1.7;
+}
 
         .chapter-heading-row {
         min-height: 48px;
@@ -1327,29 +1413,69 @@ body {
 
     </div>
 
-    <!-- BIBLE READER -->
+<!-- =========================
+     BIBLE READER
+========================= -->
+
 <div
     id="bibleReaderContainer"
     class="bible-reader-container">
 
-    <div
-        id="bibleReaderTitle"
-        class="bible-reader-title">
+    <div class="bible-reader-header">
+
+        <div
+            id="bibleReaderTitle"
+            class="bible-reader-title">
+        </div>
+
+        <div class="bible-reader-controls">
+
+            <button
+                type="button"
+                onclick="changeBibleFontSize(-1)"
+                title="Zoom Out">
+
+                A−
+
+            </button>
+
+            <button
+                type="button"
+                onclick="resetBibleFontSize()"
+                title="Reset Text Size">
+
+                A
+
+            </button>
+
+            <button
+                type="button"
+                onclick="changeBibleFontSize(1)"
+                title="Zoom In">
+
+                A+
+
+            </button>
+
+        </div>
+
     </div>
+
 
     <div
         id="bibleText"
         class="bible-text">
     </div>
 
-<button
-    class="close-bible"
-    onclick="closeBibleReader()"
-    aria-label="Close Bible">
 
-    ✕
+    <button
+        class="close-bible"
+        onclick="closeBibleReader()"
+        aria-label="Close Bible">
 
-</button>
+        ✕
+
+    </button>
 
 </div>
 
@@ -3036,8 +3162,53 @@ function goHome() {
  
 let currentBibleData = null; 
 let bibleReaderOpen = false; 
- 
- 
+
+/* =========================================================
+   BIBLE READER TEXT ZOOM
+========================================================= */
+
+let bibleFontSize = 18;
+
+function changeBibleFontSize(amount) {
+
+    bibleFontSize += amount;
+
+    /* Minimum size */
+    if (bibleFontSize < 14) {
+        bibleFontSize = 14;
+    }
+
+    /* Maximum size */
+    if (bibleFontSize > 32) {
+        bibleFontSize = 32;
+    }
+
+    const bibleText =
+        document.getElementById("bibleText");
+
+    if (bibleText) {
+
+        bibleText.style.fontSize =
+            bibleFontSize + "px";
+    }
+}
+
+
+function resetBibleFontSize() {
+
+    bibleFontSize = 18;
+
+    const bibleText =
+        document.getElementById("bibleText");
+
+    if (bibleText) {
+
+        bibleText.style.fontSize =
+            bibleFontSize + "px";
+    }
+
+} 
+
 async function loadBibleBook(book) { 
  
     try { 
