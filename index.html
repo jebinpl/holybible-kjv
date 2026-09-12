@@ -216,7 +216,7 @@ body {
 ========================= */
 
 .main {
-    padding: 125px 20px 40px;
+    padding: 180px 20px 40px;
     max-width: 1100px;
     margin: auto;
 }
@@ -1337,7 +1337,7 @@ body {
     }
 
     .main {
-        padding-top: 115px;
+        padding-top: 155px;
     }
 
     .audio-version {
@@ -1422,6 +1422,71 @@ body {
     }
 }
 
+.testament-navigation {
+    position: fixed;
+    top: 105px;
+    left: 0;
+    width: 100%;
+    height: 55px;
+    z-index: 940;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    background: linear-gradient(to bottom, #fffdf5, #f5ecd5);
+    border-bottom: 2px solid #b8943d;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.nav-back-button,
+.testament-nav-button {
+    border: 2px solid #b8943d;
+    background: linear-gradient(to bottom, #70451e, #3b210d);
+    color: #fff8dc;
+    font-family: Georgia, serif;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.nav-back-button {
+    width: 45px;
+    height: 40px;
+    font-size: 25px;
+    border-radius: 8px;
+}
+
+.testament-nav-button {
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.nav-back-button:hover,
+.testament-nav-button:hover {
+    background: linear-gradient(to bottom, #8a5a28, #4a2b12);
+}
+
+@media (max-width: 700px) {
+    .testament-navigation {
+        top: 95px;
+        height: 50px;
+        gap: 6px;
+    }
+
+    .testament-nav-button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .nav-back-button {
+        width: 40px;
+        height: 36px;
+        font-size: 22px;
+    }
+}
+
 </style>
 </head>
 
@@ -1456,7 +1521,7 @@ body {
     <div class="header-controls">
 
         <div class="audio-version">
-            🔊 Video Version
+            Video Version
         </div>
 
         <button
@@ -1470,6 +1535,18 @@ body {
     </div>
 
 </header>
+
+<div class="testament-navigation">
+    <button class="nav-back-button" onclick="headerBack()">←</button>
+
+    <button class="testament-nav-button" onclick="showBooks('old')">
+        OLD TESTAMENT
+    </button>
+
+    <button class="testament-nav-button" onclick="showBooks('new')">
+        NEW TESTAMENT
+    </button>
+</div>
 
 <main class="main">
 
@@ -1693,13 +1770,7 @@ body {
         class="book-grid"> 
     </div>
 
-    <button
-        class="back-button"
-        onclick="goHome()">
 
-        ← BACK
-
-    </button>
 
 </section>
 
@@ -1731,13 +1802,7 @@ body {
         class="chapter-grid">
     </div>
 
-    <button
-        class="back-button"
-        onclick="backToBooks()">
 
-        ← BACK TO BOOKS
-
-    </button>
 
 </section>
 
@@ -1775,13 +1840,7 @@ body {
     </div>
 
 
-    <button
-        class="back-button"
-        onclick="backToChapters()">
 
-        ← BACK TO CHAPTERS
-
-    </button>
 
 </section>
 
@@ -2013,7 +2072,7 @@ function showBooks(testament) {
         grid.appendChild(button); 
  
     }); 
- 
+ updateTestamentNavigation();
 } 
  
  
@@ -3224,7 +3283,7 @@ function goHome() {
         "homePage" 
     ).style.display = 
         "block"; 
- 
+updateTestamentNavigation();
 } 
  
 /* ============================== 
@@ -3729,6 +3788,39 @@ if ("serviceWorker" in navigator) {
 
     });
 
+}
+
+function headerBack() {
+    const page = sessionStorage.getItem("page");
+
+    if (page === "videos") {
+        backToChapters();
+    } else if (page === "chapters") {
+        backToBooks();
+    } else if (page === "books") {
+        goHome();
+    } else if (page === "search") {
+        closeSearchPage();
+    } else {
+        goHome();
+    }
+}
+
+function updateTestamentNavigation() {
+    const nav = document.querySelector(".testament-navigation");
+    const main = document.querySelector(".main");
+
+    if (!nav || !main) return;
+
+    const mobile = window.innerWidth <= 700;
+
+    if (!sessionStorage.getItem("page") || sessionStorage.getItem("page") === "home") {
+        nav.style.display = "none";
+        main.style.paddingTop = mobile ? "115px" : "125px";
+    } else {
+        nav.style.display = "flex";
+        main.style.paddingTop = mobile ? "155px" : "180px";
+    }
 }
  
 </script> 
