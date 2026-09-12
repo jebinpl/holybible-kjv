@@ -1430,7 +1430,9 @@ body {
     height: 55px;
     z-index: 940;
 
-    display: flex;
+    /* HIDDEN BY DEFAULT */
+    display: none;
+
     align-items: center;
     justify-content: center;
     gap: 10px;
@@ -3540,131 +3542,124 @@ function closeBibleReader() {
     currentBibleData = null;
 }
  
-/* ========================================================= 
-   RESTORE PAGE AFTER REFRESH 
-========================================================= */ 
- 
-window.addEventListener("DOMContentLoaded", function () { 
- 
-    const savedPage = 
-        sessionStorage.getItem("page"); 
- 
-    const savedTestament = 
-        sessionStorage.getItem("testament"); 
- 
-    const savedBook = 
-        sessionStorage.getItem("book"); 
- 
-    const savedChapter = 
-        sessionStorage.getItem("chapter"); 
- 
- 
-    /* ========================= 
-       HIDE ALL PAGES FIRST 
-    ========================= */ 
- 
-    document.getElementById("homePage").style.display = "none"; 
- 
-    document.getElementById("bookPage").style.display = "none"; 
- 
-    document.getElementById("chapterPage").style.display = "none"; 
- 
-    document.getElementById("videoPage").style.display = "none"; 
- 
- 
-    /* ========================= 
-       NO SAVED PAGE 
-       SHOW HOME 
-    ========================= */ 
- 
-    if (!savedPage) { 
- 
-        document.getElementById("homePage").style.display = "block"; 
- 
-        return; 
-    } 
- 
- 
-    /* ========================= 
-       RESTORE BOOK PAGE 
-    ========================= */ 
- 
-    if ( 
-        savedPage === "books" && 
-        savedTestament 
-    ) { 
- 
-        showBooks(savedTestament); 
- 
-        return; 
-    } 
- 
- 
-    /* ========================= 
-       RESTORE CHAPTER PAGE 
-    ========================= */ 
- 
-    if ( 
-        savedPage === "chapters" && 
-        savedBook 
-    ) { 
- 
-        const allBooks = [ 
-            ...bible.old, 
-            ...bible.new 
-        ]; 
- 
-        const book = 
-            allBooks.find(function (item) { 
- 
-                return item[0] === savedBook; 
- 
-            }); 
- 
- 
-        if (book) { 
- 
-            showChapters( 
-                book[0], 
-                book[1] 
-            ); 
- 
-        } else { 
- 
-            document.getElementById("homePage").style.display = "block"; 
- 
-        } 
- 
-        return; 
-    } 
- 
- 
-    /* ========================= 
-       RESTORE VIDEO PAGE 
-    ========================= */ 
- 
-    if ( 
-        savedPage === "videos" && 
-        savedBook && 
-        savedChapter 
-    ) { 
- 
-        openChapter( 
-            savedBook, 
-            Number(savedChapter) 
-        ); 
- 
-        return; 
-    } 
- 
- 
-    /* ========================= 
-       FALLBACK 
-    ========================= */ 
- 
-    document.getElementById("homePage").style.display = "block"; 
- 
-}); 
+/* =========================================================
+   RESTORE CURRENT PAGE AFTER REFRESH
+========================================================= */
+
+window.addEventListener("DOMContentLoaded", function () {
+
+    const savedPage = sessionStorage.getItem("page");
+    const savedTestament = sessionStorage.getItem("testament");
+    const savedBook = sessionStorage.getItem("book");
+    const savedChapter = sessionStorage.getItem("chapter");
+
+    /* Hide all pages first */
+
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+    document.getElementById("searchPage").style.display = "none";
+
+    /* =========================================
+       HOME
+    ========================================= */
+
+    if (!savedPage) {
+
+        document.getElementById("homePage").style.display = "block";
+
+        updateTestamentNavigation();
+
+        return;
+    }
+
+    /* =========================================
+       BOOKS
+    ========================================= */
+
+    if (
+        savedPage === "books" &&
+        savedTestament
+    ) {
+
+        showBooks(savedTestament);
+
+        updateTestamentNavigation();
+
+        return;
+    }
+
+    /* =========================================
+       CHAPTERS
+    ========================================= */
+
+    if (
+        savedPage === "chapters" &&
+        savedBook
+    ) {
+
+        const allBooks = [
+            ...bible.old,
+            ...bible.new
+        ];
+
+        const book = allBooks.find(function (item) {
+            return item[0] === savedBook;
+        });
+
+        if (book) {
+
+            showChapters(
+                book[0],
+                book[1]
+            );
+
+            updateTestamentNavigation();
+
+        } else {
+
+            sessionStorage.clear();
+
+            document.getElementById("homePage").style.display = "block";
+
+            updateTestamentNavigation();
+        }
+
+        return;
+    }
+
+    /* =========================================
+       VIDEOS
+    ========================================= */
+
+    if (
+        savedPage === "videos" &&
+        savedBook &&
+        savedChapter
+    ) {
+
+        openChapter(
+            savedBook,
+            Number(savedChapter)
+        );
+
+        updateTestamentNavigation();
+
+        return;
+    }
+
+    /* =========================================
+       FALLBACK → HOME
+    ========================================= */
+
+    sessionStorage.clear();
+
+    document.getElementById("homePage").style.display = "block";
+
+    updateTestamentNavigation();
+
+});
 
 // Disable F12
 document.addEventListener("keydown", function (e) {
