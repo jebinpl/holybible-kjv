@@ -35,6 +35,187 @@ body {
     overscroll-behavior: none;
 }
 
+/* =========================================================
+   STARTUP SPLASH SCREEN
+========================================================= */
+
+#startupSplash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        to bottom,
+        #fffdf5,
+        #f5ecd5
+    );
+}
+
+/* SPLASH CONTENT */
+
+.splash-content {
+    text-align: center;
+    transform: scale(1);
+}
+
+/* CROSS */
+
+.splash-cross {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 18px;
+}
+
+.splash-cross img {
+    width: 90px;
+    height: auto;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+/* HOLY BIBLE */
+
+.splash-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 42px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+/* KING JAMES VERSION */
+
+.splash-subtitle {
+    margin-top: 8px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 22px;
+    font-weight: normal;
+    letter-spacing: 1.5px;
+}
+
+
+/* =========================================================
+   GROW + FADE ANIMATION
+========================================================= */
+
+@keyframes bibleSplashGrow {
+
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    55% {
+        transform: scale(1.8);
+        opacity: 1;
+    }
+
+    80% {
+        transform: scale(2.7);
+        opacity: 0.55;
+    }
+
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .splash-cross {
+        margin-bottom: 14px;
+    }
+
+    .splash-cross img {
+        width: 75px;
+        height: auto;
+    }
+
+    .splash-title {
+        font-size: 32px;
+        letter-spacing: 1.5px;
+    }
+
+    .splash-subtitle {
+        font-size: 17px;
+    }
+}
+
+
+@media (max-width: 450px) {
+
+    .splash-cross {
+        margin-bottom: 12px;
+    }
+
+    .splash-cross img {
+        width: 65px;
+        height: auto;
+    }
+
+    .splash-title {
+        font-size: 28px;
+    }
+
+    .splash-subtitle {
+        font-size: 15px;
+    }
+}
+/* =========================================================
+   BIBLE FRONT PAGE BORDER
+========================================================= */
+
+#startupSplash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        to bottom,
+        #fffdf5,
+        #f5ecd5
+    );
+
+    /* OUTER BIBLE COVER BORDER */
+    border: 10px solid #3b210d;
+
+    /* INNER GOLD BORDER */
+    box-shadow:
+        inset 0 0 0 4px #d4af37,
+        inset 0 0 0 9px #70451e;
+
+    box-sizing: border-box;
+}
+
+#startupSplash::before {
+    content: "";
+    position: absolute;
+
+    top: 18px;
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+
+    border: 2px solid #b8943d;
+
+    pointer-events: none;
+}
 /* =========================
    HEADER
 ========================= */
@@ -1504,6 +1685,23 @@ body {
 
 <body>
 
+<div id="startupSplash">
+    <div class="splash-content">
+
+        <div class="splash-cross">
+    <img src="cross.png" alt="Cross">
+</div>
+
+        <div class="splash-title">
+            HOLY BIBLE
+        </div>
+
+        <div class="splash-subtitle">
+            KING JAMES VERSION
+        </div>
+
+    </div>
+</div>
 
 <!-- =========================
      HEADER
@@ -1653,7 +1851,7 @@ body {
         class="search-open-button"
         onclick="openSearchPage()">
 
-        🔍 SEARCH VIDEOS
+         SEARCH VIDEOS
 
     </button>
 
@@ -1734,7 +1932,7 @@ body {
         <input
             type="text"
             id="videoSearchInput"
-            placeholder="🔍 Type a video title or keyword..."
+            placeholder=" Type a video title or keyword..."
             oninput="searchBibleVideos()">
 
     </div>
@@ -3263,39 +3461,35 @@ function backToBooks() {
    BACK TO HOME 
 ========================================================= */ 
  
-function goHome() { 
- 
-    sessionStorage.clear(); 
- 
- 
-    document.getElementById( 
-        "bookPage" 
-    ).style.display = 
-        "none"; 
- 
- 
-    document.getElementById( 
-        "chapterPage" 
-    ).style.display = 
-        "none"; 
- 
- 
-    document.getElementById( 
-        "videoPage" 
-    ).style.display = 
-        "none"; 
- 
-    document.getElementById( 
-        "searchPage" 
-    ).style.display =  
-        "none"; 
- 
-    document.getElementById( 
-        "homePage" 
-    ).style.display = 
-        "block"; 
-updateTestamentNavigation();
-} 
+function goHome() {
+
+    // Keep the splash-screen status
+    const splashShown =
+        sessionStorage.getItem("holyBibleSplashShown");
+
+    // Clear navigation state
+    sessionStorage.removeItem("page");
+    sessionStorage.removeItem("testament");
+    sessionStorage.removeItem("book");
+    sessionStorage.removeItem("chapter");
+
+    // Restore splash status
+    if (splashShown === "yes") {
+        sessionStorage.setItem(
+            "holyBibleSplashShown",
+            "yes"
+        );
+    }
+
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+    document.getElementById("searchPage").style.display = "none";
+
+    document.getElementById("homePage").style.display = "block";
+
+    updateTestamentNavigation();
+}
  
 /* ============================== 
    BIBLE READER 
@@ -3826,6 +4020,53 @@ function updateTestamentNavigation() {
         main.style.paddingTop = mobile ? "155px" : "180px";
     }
 }
+
+/* =========================================================
+   STARTUP SPLASH — ONLY ONCE PER SESSION
+========================================================= */
+
+window.addEventListener("DOMContentLoaded", function () {
+
+    const splash = document.getElementById("startupSplash");
+
+    if (!splash) return;
+
+    /* If splash has already been shown, don't show it again */
+    if (sessionStorage.getItem("holyBibleSplashShown") === "yes") {
+        splash.style.display = "none";
+        return;
+    }
+
+    /* Mark it as shown immediately */
+    sessionStorage.setItem("holyBibleSplashShown", "yes");
+
+    /*
+       Keep the title completely still for 3 seconds.
+       Then start the grow/fade animation.
+    */
+
+    setTimeout(function () {
+
+        const content = splash.querySelector(".splash-content");
+
+        content.style.animation =
+            "bibleSplashGrow 1.8s ease-in forwards";
+
+    }, 3000);
+
+    /*
+       Remove splash after:
+       3 seconds waiting
+       + 1.8 seconds animation
+    */
+
+    setTimeout(function () {
+
+        splash.style.display = "none";
+
+    }, 4800);
+
+});
  
 </script> 
  
