@@ -36,7 +36,7 @@ body {
 }
 
 /* =========================================================
-   STARTUP SPLASH SCREEN
+   BIBLE FRONT PAGE SPLASH
 ========================================================= */
 
 #startupSplash {
@@ -53,14 +53,44 @@ body {
         #fffdf5,
         #f5ecd5
     );
+
+    /* OUTER BIBLE COVER */
+    border: 10px solid #3b210d;
+
+    /* GOLD + INNER BORDER */
+    box-shadow:
+        inset 0 0 0 4px #d4af37,
+        inset 0 0 0 9px #70451e;
+
+    box-sizing: border-box;
+
+    /* PAGE TURN */
+    transform-origin: left center;
 }
 
-/* SPLASH CONTENT */
+
+/* INNER DECORATIVE BORDER */
+
+#startupSplash::before {
+    content: "";
+    position: absolute;
+
+    inset: 18px;
+
+    border: 2px solid #b8943d;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   SPLASH CONTENT
+========================================================= */
 
 .splash-content {
     text-align: center;
-    transform: scale(1);
 }
+
 
 /* CROSS */
 
@@ -81,14 +111,20 @@ body {
     object-fit: contain;
 }
 
+
 /* HOLY BIBLE */
 
 .splash-title {
     font-family: Georgia, "Times New Roman", serif;
+
     font-size: 42px;
     font-weight: bold;
+
     letter-spacing: 2px;
+
+    color: #3b210d;
 }
+
 
 /* KING JAMES VERSION */
 
@@ -96,41 +132,74 @@ body {
     margin-top: 8px;
 
     font-family: Georgia, "Times New Roman", serif;
+
     font-size: 22px;
     font-weight: normal;
+
     letter-spacing: 1.5px;
+
+    color: #70451e;
 }
 
 
 /* =========================================================
-   GROW + FADE ANIMATION
+   PAGE TURN EFFECT
 ========================================================= */
 
-@keyframes bibleSplashGrow {
+.page-turn {
+    animation: biblePageTurn 1.8s
+        cubic-bezier(0.65, 0, 0.35, 1)
+        forwards;
+}
+
+
+@keyframes biblePageTurn {
 
     0% {
-        transform: scale(1);
+        transform:
+            perspective(1500px)
+            rotateY(0deg);
+
         opacity: 1;
     }
 
-    55% {
-        transform: scale(1.8);
+    35% {
+        transform:
+            perspective(1500px)
+            rotateY(-35deg);
+
         opacity: 1;
     }
 
-    80% {
-        transform: scale(2.7);
-        opacity: 0.55;
+    65% {
+        transform:
+            perspective(1500px)
+            rotateY(-75deg);
+
+        opacity: 0.95;
+    }
+
+    85% {
+        transform:
+            perspective(1500px)
+            rotateY(-105deg);
+
+        opacity: 0.5;
     }
 
     100% {
-        transform: scale(4);
+        transform:
+            perspective(1500px)
+            rotateY(-125deg);
+
         opacity: 0;
     }
 }
 
 
-/* MOBILE */
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 700px) {
 
@@ -140,7 +209,6 @@ body {
 
     .splash-cross img {
         width: 75px;
-        height: auto;
     }
 
     .splash-title {
@@ -162,7 +230,6 @@ body {
 
     .splash-cross img {
         width: 65px;
-        height: auto;
     }
 
     .splash-title {
@@ -172,49 +239,6 @@ body {
     .splash-subtitle {
         font-size: 15px;
     }
-}
-/* =========================================================
-   BIBLE FRONT PAGE BORDER
-========================================================= */
-
-#startupSplash {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: linear-gradient(
-        to bottom,
-        #fffdf5,
-        #f5ecd5
-    );
-
-    /* OUTER BIBLE COVER BORDER */
-    border: 10px solid #3b210d;
-
-    /* INNER GOLD BORDER */
-    box-shadow:
-        inset 0 0 0 4px #d4af37,
-        inset 0 0 0 9px #70451e;
-
-    box-sizing: border-box;
-}
-
-#startupSplash::before {
-    content: "";
-    position: absolute;
-
-    top: 18px;
-    left: 18px;
-    right: 18px;
-    bottom: 18px;
-
-    border: 2px solid #b8943d;
-
-    pointer-events: none;
 }
 /* =========================
    HEADER
@@ -4057,7 +4081,7 @@ function updateTestamentNavigation() {
 }
 
 /* =========================================================
-   STARTUP SPLASH — ONLY ONCE PER SESSION
+   STARTUP SPLASH — ONLY ONCE PER SESSION — PAGE TURN
 ========================================================= */
 
 window.addEventListener("DOMContentLoaded", function () {
@@ -4072,34 +4096,23 @@ window.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    /* Mark it as shown immediately */
+    /* Mark it as shown */
     sessionStorage.setItem("holyBibleSplashShown", "yes");
 
-    /*
-       Keep the title completely still for 3 seconds.
-       Then start the grow/fade animation.
-    */
-
+    /* Keep splash visible for 3 seconds */
     setTimeout(function () {
 
-        const content = splash.querySelector(".splash-content");
-
-        content.style.animation =
-            "bibleSplashGrow 1.8s ease-in forwards";
+        /* Start PAGE TURN */
+        splash.classList.add("page-turn");
 
     }, 3000);
 
-    /*
-       Remove splash after:
-       3 seconds waiting
-       + 1.8 seconds animation
-    */
-
+    /* Remove splash after 3 sec + 1.8 sec animation */
     setTimeout(function () {
 
         splash.style.display = "none";
 
-    }, 4800);
+    }, 5000);
 
 });
  
