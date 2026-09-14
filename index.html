@@ -1278,6 +1278,23 @@ body {
     margin-right: 7px;
 }
 
+.bible-section-heading {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 21px;
+    font-weight: bold;
+    text-align: center;
+
+    color: #5b3a00;
+
+    margin: 30px 0 18px;
+    padding: 10px 8px 12px;
+
+    border-top: 1px solid #c7a85b;
+    border-bottom: 1px solid #c7a85b;
+
+    line-height: 1.4;
+}
+
 
 /* =========================
    MOBILE
@@ -1325,6 +1342,12 @@ body {
     .bible-text {
         font-size: 18px;
         line-height: 1.75;
+    }
+
+     .bible-section-heading {
+        font-size: 19px;
+        margin: 25px 0 15px;
+        padding: 9px 5px 10px;
     }
 }
 
@@ -2859,7 +2882,7 @@ function loadChapterVideos(book, chapter) {
         ); 
         addVideoButton( 
             "Land of Gennesaret", 
-            "Matthew 14:22-33", 
+            "Matthew 14:34-36", 
             "9LMae_c1y_U" 
         ); 
 } 
@@ -3804,27 +3827,42 @@ async function updateBibleReader(book, chapter) {
     textContainer.innerHTML = ""; 
  
  
-    Object.entries(verses).forEach( 
-        ([verseNumber, verseText]) => { 
+const verseNumbers = Object.keys(verses)
+    .filter(key => /^\d+$/.test(key))
+    .map(Number)
+    .sort((a, b) => a - b);
+
+verseNumbers.forEach(function(verseNumber) {
+
+    // Get heading for this verse
+    const heading = verses["heading_" + verseNumber];
+
+    // Add heading BEFORE the verse
+    if (heading) {
+        const headingElement = document.createElement("div");
+
+        headingElement.className = "bible-section-heading";
+
+        headingElement.textContent = heading;
+
+        textContainer.appendChild(headingElement);
+    }
+
+    // Get verse text
+    const verseText = verses[String(verseNumber)];
+
+    // Create verse
+    const verse = document.createElement("div");
+
+    verse.className = "bible-verse";
+
+    verse.innerHTML =
+        `<span class="verse-number">${verseNumber}</span> ${verseText}`;
+
+    textContainer.appendChild(verse);
+});
  
-            const verse = 
-                document.createElement("div"); 
- 
-            verse.className = "bible-verse"; 
- 
- 
-            verse.innerHTML = 
-                `<span class="verse-number">${verseNumber}</span> 
-                 ${verseText}`; 
- 
- 
-            textContainer.appendChild(verse); 
- 
-        } 
-    ); 
 } 
- 
- 
 function closeBibleReader() {
 
     const wrapper =
