@@ -2082,6 +2082,88 @@ body {
     }
 }
 
+@media (max-width: 450px) {
+
+    .header {
+        height: 90px !important;
+    }
+
+    .search-sticky-header {
+        position: fixed !important;
+        top: 90px !important;
+    }
+
+    #bibleTextSearchResults {
+        padding-top: 150px;
+    }
+}
+
+
+/* =====================================================
+   iPHONE / iOS SAFARI - KEEP HEADER FIXED
+   ===================================================== */
+
+@supports (-webkit-touch-callout: none) {
+
+    @media (max-width: 700px) {
+
+        html,
+        body {
+            overflow-x: hidden;
+        }
+
+        .header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            z-index: 10000 !important;
+
+            transform: none !important;
+            -webkit-transform: none !important;
+
+            will-change: auto !important;
+        }
+
+        .search-sticky-header {
+            position: fixed !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 9000 !important;
+
+            transform: none !important;
+            -webkit-transform: none !important;
+
+            will-change: auto !important;
+        }
+    }
+
+    @media (max-width: 450px) {
+
+        .header {
+            height: 90px !important;
+            top: 0 !important;
+        }
+
+        .search-sticky-header {
+            top: 90px !important;
+        }
+    }
+
+    @media (min-width: 451px) and (max-width: 700px) {
+
+        .header {
+            height: 95px !important;
+            top: 0 !important;
+        }
+
+        .search-sticky-header {
+            top: 95px !important;
+        }
+    }
+}
+
 /* =====================================================
    FULL PAGE BACKGROUND
    Keeps the Bible background filled while scrolling
@@ -2106,6 +2188,7 @@ body {
 
     background-attachment: scroll;
 }
+
 }
 </style>
 </head>
