@@ -2101,6 +2101,30 @@ body {
 
     will-change: transform;
 }
+/* =====================================================
+   FULL PAGE BACKGROUND
+   Keeps the Bible background filled while scrolling
+   ===================================================== */
+
+html {
+    min-height: 100%;
+    background: #e7d3a9;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #fffdf5 0%,
+            #f5ecd5 50%,
+            #e7d3a9 100%
+        );
+
+    background-attachment: scroll;
+}
 }
 </style>
 </head>
