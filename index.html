@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 
 <title>Bible - King James Version</title>
 <link rel="icon" type="image/png" href="logo.png">
@@ -1993,7 +1993,114 @@ body {
     .bible-search-text {
         font-size: 16px;
     }
+/* =====================================================
+   MOBILE KEYBOARD — KEEP HEADER FIXED
+   ===================================================== */
 
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+/* Header always stays attached to the viewport */
+.header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    z-index: 10000 !important;
+}
+
+/* Search header stays below main header */
+.search-sticky-header {
+    z-index: 9000 !important;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+
+    .header {
+        height: 95px !important;
+    }
+
+    .search-sticky-header {
+        top: 95px !important;
+    }
+}
+
+/* Small phones */
+@media (max-width: 450px) {
+
+    .header {
+        height: 90px !important;
+    }
+
+    .search-sticky-header {
+        top: 90px !important;
+    }
+}
+/* MOBILE SEARCH + KEYBOARD FIX */
+@media (max-width: 700px) {
+
+    .header {
+        height: 95px !important;
+    }
+
+    .search-sticky-header {
+        position: fixed !important;
+        top: 95px !important;
+        left: 0 !important;
+        width: 100% !important;
+        z-index: 9000 !important;
+    }
+
+    #bibleTextSearchResults {
+        padding-top: 160px;
+    }
+}
+
+@media (max-width: 450px) {
+
+    .header {
+        height: 90px !important;
+    }
+
+    .search-sticky-header {
+        position: fixed !important;
+        top: 90px !important;
+    }
+
+    #bibleTextSearchResults {
+        padding-top: 150px;
+    }
+}
+/* Keep fixed headers attached to the visible mobile viewport */
+.header {
+    transform: translate3d(
+        0,
+        var(--keyboard-offset, 0px),
+        0
+    ) !important;
+
+    will-change: transform;
+}
+
+.search-sticky-header {
+    transform: translate3d(
+        0,
+        var(--keyboard-offset, 0px),
+        0
+    ) !important;
+
+    will-change: transform;
+}
 }
 </style>
 </head>
@@ -5282,6 +5389,73 @@ function goBackFromChapter() {
 
     backToChapters();
 }
+
+/* =========================================
+   MOBILE KEYBOARD / VIEWPORT FIX
+   Keeps the app header fixed when keyboard opens
+   ========================================= */
+
+(function () {
+
+    const header = document.querySelector(".header");
+    const searchHeader = document.querySelector(".search-sticky-header");
+
+    if (!header) return;
+
+    const viewport = window.visualViewport;
+
+    if (!viewport) return;
+
+    function updateKeyboardViewport() {
+
+        // Detect whether the mobile keyboard is open
+        const keyboardHeight =
+            window.innerHeight - viewport.height;
+
+        const keyboardOpen = keyboardHeight > 120;
+
+        document.documentElement.classList.toggle(
+            "keyboard-open",
+            keyboardOpen
+        );
+
+        // Visual viewport can move when the keyboard appears.
+        // Move the fixed headers with it so they remain visible.
+        const offsetTop = keyboardOpen
+            ? Math.max(0, viewport.offsetTop)
+            : 0;
+
+        header.style.setProperty(
+            "--keyboard-offset",
+            offsetTop + "px"
+        );
+
+        if (searchHeader) {
+            searchHeader.style.setProperty(
+                "--keyboard-offset",
+                offsetTop + "px"
+            );
+        }
+    }
+
+    viewport.addEventListener(
+        "resize",
+        updateKeyboardViewport
+    );
+
+    viewport.addEventListener(
+        "scroll",
+        updateKeyboardViewport
+    );
+
+    window.addEventListener(
+        "resize",
+        updateKeyboardViewport
+    );
+
+    updateKeyboardViewport();
+
+})();
 
 </script>
 </body>
