@@ -2477,28 +2477,27 @@ body {
     id="searchPage"
     class="page">
 
-    <div class="sticky-page-header">
+<div class="search-sticky-header">
 
-        <h2 class="page-title">
-            Search Bible Videos
-        </h2>
+    <h2 class="page-title">
+        Search Bible Videos
+    </h2>
 
-        <p class="page-subtitle">
-            Search Old & New Testament Videos
-        </p>
-
-    </div>
-
+    <p class="page-subtitle">
+        Search Old & New Testament Videos
+    </p>
 
     <div class="search-box-container">
 
         <input
             type="text"
             id="videoSearchInput"
-            placeholder=" Type a video title or keyword..."
+            placeholder="Type a video title or keyword..."
             oninput="searchBibleVideos()">
 
     </div>
+
+</div>
 
 
     <div id="searchResults">
@@ -3671,7 +3670,7 @@ function openSearchPage() {
         ""; 
     updateTestamentNavigation();
  
-    document.getElementById("videoSearchInput").focus(); 
+    
  
 } 
  
