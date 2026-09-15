@@ -5445,21 +5445,20 @@ function goBackFromChapter() {
 
         // Visual viewport can move when the keyboard appears.
         // Move the fixed headers with it so they remain visible.
-        const offsetTop = keyboardOpen
-            ? Math.max(0, viewport.offsetTop)
-            : 0;
+/* Keep the headers fixed.
+   Do not move them when the keyboard opens. */
 
-        header.style.setProperty(
-            "--keyboard-offset",
-            offsetTop + "px"
-        );
+header.style.setProperty(
+    "--keyboard-offset",
+    "0px"
+);
 
-        if (searchHeader) {
-            searchHeader.style.setProperty(
-                "--keyboard-offset",
-                offsetTop + "px"
-            );
-        }
+if (searchHeader) {
+    searchHeader.style.setProperty(
+        "--keyboard-offset",
+        "0px"
+    );
+}
     }
 
     viewport.addEventListener(
