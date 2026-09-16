@@ -2082,6 +2082,24 @@ body {
     }
 }
 
+/* VIDEO SEARCH RESULTS — KEEP BELOW FIXED HEADER */
+
+@media (max-width: 700px) {
+
+    #searchResults {
+        padding-top: 160px;
+    }
+
+}
+
+@media (max-width: 450px) {
+
+    #searchResults {
+        padding-top: 150px;
+    }
+
+}
+
 @media (max-width: 450px) {
 
     .header {
@@ -2190,6 +2208,271 @@ body {
 }
 
 }
+
+/* =========================================================
+   365 DAY BIBLE READING POPUP
+========================================================= */
+
+#dailyReadingPopup {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(40, 20, 5, 0.55);
+
+    box-sizing: border-box;
+}
+
+/* POPUP BOX */
+
+.daily-reading-box {
+    position: relative;
+
+    width: 100%;
+    max-width: 500px;
+
+    padding: 28px 25px 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fffdf5,
+            #f5ecd5
+        );
+
+    border: 3px solid #d4af37;
+    border-radius: 18px;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.35),
+        inset 0 0 0 2px #70451e;
+
+    text-align: center;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    box-sizing: border-box;
+
+    animation: readingPopupAppear 0.35s ease-out;
+}
+
+@keyframes readingPopupAppear {
+
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* CLOSE X */
+
+.daily-reading-close {
+    position: absolute;
+
+    top: -13px;
+    right: -13px;
+
+    width: 38px;
+    height: 38px;
+
+    border: 2px solid #d4af37;
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #70451e,
+            #3b210d
+        );
+
+    color: #fffdf5;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    line-height: 32px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,0.30);
+
+    z-index: 2;
+}
+
+.daily-reading-close:hover {
+    background: #8a5a28;
+}
+
+/* CROSS / ICON */
+
+.daily-reading-icon {
+    font-size: 42px;
+    margin-bottom: 8px;
+}
+
+/* TITLE */
+
+.daily-reading-title {
+    color: #3b210d;
+
+    font-size: 25px;
+    font-weight: bold;
+
+    margin-bottom: 8px;
+}
+
+/* DAY */
+
+.daily-reading-day {
+    color: #76582e;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    margin-bottom: 18px;
+}
+
+.daily-reading-date {
+    color: #98752d;
+    font-size: 15px;
+    margin-top: -12px;
+    margin-bottom: 18px;
+}
+
+/* READING LABEL */
+
+.daily-reading-label {
+    color: #76582e;
+
+    font-size: 15px;
+
+    margin-bottom: 7px;
+}
+
+/* READING REFERENCE */
+
+.daily-reading-reference {
+    color: #3b210d;
+
+    font-size: 25px;
+    font-weight: bold;
+
+    line-height: 1.4;
+
+    margin-bottom: 10px;
+}
+
+/* CHAPTER COUNT */
+
+.daily-reading-chapters {
+    color: #98752d;
+
+    font-size: 15px;
+
+    margin-bottom: 8px;
+}
+
+/* TIME */
+
+.daily-reading-time {
+    color: #70451e;
+
+    font-size: 15px;
+
+    margin-bottom: 22px;
+}
+
+/* READ BUTTON */
+
+.daily-reading-read {
+    border: 2px solid #c7a85b;
+    border-radius: 25px;
+
+    padding: 11px 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #70451e,
+            #3b210d
+        );
+
+    color: white;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 17px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,0.20);
+
+    transition: 0.2s;
+}
+
+.daily-reading-read:hover {
+    transform: translateY(-2px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #8a5a28,
+            #4b3018
+        );
+}
+
+.daily-reading-read:active {
+    transform: scale(0.96);
+}
+
+/* MOBILE */
+
+@media (max-width: 500px) {
+
+    #dailyReadingPopup {
+        padding: 15px;
+    }
+
+    .daily-reading-box {
+        max-width: 100%;
+        padding: 25px 18px 22px;
+    }
+
+    .daily-reading-title {
+        font-size: 22px;
+    }
+
+    .daily-reading-reference {
+        font-size: 22px;
+    }
+
+    .daily-reading-close {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+}
+
 </style>
 </head>
 
@@ -2212,6 +2495,73 @@ body {
         </div>
 
     </div>
+</div>
+
+<!-- =========================================================
+     365 DAY BIBLE READING POPUP
+========================================================= -->
+
+<div id="dailyReadingPopup">
+
+    <div class="daily-reading-box">
+
+        <button
+            class="daily-reading-close"
+            onclick="closeDailyReadingPopup()"
+            aria-label="Close"
+            title="Close">
+
+            ✕
+
+        </button>
+
+        <div class="daily-reading-icon">
+            📖
+        </div>
+
+        <div class="daily-reading-title">
+            TODAY'S BIBLE READING
+        </div>
+
+        <div
+    id="dailyReadingDay"
+    class="daily-reading-day">
+</div>
+
+<div
+    id="dailyReadingDate"
+    class="daily-reading-date">
+</div>
+
+        <div class="daily-reading-label">
+            Reading
+        </div>
+
+        <div
+            id="dailyReadingReference"
+            class="daily-reading-reference">
+        </div>
+
+        <div
+            id="dailyReadingChapterCount"
+            class="daily-reading-chapters">
+        </div>
+
+        <div
+            id="dailyReadingTime"
+            class="daily-reading-time">
+        </div>
+
+        <button
+            class="daily-reading-read"
+            onclick="readDailyBible()">
+
+            📖 READ
+
+        </button>
+
+    </div>
+
 </div>
 
 <!-- =========================
@@ -4875,36 +5225,84 @@ function updateTestamentNavigation() {
 }
 
 /* =========================================================
-   STARTUP SPLASH — ONLY ONCE PER SESSION — PAGE TURN
+   STARTUP SPLASH + DAILY READING
 ========================================================= */
 
 window.addEventListener("DOMContentLoaded", function () {
 
-    const splash = document.getElementById("startupSplash");
+    const splash =
+        document.getElementById(
+            "startupSplash"
+        );
 
-    if (!splash) return;
-
-    /* If splash has already been shown, don't show it again */
-    if (sessionStorage.getItem("holyBibleSplashShown") === "yes") {
-        splash.style.display = "none";
+    if (!splash) {
         return;
     }
 
-    /* Mark it as shown */
-    sessionStorage.setItem("holyBibleSplashShown", "yes");
+    /*
+       Check whether splash has already
+       been shown during this session.
+    */
 
-    /* Keep splash visible for 3 seconds */
+    const splashAlreadyShown =
+        sessionStorage.getItem(
+            "holyBibleSplashShown"
+        ) === "yes";
+
+
+    /*
+       Splash already shown:
+       hide it and show today's reading.
+    */
+
+    if (splashAlreadyShown) {
+
+        splash.style.display = "none";
+
+        setTimeout(function () {
+
+            showDailyReadingPopup();
+
+        }, 150);
+
+        return;
+    }
+
+
+    /*
+       First opening of this session.
+    */
+
+    sessionStorage.setItem(
+        "holyBibleSplashShown",
+        "yes"
+    );
+
+
+    /*
+       Keep splash visible for 3 seconds.
+    */
+
     setTimeout(function () {
 
-        /* Start PAGE TURN */
-        splash.classList.add("page-turn");
+        splash.classList.add(
+            "page-turn"
+        );
 
     }, 3000);
 
-    /* Remove splash after 3 sec + 1.8 sec animation */
+
+    /*
+       Remove splash after animation.
+
+       Then show today's reading popup.
+    */
+
     setTimeout(function () {
 
         splash.style.display = "none";
+
+        showDailyReadingPopup();
 
     }, 5000);
 
@@ -5542,6 +5940,377 @@ if (searchHeader) {
     updateKeyboardViewport();
 
 })();
+
+/* =========================================================
+   365 DAY BIBLE READING PLAN
+   1,189 CHAPTERS / 365 DAYS
+========================================================= */
+
+const TOTAL_BIBLE_CHAPTERS = 1189;
+const TOTAL_READING_DAYS = 365;
+
+let todayBibleReading = null;
+
+
+/* =========================================================
+   GET DAY OF YEAR
+========================================================= */
+
+function getBibleDayOfYear() {
+
+    const today = new Date();
+
+    const startOfYear =
+        new Date(today.getFullYear(), 0, 1);
+
+    const currentDay =
+        new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        );
+
+    const difference =
+        currentDay - startOfYear;
+
+    return Math.floor(
+        difference / (1000 * 60 * 60 * 24)
+    ) + 1;
+}
+
+
+/* =========================================================
+   GET CHAPTER BY GLOBAL CHAPTER NUMBER
+========================================================= */
+
+function getBibleChapterByIndex(index) {
+
+    let currentIndex = 0;
+
+    const allBooks = [
+        ...bible.old,
+        ...bible.new
+    ];
+
+    for (const book of allBooks) {
+
+        const bookName = book[0];
+        const chapterCount = book[1];
+
+        const bookStart =
+            currentIndex + 1;
+
+        const bookEnd =
+            currentIndex + chapterCount;
+
+        if (
+            index >= bookStart &&
+            index <= bookEnd
+        ) {
+
+            const chapter =
+                index - currentIndex;
+
+            return {
+                book: bookName,
+                chapter: chapter
+            };
+        }
+
+        currentIndex += chapterCount;
+    }
+
+    return null;
+}
+
+
+/* =========================================================
+   CREATE TODAY'S READING
+========================================================= */
+
+function getTodayBibleReading() {
+
+    let dayOfYear =
+        getBibleDayOfYear();
+
+    /*
+       This is a 365-day plan.
+
+       On December 31 of a leap year,
+       keep the plan at Day 365.
+    */
+
+    if (dayOfYear > TOTAL_READING_DAYS) {
+        dayOfYear = TOTAL_READING_DAYS;
+    }
+
+    /*
+       Evenly distribute all 1,189 chapters
+       across 365 days.
+
+       Example:
+
+       Day 1:
+       chapters 1 - 3
+
+       Day 2:
+       chapters 4 - 6
+
+       Some days receive 4 chapters.
+
+       This guarantees:
+
+       1,189 chapters
+       365 days
+       No skips
+       No repeats
+    */
+
+    const startIndex =
+        Math.floor(
+            ((dayOfYear - 1) *
+                TOTAL_BIBLE_CHAPTERS) /
+            TOTAL_READING_DAYS
+        ) + 1;
+
+    const endIndex =
+        Math.floor(
+            (dayOfYear *
+                TOTAL_BIBLE_CHAPTERS) /
+            TOTAL_READING_DAYS
+        );
+
+    const startChapter =
+        getBibleChapterByIndex(startIndex);
+
+    const endChapter =
+        getBibleChapterByIndex(endIndex);
+
+    if (
+        !startChapter ||
+        !endChapter
+    ) {
+        return null;
+    }
+
+    const chapterCount =
+        endIndex - startIndex + 1;
+
+    return {
+
+        day: dayOfYear,
+
+        startBook:
+            startChapter.book,
+
+        startChapter:
+            startChapter.chapter,
+
+        endBook:
+            endChapter.book,
+
+        endChapter:
+            endChapter.chapter,
+
+        chapterCount:
+            chapterCount
+    };
+}
+
+
+/* =========================================================
+   READING REFERENCE TEXT
+========================================================= */
+
+function getReadingReference(reading) {
+
+    if (!reading) {
+        return "";
+    }
+
+    if (
+        reading.startBook ===
+        reading.endBook
+    ) {
+
+        if (
+            reading.startChapter ===
+            reading.endChapter
+        ) {
+
+            return (
+                reading.startBook +
+                " " +
+                reading.startChapter
+            );
+
+        }
+
+        return (
+            reading.startBook +
+            " " +
+            reading.startChapter +
+            " – " +
+            reading.endChapter
+        );
+    }
+
+    return (
+        reading.startBook +
+        " " +
+        reading.startChapter +
+        " – " +
+        reading.endBook +
+        " " +
+        reading.endChapter
+    );
+}
+
+
+/* =========================================================
+   APPROXIMATE READING TIME
+========================================================= */
+
+function getReadingTime(chapterCount) {
+
+    /*
+       Approximation:
+       about 4 minutes per chapter.
+
+       This is only an estimate because
+       chapter lengths vary.
+    */
+
+    const minutes =
+        chapterCount * 4;
+
+    return "Approx. " + minutes + " min";
+}
+
+
+/* =========================================================
+   SHOW DAILY READING POPUP
+========================================================= */
+
+function showDailyReadingPopup() {
+
+    const popup =
+        document.getElementById(
+            "dailyReadingPopup"
+        );
+
+    if (!popup) {
+        return;
+    }
+
+    todayBibleReading =
+        getTodayBibleReading();
+
+    if (!todayBibleReading) {
+        return;
+    }
+
+    document.getElementById(
+        "dailyReadingDay"
+    ).textContent =
+        "Day " +
+        todayBibleReading.day +
+        " of 365";
+
+    document.getElementById(
+    "dailyReadingDate"
+).textContent =
+    new Date().toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    });    
+    
+    document.getElementById(
+        "dailyReadingReference"
+    ).textContent =
+        getReadingReference(
+            todayBibleReading
+        );
+
+    document.getElementById(
+        "dailyReadingChapterCount"
+    ).textContent =
+        todayBibleReading.chapterCount +
+        (
+            todayBibleReading.chapterCount === 1
+                ? " chapter"
+                : " chapters"
+        );
+
+    document.getElementById(
+        "dailyReadingTime"
+    ).textContent =
+        getReadingTime(
+            todayBibleReading.chapterCount
+        );
+
+    popup.style.display = "flex";
+}
+
+
+/* =========================================================
+   CLOSE DAILY READING POPUP
+========================================================= */
+
+function closeDailyReadingPopup() {
+
+    const popup =
+        document.getElementById(
+            "dailyReadingPopup"
+        );
+
+    if (!popup) {
+        return;
+    }
+
+    popup.style.display = "none";
+}
+
+
+/* =========================================================
+   READ TODAY'S BIBLE CHAPTERS
+========================================================= */
+
+function readDailyBible() {
+    if (!todayBibleReading) return;
+
+    const reading = todayBibleReading;
+
+    closeDailyReadingPopup();
+
+    const allBooks = [...bible.old, ...bible.new];
+
+    const book = allBooks.find(function(item) {
+        return item[0] === reading.startBook;
+    });
+
+    if (!book) return;
+
+    // Hide all main pages first
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+
+    // Open the selected book's chapter page
+    showChapters(reading.startBook, book[1]);
+
+    // Open the first chapter of today's reading
+    setTimeout(function() {
+        openChapter(
+            reading.startBook,
+            reading.startChapter
+        );
+    }, 50);
+}
 
 </script>
 </body>
