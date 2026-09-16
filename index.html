@@ -5941,209 +5941,224 @@ if (searchHeader) {
 
 })();
 
-/* =========================================================
-   365 DAY BIBLE READING PLAN
-   1,189 CHAPTERS / 365 DAYS
-========================================================= */
+    /* =========================================================
+    365 DAY BIBLE READING PLAN
+    1,189 CHAPTERS / 365 DAYS
+    ========================================================= */
 
 const TOTAL_BIBLE_CHAPTERS = 1189;
-const TOTAL_READING_DAYS = 365;
 
-let todayBibleReading = null;
+const TOTAL_READING_DAYS =
+    new Date().getFullYear() % 4 === 0 &&
+    (new Date().getFullYear() % 100 !== 0 ||
+     new Date().getFullYear() % 400 === 0)
+        ? 366
+        : 365;
 
-
-/* =========================================================
-   GET DAY OF YEAR
-========================================================= */
-
-function getBibleDayOfYear() {
-
-    const today = new Date();
-
-    const startOfYear =
-        new Date(today.getFullYear(), 0, 1);
-
-    const currentDay =
-        new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate()
-        );
-
-    const difference =
-        currentDay - startOfYear;
-
-    return Math.floor(
-        difference / (1000 * 60 * 60 * 24)
-    ) + 1;
-}
+    let todayBibleReading = null;
 
 
-/* =========================================================
-   GET CHAPTER BY GLOBAL CHAPTER NUMBER
-========================================================= */
+    /* =========================================================
+    GET DAY OF YEAR
+    ========================================================= */
 
-function getBibleChapterByIndex(index) {
+    function getBibleDayOfYear() {
 
-    let currentIndex = 0;
+        const today = new Date();
 
-    const allBooks = [
-        ...bible.old,
-        ...bible.new
-    ];
+        const startOfYear =
+            new Date(today.getFullYear(), 0, 1);
 
-    for (const book of allBooks) {
+        const currentDay =
+            new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate()
+            );
 
-        const bookName = book[0];
-        const chapterCount = book[1];
+        const difference =
+            currentDay - startOfYear;
 
-        const bookStart =
-            currentIndex + 1;
+        return Math.floor(
+            difference / (1000 * 60 * 60 * 24)
+        ) + 1;
+    }
 
-        const bookEnd =
-            currentIndex + chapterCount;
 
-        if (
-            index >= bookStart &&
-            index <= bookEnd
-        ) {
+    /* =========================================================
+    GET CHAPTER BY GLOBAL CHAPTER NUMBER
+    ========================================================= */
 
-            const chapter =
-                index - currentIndex;
+    function getBibleChapterByIndex(index) {
 
-            return {
-                book: bookName,
-                chapter: chapter
-            };
+        let currentIndex = 0;
+
+        const allBooks = [
+            ...bible.old,
+            ...bible.new
+        ];
+
+        for (const book of allBooks) {
+
+            const bookName = book[0];
+            const chapterCount = book[1];
+
+            const bookStart =
+                currentIndex + 1;
+
+            const bookEnd =
+                currentIndex + chapterCount;
+
+            if (
+                index >= bookStart &&
+                index <= bookEnd
+            ) {
+
+                const chapter =
+                    index - currentIndex;
+
+                return {
+                    book: bookName,
+                    chapter: chapter
+                };
+            }
+
+            currentIndex += chapterCount;
         }
 
-        currentIndex += chapterCount;
-    }
-
-    return null;
-}
-
-
-/* =========================================================
-   CREATE TODAY'S READING
-========================================================= */
-
-function getTodayBibleReading() {
-
-    let dayOfYear =
-        getBibleDayOfYear();
-
-    /*
-       This is a 365-day plan.
-
-       On December 31 of a leap year,
-       keep the plan at Day 365.
-    */
-
-    if (dayOfYear > TOTAL_READING_DAYS) {
-        dayOfYear = TOTAL_READING_DAYS;
-    }
-
-    /*
-       Evenly distribute all 1,189 chapters
-       across 365 days.
-
-       Example:
-
-       Day 1:
-       chapters 1 - 3
-
-       Day 2:
-       chapters 4 - 6
-
-       Some days receive 4 chapters.
-
-       This guarantees:
-
-       1,189 chapters
-       365 days
-       No skips
-       No repeats
-    */
-
-    const startIndex =
-        Math.floor(
-            ((dayOfYear - 1) *
-                TOTAL_BIBLE_CHAPTERS) /
-            TOTAL_READING_DAYS
-        ) + 1;
-
-    const endIndex =
-        Math.floor(
-            (dayOfYear *
-                TOTAL_BIBLE_CHAPTERS) /
-            TOTAL_READING_DAYS
-        );
-
-    const startChapter =
-        getBibleChapterByIndex(startIndex);
-
-    const endChapter =
-        getBibleChapterByIndex(endIndex);
-
-    if (
-        !startChapter ||
-        !endChapter
-    ) {
         return null;
     }
 
-    const chapterCount =
-        endIndex - startIndex + 1;
 
-    return {
+    /* =========================================================
+    CREATE TODAY'S READING
+    ========================================================= */
 
-        day: dayOfYear,
+    function getTodayBibleReading() {
 
-        startBook:
-            startChapter.book,
+        let dayOfYear =
+            getBibleDayOfYear();
 
-        startChapter:
-            startChapter.chapter,
+        /*
+        This is a 365-day plan.
 
-        endBook:
-            endChapter.book,
+        On December 31 of a leap year,
+        keep the plan at Day 365.
+        */
 
-        endChapter:
-            endChapter.chapter,
+        if (dayOfYear > TOTAL_READING_DAYS) {
+            dayOfYear = TOTAL_READING_DAYS;
+        }
 
-        chapterCount:
-            chapterCount
-    };
-}
+        /*
+        Evenly distribute all 1,189 chapters
+        across 365 days.
 
+        Example:
 
-/* =========================================================
-   READING REFERENCE TEXT
-========================================================= */
+        Day 1:
+        chapters 1 - 3
 
-function getReadingReference(reading) {
+        Day 2:
+        chapters 4 - 6
 
-    if (!reading) {
-        return "";
-    }
+        Some days receive 4 chapters.
 
-    if (
-        reading.startBook ===
-        reading.endBook
-    ) {
+        This guarantees:
+
+        1,189 chapters
+        365 days
+        No skips
+        No repeats
+        */
+
+        const startIndex =
+            Math.floor(
+                ((dayOfYear - 1) *
+                    TOTAL_BIBLE_CHAPTERS) /
+                TOTAL_READING_DAYS
+            ) + 1;
+
+        const endIndex =
+            Math.floor(
+                (dayOfYear *
+                    TOTAL_BIBLE_CHAPTERS) /
+                TOTAL_READING_DAYS
+            );
+
+        const startChapter =
+            getBibleChapterByIndex(startIndex);
+
+        const endChapter =
+            getBibleChapterByIndex(endIndex);
 
         if (
-            reading.startChapter ===
-            reading.endChapter
+            !startChapter ||
+            !endChapter
         ) {
+            return null;
+        }
+
+        const chapterCount =
+            endIndex - startIndex + 1;
+
+        return {
+
+            day: dayOfYear,
+
+            startBook:
+                startChapter.book,
+
+            startChapter:
+                startChapter.chapter,
+
+            endBook:
+                endChapter.book,
+
+            endChapter:
+                endChapter.chapter,
+
+            chapterCount:
+                chapterCount
+        };
+    }
+
+
+    /* =========================================================
+    READING REFERENCE TEXT
+    ========================================================= */
+
+    function getReadingReference(reading) {
+
+        if (!reading) {
+            return "";
+        }
+
+        if (
+            reading.startBook ===
+            reading.endBook
+        ) {
+
+            if (
+                reading.startChapter ===
+                reading.endChapter
+            ) {
+
+                return (
+                    reading.startBook +
+                    " " +
+                    reading.startChapter
+                );
+
+            }
 
             return (
                 reading.startBook +
                 " " +
-                reading.startChapter
+                reading.startChapter +
+                " – " +
+                reading.endChapter
             );
-
         }
 
         return (
@@ -6151,166 +6166,153 @@ function getReadingReference(reading) {
             " " +
             reading.startChapter +
             " – " +
+            reading.endBook +
+            " " +
             reading.endChapter
         );
     }
 
-    return (
-        reading.startBook +
-        " " +
-        reading.startChapter +
-        " – " +
-        reading.endBook +
-        " " +
-        reading.endChapter
-    );
-}
+
+    /* =========================================================
+    APPROXIMATE READING TIME
+    ========================================================= */
+
+    function getReadingTime(chapterCount) {
+
+        /*
+        Approximation:
+        about 4 minutes per chapter.
+
+        This is only an estimate because
+        chapter lengths vary.
+        */
+
+        const minutes =
+            chapterCount * 4;
+
+        return "Approx. " + minutes + " min";
+    }
 
 
-/* =========================================================
-   APPROXIMATE READING TIME
-========================================================= */
+    /* =========================================================
+    SHOW DAILY READING POPUP
+    ========================================================= */
 
-function getReadingTime(chapterCount) {
+    function showDailyReadingPopup() {
 
-    /*
-       Approximation:
-       about 4 minutes per chapter.
+        const popup =
+            document.getElementById(
+                "dailyReadingPopup"
+            );
 
-       This is only an estimate because
-       chapter lengths vary.
-    */
+        if (!popup) {
+            return;
+        }
 
-    const minutes =
-        chapterCount * 4;
+        todayBibleReading =
+            getTodayBibleReading();
 
-    return "Approx. " + minutes + " min";
-}
+        if (!todayBibleReading) {
+            return;
+        }
 
+        document.getElementById("dailyReadingDay").textContent =
+    "Day " + todayBibleReading.day + " of " + TOTAL_READING_DAYS;
 
-/* =========================================================
-   SHOW DAILY READING POPUP
-========================================================= */
-
-function showDailyReadingPopup() {
-
-    const popup =
         document.getElementById(
-            "dailyReadingPopup"
-        );
-
-    if (!popup) {
-        return;
-    }
-
-    todayBibleReading =
-        getTodayBibleReading();
-
-    if (!todayBibleReading) {
-        return;
-    }
-
-    document.getElementById(
-        "dailyReadingDay"
+        "dailyReadingDate"
     ).textContent =
-        "Day " +
-        todayBibleReading.day +
-        " of 365";
-
-    document.getElementById(
-    "dailyReadingDate"
-).textContent =
-    new Date().toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-    });    
-    
-    document.getElementById(
-        "dailyReadingReference"
-    ).textContent =
-        getReadingReference(
-            todayBibleReading
-        );
-
-    document.getElementById(
-        "dailyReadingChapterCount"
-    ).textContent =
-        todayBibleReading.chapterCount +
-        (
-            todayBibleReading.chapterCount === 1
-                ? " chapter"
-                : " chapters"
-        );
-
-    document.getElementById(
-        "dailyReadingTime"
-    ).textContent =
-        getReadingTime(
-            todayBibleReading.chapterCount
-        );
-
-    popup.style.display = "flex";
-}
-
-
-/* =========================================================
-   CLOSE DAILY READING POPUP
-========================================================= */
-
-function closeDailyReadingPopup() {
-
-    const popup =
+        new Date().toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        });    
+        
         document.getElementById(
-            "dailyReadingPopup"
-        );
+            "dailyReadingReference"
+        ).textContent =
+            getReadingReference(
+                todayBibleReading
+            );
 
-    if (!popup) {
-        return;
+        document.getElementById(
+            "dailyReadingChapterCount"
+        ).textContent =
+            todayBibleReading.chapterCount +
+            (
+                todayBibleReading.chapterCount === 1
+                    ? " chapter"
+                    : " chapters"
+            );
+
+        document.getElementById(
+            "dailyReadingTime"
+        ).textContent =
+            getReadingTime(
+                todayBibleReading.chapterCount
+            );
+
+        popup.style.display = "flex";
     }
 
-    popup.style.display = "none";
-}
+
+    /* =========================================================
+    CLOSE DAILY READING POPUP
+    ========================================================= */
+
+    function closeDailyReadingPopup() {
+
+        const popup =
+            document.getElementById(
+                "dailyReadingPopup"
+            );
+
+        if (!popup) {
+            return;
+        }
+
+        popup.style.display = "none";
+    }
 
 
-/* =========================================================
-   READ TODAY'S BIBLE CHAPTERS
-========================================================= */
+    /* =========================================================
+    READ TODAY'S BIBLE CHAPTERS
+    ========================================================= */
 
-function readDailyBible() {
-    if (!todayBibleReading) return;
+    function readDailyBible() {
+        if (!todayBibleReading) return;
 
-    const reading = todayBibleReading;
+        const reading = todayBibleReading;
 
-    closeDailyReadingPopup();
+        closeDailyReadingPopup();
 
-    const allBooks = [...bible.old, ...bible.new];
+        const allBooks = [...bible.old, ...bible.new];
 
-    const book = allBooks.find(function(item) {
-        return item[0] === reading.startBook;
-    });
+        const book = allBooks.find(function(item) {
+            return item[0] === reading.startBook;
+        });
 
-    if (!book) return;
+        if (!book) return;
 
-    // Hide all main pages first
-    document.getElementById("homePage").style.display = "none";
-    document.getElementById("bookPage").style.display = "none";
-    document.getElementById("chapterPage").style.display = "none";
-    document.getElementById("videoPage").style.display = "none";
-    document.getElementById("searchPage").style.display = "none";
-    document.getElementById("bibleTextSearchPage").style.display = "none";
+        // Hide all main pages first
+        document.getElementById("homePage").style.display = "none";
+        document.getElementById("bookPage").style.display = "none";
+        document.getElementById("chapterPage").style.display = "none";
+        document.getElementById("videoPage").style.display = "none";
+        document.getElementById("searchPage").style.display = "none";
+        document.getElementById("bibleTextSearchPage").style.display = "none";
 
-    // Open the selected book's chapter page
-    showChapters(reading.startBook, book[1]);
+        // Open the selected book's chapter page
+        showChapters(reading.startBook, book[1]);
 
-    // Open the first chapter of today's reading
-    setTimeout(function() {
-        openChapter(
-            reading.startBook,
-            reading.startChapter
-        );
-    }, 50);
-}
+        // Open the first chapter of today's reading
+        setTimeout(function() {
+            openChapter(
+                reading.startBook,
+                reading.startChapter
+            );
+        }, 50);
+    }
 
 </script>
 </body>
