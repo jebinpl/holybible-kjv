@@ -2473,6 +2473,480 @@ body {
     }
 }
 
+
+/* =========================================================
+   DARK MODE
+   Added without changing the existing light-mode design
+========================================================= */
+
+.theme-toggle {
+    width: 38px;
+    height: 30px;
+
+    border: 1px solid #d4af37;
+    border-radius: 18px;
+
+    background: linear-gradient(
+        135deg,
+        #f4d982,
+        #c99b2e
+    );
+
+    color: #3b210d;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow:
+        0 3px 8px rgba(0,0,0,0.25);
+
+    transition: 0.2s;
+
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px);
+
+    background: linear-gradient(
+        135deg,
+        #ffe99a,
+        #d4af37
+    );
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.theme-toggle:focus,
+.theme-toggle:focus-visible {
+    outline: none !important;
+}
+
+
+/* =========================
+   DARK PAGE
+========================= */
+
+html.dark-mode {
+    background: #181818;
+}
+
+body.dark-mode {
+    background:
+        radial-gradient(
+            circle at top,
+            #343434 0%,
+            #242424 55%,
+            #181818 100%
+        );
+
+    color: #e8e6e3;
+}
+
+
+/* =========================
+   SPLASH SCREEN
+========================= */
+
+body.dark-mode #startupSplash {
+    background: linear-gradient(
+        to bottom,
+        #303030,
+        #202020
+    );
+
+    border-color: #21150d;
+
+    box-shadow:
+        inset 0 0 0 4px #d4af37,
+        inset 0 0 0 9px #70451e;
+}
+
+body.dark-mode .splash-title {
+    color: #f0e2b5;
+}
+
+body.dark-mode .splash-subtitle {
+    color: #d0b66d;
+}
+
+
+/* =========================
+   PAGE HEADINGS
+========================= */
+
+body.dark-mode .page-title {
+    color: #eeeeee;
+}
+
+body.dark-mode .page-subtitle {
+    background: #292929;
+    color: #bdb5a5;
+    border-color: #8e7440;
+}
+
+body.dark-mode #bookPage .sticky-page-header,
+body.dark-mode #chapterPage .sticky-page-header,
+body.dark-mode #searchPage .sticky-page-header {
+    background: linear-gradient(
+        180deg,
+        #303030,
+        #222222
+    );
+}
+
+body.dark-mode #bookPage .page-subtitle,
+body.dark-mode #chapterPage .page-subtitle,
+body.dark-mode #searchPage .page-subtitle {
+    background: transparent;
+    color: #bdb5a5;
+}
+
+
+/* =========================
+   TESTAMENT NAVIGATION
+========================= */
+
+body.dark-mode .testament-navigation {
+    background: linear-gradient(
+        to bottom,
+        #292929,
+        #202020
+    );
+
+    border-color: #8e7440;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,0.55);
+}
+
+
+/* =========================
+   BOOK BUTTONS
+========================= */
+
+body.dark-mode .book-button {
+    background: #2c2c2c;
+    color: #eeeeee;
+    border-color: #8e7440;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,0.45);
+}
+
+body.dark-mode .book-button:hover {
+    background: #3a3a3a;
+    color: #ffffff;
+}
+
+body.dark-mode .book-number,
+body.dark-mode .book-chapters {
+    color: #c4a866;
+}
+
+
+/* =========================
+   CHAPTER BUTTONS
+========================= */
+
+body.dark-mode .chapter-button {
+    background: linear-gradient(
+        135deg,
+        #333333,
+        #252525
+    );
+
+    color: #eeeeee;
+    border-color: #8e7440;
+
+    box-shadow:
+        0 4px 9px rgba(0,0,0,0.40);
+}
+
+body.dark-mode .chapter-button:hover {
+    background: #8e7440;
+    color: #ffffff;
+}
+
+
+/* =========================
+   VIDEO BUTTONS
+========================= */
+
+body.dark-mode .video-button {
+    background: linear-gradient(
+        135deg,
+        #333333,
+        #252525
+    );
+
+    color: #eeeeee;
+    border-color: #8e7440;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,0.45);
+}
+
+body.dark-mode .video-button:hover {
+    background: #3a3a3a;
+    color: #ffffff;
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+body.dark-mode .search-sticky-header {
+    background: linear-gradient(
+        to bottom,
+        #292929,
+        #202020
+    );
+
+    border-color: #8e7440;
+}
+
+body.dark-mode .search-header-title h2 {
+    color: #e3c57a;
+}
+
+body.dark-mode .search-header-title p {
+    color: #bdb5a5;
+}
+
+body.dark-mode .search-open-button,
+body.dark-mode .read-bible-button {
+    background: linear-gradient(
+        135deg,
+        #333333,
+        #252525
+    );
+
+    color: #eeeeee;
+    border-color: #8e7440;
+}
+
+body.dark-mode .search-open-button:hover,
+body.dark-mode .read-bible-button:hover {
+    background: #8e7440;
+    color: #ffffff;
+}
+
+body.dark-mode #videoSearchInput,
+body.dark-mode #bibleTextSearchInput {
+    background: #292929;
+    color: #eeeeee;
+    border-color: #8e7440;
+}
+
+body.dark-mode #videoSearchInput::placeholder,
+body.dark-mode #bibleTextSearchInput::placeholder {
+    color: #aaa49a;
+}
+
+body.dark-mode #videoSearchInput:focus,
+body.dark-mode #bibleTextSearchInput:focus {
+    border-color: #d4af37;
+}
+
+body.dark-mode .close-search-button,
+body.dark-mode .back-button {
+    background: #333333;
+    color: #eeeeee;
+}
+
+body.dark-mode .close-search-button:hover,
+body.dark-mode .back-button:hover {
+    background: #70451e;
+}
+
+
+/* =========================
+   BIBLE SEARCH RESULTS
+========================= */
+
+body.dark-mode .bible-search-result {
+    background: linear-gradient(
+        135deg,
+        #303030,
+        #222222
+    );
+
+    color: #eeeeee;
+    border-color: #8e7440;
+
+    box-shadow:
+        0 2px 7px rgba(0,0,0,0.45);
+}
+
+body.dark-mode .bible-search-reference {
+    color: #e1c77c;
+}
+
+body.dark-mode .bible-search-text {
+    color: #e8e4dd;
+}
+
+body.dark-mode .bible-search-highlight {
+    background: #b08a24;
+    color: #ffffff;
+}
+
+body.dark-mode .bible-search-count,
+body.dark-mode .bible-search-no-results {
+    color: #d6c38e;
+}
+
+
+/* =========================
+   BIBLE READER
+========================= */
+
+body.dark-mode .chapter-heading-row {
+    background: linear-gradient(
+        180deg,
+        #303030,
+        #222222
+    );
+}
+
+body.dark-mode .bible-reader-container {
+    background: linear-gradient(
+        135deg,
+        #303030,
+        #222222
+    );
+
+    border-color: #b8943d;
+
+    box-shadow:
+        0 6px 20px rgba(0,0,0,0.55);
+}
+
+body.dark-mode .bible-reader-title {
+    color: #e8d6a2;
+    border-color: #8e7440;
+}
+
+body.dark-mode .bible-text {
+    color: #e7e3dc;
+}
+
+body.dark-mode .verse-number {
+    color: #d2ae58;
+}
+
+body.dark-mode .bible-section-heading {
+    color: #e8d6a2;
+    border-color: #8e7440;
+}
+
+body.dark-mode .bible-reader-controls button,
+body.dark-mode .close-bible {
+    background: linear-gradient(
+        to bottom,
+        #383838,
+        #252525
+    );
+
+    color: #f0e5c2;
+    border-color: #8e7440;
+}
+
+body.dark-mode .bible-reader-controls button:hover,
+body.dark-mode .close-bible:hover {
+    background: #444444;
+}
+
+
+/* =========================
+   VIDEO PLAYER
+========================= */
+
+body.dark-mode .video-player-container {
+    background: #111111;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.60);
+}
+
+body.dark-mode .close-video {
+    background: #444444;
+}
+
+body.dark-mode .close-video:hover {
+    background: #666666;
+}
+
+
+/* =========================
+   DAILY READING POPUP
+========================= */
+
+body.dark-mode #dailyReadingPopup {
+    background: rgba(0,0,0,0.68);
+}
+
+body.dark-mode .daily-reading-box {
+    background: linear-gradient(
+        135deg,
+        #303030,
+        #202020
+    );
+
+    border-color: #d4af37;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.70),
+        inset 0 0 0 2px #70451e;
+}
+
+body.dark-mode .daily-reading-title {
+    color: #f0e2b5;
+}
+
+body.dark-mode .daily-reading-day,
+body.dark-mode .daily-reading-label {
+    color: #cdbd94;
+}
+
+body.dark-mode .daily-reading-date,
+body.dark-mode .daily-reading-chapters {
+    color: #c4a866;
+}
+
+body.dark-mode .daily-reading-reference {
+    color: #e1c77c;
+}
+
+body.dark-mode .daily-reading-time {
+    color: #d0bd88;
+}
+
+
+/* =========================
+   MOBILE THEME BUTTON
+========================= */
+
+@media (max-width: 450px) {
+
+    .theme-toggle {
+        width: 34px;
+        height: 28px;
+        font-size: 15px;
+    }
+}
+
 </style>
 </head>
 
@@ -2593,6 +3067,15 @@ body {
         <div class="audio-version">
             Video Version
         </div>
+
+        <button
+            id="themeToggle"
+            class="theme-toggle"
+            onclick="toggleDarkMode()"
+            aria-label="Toggle dark mode"
+            title="Toggle dark mode">
+            🌙
+        </button>
 
         <button
             class="home-header-button"
@@ -6313,6 +6796,77 @@ const TOTAL_READING_DAYS =
             );
         }, 50);
     }
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+function applyTheme(theme) {
+
+    const isDark = theme === "dark";
+
+    document.body.classList.toggle(
+        "dark-mode",
+        isDark
+    );
+
+    document.documentElement.classList.toggle(
+        "dark-mode",
+        isDark
+    );
+
+    const button =
+        document.getElementById("themeToggle");
+
+    if (button) {
+
+        button.textContent =
+            isDark ? "☀️" : "🌙";
+
+        button.setAttribute(
+            "aria-label",
+            isDark
+                ? "Switch to light mode"
+                : "Switch to dark mode"
+        );
+
+        button.title =
+            isDark
+                ? "Switch to light mode"
+                : "Switch to dark mode";
+    }
+}
+
+
+function toggleDarkMode() {
+
+    const isDark =
+        !document.body.classList.contains("dark-mode");
+
+    applyTheme(
+        isDark ? "dark" : "light"
+    );
+
+    localStorage.setItem(
+        "bibleTheme",
+        isDark ? "dark" : "light"
+    );
+}
+
+
+/* Restore the saved theme */
+
+window.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const savedTheme =
+            localStorage.getItem("bibleTheme") || "light";
+
+        applyTheme(savedTheme);
+    }
+);
 
 </script>
 </body>
