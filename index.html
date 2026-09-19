@@ -1863,6 +1863,29 @@ body {
     background: linear-gradient(to bottom, #8a5a28, #4a2b12);
 }
 
+/* =========================
+   ACTIVE TESTAMENT
+========================= */
+
+.testament-nav-button.active {
+    background: linear-gradient(
+        135deg,
+        #d4af37,
+        #f4d982,
+        #d4af37
+    );
+
+    color: #3b210d;
+
+    border-color: #70451e;
+
+    box-shadow:
+        0 0 0 2px #d4af37,
+        0 4px 12px rgba(0,0,0,0.25);
+
+    transform: translateY(3px);
+}
+
 @media (max-width: 700px) {
     .testament-navigation {
         top: 90px;
@@ -5717,8 +5740,42 @@ function updateTestamentNavigation() {
     const page =
         sessionStorage.getItem("page");
 
-    // HOME and SEARCH pages
-    // should NOT show Old/New Testament navigation
+    const testament =
+        sessionStorage.getItem("testament");
+
+    /* =========================
+       UPDATE ACTIVE TESTAMENT
+    ========================= */
+
+    const oldButton =
+        document.querySelector(
+            ".testament-nav-button[onclick=\"showBooks('old')\"]"
+        );
+
+    const newButton =
+        document.querySelector(
+            ".testament-nav-button[onclick=\"showBooks('new')\"]"
+        );
+
+    if (oldButton) {
+        oldButton.classList.toggle(
+            "active",
+            testament === "old"
+        );
+    }
+
+    if (newButton) {
+        newButton.classList.toggle(
+            "active",
+            testament === "new"
+        );
+    }
+
+    /* =========================
+       HOME / SEARCH
+       HIDE NAVIGATION
+    ========================= */
+
     if (
         !page ||
         page === "home" ||
@@ -5732,8 +5789,7 @@ function updateTestamentNavigation() {
 
     } else {
 
-        // BOOKS / CHAPTERS / VIDEOS
-        // show Testament navigation
+        /* BOOKS / CHAPTERS / VIDEOS */
 
         nav.style.display = "flex";
 
