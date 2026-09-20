@@ -1443,20 +1443,15 @@ body {
 ============================== */
 
 .chapter-heading-row {
-    position: -webkit-sticky;
-    position: sticky;
-
+    position: fixed;
     top: 155px;
-
+    left: 0;
+    width: 100%;
     z-index: 930;
 
-    width: 100%;
     box-sizing: border-box;
-
     background: var(--bg-color, #ffffff);
-
     border-bottom: 2px solid #c7a85b;
-
     padding: 10px;
     min-height: 48px;
 
@@ -1468,15 +1463,12 @@ body {
 @media (max-width: 700px) {
     .chapter-heading-row {
         top: 140px;
-        z-index: 930;
     }
 }
 
-/* iPHONE / SMALL PHONES */
 @media (max-width: 450px) {
-    .chapter-heading-row {
-        top: 155px;
-        z-index: 930;
+    .chapter-heading-row {  
+        top: 140px;
     }
 }
 
