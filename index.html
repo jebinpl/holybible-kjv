@@ -1443,35 +1443,25 @@ body {
 ============================== */
 
 .chapter-heading-row {
+    position: -webkit-sticky;
     position: sticky;
+
     top: 155px;
-    z-index: 930;
+
+    z-index: 950;
 
     width: 100%;
     box-sizing: border-box;
 
-    background: #fffdf5;
+    background: var(--bg-color, #ffffff);
 
     border-bottom: 2px solid #c7a85b;
 
-    padding: 10px 10px;
+    padding: 10px;
     min-height: 48px;
 
     display: flex;
     align-items: center;
-
-    margin-bottom: 0;
-}
-
-/* Keep the separator visually attached while scrolling */
-.chapter-heading-row::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -2px;
-    height: 2px;
-    background: #c7a85b;
 }
 
 /* MOBILE */
@@ -1481,7 +1471,7 @@ body {
     }
 }
 
-/* SMALL PHONES / iPHONE SE */
+/* SMALL PHONES */
 @media (max-width: 450px) {
     .chapter-heading-row {
         top: 140px;
