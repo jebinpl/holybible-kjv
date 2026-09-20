@@ -1443,26 +1443,49 @@ body {
 ============================== */
 
 .chapter-heading-row {
-    position: relative;
+    position: sticky;
+    top: 155px;
+    z-index: 930;
 
     width: 100%;
-    min-height: 52px;
+    box-sizing: border-box;
+
+    background: #fffdf5;
+
+    border-bottom: 2px solid #c7a85b;
+
+    padding: 10px 10px;
+    min-height: 48px;
 
     display: flex;
     align-items: center;
 
-    box-sizing: border-box;
+    margin-bottom: 0;
+}
 
-    margin: 0 0 4px;
-    padding: 6px 10px;
+/* Keep the separator visually attached while scrolling */
+.chapter-heading-row::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    background: #c7a85b;
+}
 
-    background: linear-gradient(
-        180deg,
-        #fffdf5,
-        #f5ecd5
-    );
+/* MOBILE */
+@media (max-width: 700px) {
+    .chapter-heading-row {
+        top: 140px;
+    }
+}
 
-    border-bottom: none;
+/* SMALL PHONES / iPHONE SE */
+@media (max-width: 450px) {
+    .chapter-heading-row {
+        top: 140px;
+    }
 }
 
 /* TESTAMENT / BOOK PAGE HEADING */
@@ -3219,10 +3242,6 @@ body.dark-mode .daily-reading-time {
                     title="Zoom In">A+</button>
         </div>
 
-        <button class="close-bible"
-                onclick="closeBibleReader()"
-                aria-label="Close Bible"
-                title="Close Bible">✕</button>
 
     </div>
 
@@ -3239,14 +3258,6 @@ body.dark-mode .daily-reading-time {
         <div id="bibleText"
              class="bible-text">
         </div>
-
-        <div class="bible-reader-bottom-close">
-    <button
-        class="bible-bottom-close-btn"
-        onclick="closeBibleReader()">
-        CLOSE
-    </button>
-</div>
 
     </div>
 
@@ -3845,13 +3856,14 @@ function openChapter(book, chapter) {
         "#videoPage .page-subtitle"
     ).textContent = "Bible Videos";
 
-    loadChapterVideos(book, chapter);
+loadChapterVideos(book, chapter);
 
-    if (bibleReaderOpen) {
-        updateBibleReader(book, chapter);
-    }
+/* Always start a new chapter with Bible Reader closed */
+if (bibleReaderOpen) {
+    closeBibleReader();
+}
 
-    updateTestamentNavigation();
+updateTestamentNavigation();
 }
  
 function loadChapterVideos(book, chapter) { 
@@ -5363,6 +5375,14 @@ async function toggleBibleReader() {
     const container =
         document.getElementById("bibleReaderContainer");
 
+    if (!wrapper || !container) {
+        return;
+    }
+
+    /* =====================================================
+       CLOSE BIBLE TEXT
+    ===================================================== */
+
     if (bibleReaderOpen) {
 
         closeBibleReader();
@@ -5370,6 +5390,10 @@ async function toggleBibleReader() {
         return;
     }
 
+
+    /* =====================================================
+       GET CURRENT BOOK + CHAPTER
+    ===================================================== */
 
     const book =
         sessionStorage.getItem("book");
@@ -5379,57 +5403,79 @@ async function toggleBibleReader() {
 
 
     if (!book || !chapter) {
-
         return;
     }
 
 
+    /* =====================================================
+       OPEN BIBLE READER
+    ===================================================== */
+
     bibleReaderOpen = true;
 
 
-    /* Show entire reader */
+    /*
+       Make sure Bible reader appears BEFORE
+       the existing video buttons.
+    */
+
+    const videoList =
+    document.getElementById("videoList");
+
+if (videoList && videoList.parentNode) {
+
+    videoList.parentNode.insertBefore(
+        wrapper,
+        videoList
+    );
+}
+
+    /* Show reader */
+
     wrapper.style.display = "block";
 
-
-    /* Show reading box */
     container.style.display = "block";
 
 
     /* Chapter title */
-    document.getElementById("bibleReaderTitle").textContent =
+
+    document.getElementById(
+        "bibleReaderTitle"
+    ).textContent =
         book + " - Ch " + chapter;
 
 
     /* Loading message */
-    document.getElementById("bibleText").innerHTML =
+
+    document.getElementById(
+        "bibleText"
+    ).innerHTML =
         "<p>Loading Bible text...</p>";
 
 
-    /* Change READ BIBLE button */
+    /* =====================================================
+       CHANGE READ → CLOSE
+    ===================================================== */
+
     const button =
         document.getElementById("readBibleButton");
 
     if (button) {
 
-        button.textContent =
-            "CLOSE";
+        button.textContent = "CLOSE";
     }
 
 
-    /* Load chapter */
-    await updateBibleReader(book, chapter);
-    updateBibleBottomCloseVisibility();
+    /* =====================================================
+       LOAD BIBLE TEXT
+    ===================================================== */
 
-    /* Scroll to reader */
-    wrapper.scrollIntoView({
+    await updateBibleReader(
+        book,
+        chapter
+    );
 
-        behavior: "smooth",
-
-        block: "start"
-
-    });
-} 
- 
+}
  
 async function updateBibleReader(book, chapter) { 
  
@@ -5515,40 +5561,55 @@ function closeBibleReader() {
         document.getElementById("bibleReaderContainer");
 
 
-    /* Hide entire reader */
-    wrapper.style.display = "none";
+    /* =====================================================
+       HIDE BIBLE TEXT
+    ===================================================== */
 
-    container.style.display = "none";
+    if (wrapper) {
+        wrapper.style.display = "none";
+    }
+
+    if (container) {
+        container.style.display = "none";
+    }
 
 
     /* Clear title */
-    document.getElementById("bibleReaderTitle").textContent = "";
+
+    const title =
+        document.getElementById("bibleReaderTitle");
+
+    if (title) {
+        title.textContent = "";
+    }
 
 
     /* Clear Bible text */
-    document.getElementById("bibleText").innerHTML = "";
+
+    const bibleText =
+        document.getElementById("bibleText");
+
+    if (bibleText) {
+        bibleText.innerHTML = "";
+    }
 
 
-    /* Restore READ BIBLE button */
+    /* =====================================================
+       CHANGE CLOSE → READ
+    ===================================================== */
+
     const button =
         document.getElementById("readBibleButton");
 
     if (button) {
-
-        button.textContent =
-            "READ";
+        button.textContent = "READ";
     }
 
 
     bibleReaderOpen = false;
 
     currentBibleData = null;
-    const bottomClose =
-    document.querySelector(".bible-reader-bottom-close");
 
-if (bottomClose) {
-    bottomClose.style.display = "none";
-}
 }
  
 /* =========================================================
@@ -7334,43 +7395,16 @@ window.addEventListener(
     }
 );
 
-function updateBibleBottomCloseVisibility() {
-
-    const closeButton =
-        document.querySelector(".bible-reader-bottom-close");
-
-    const homePage =
-        document.getElementById("homePage");
-
-    if (!closeButton || !homePage) {
-        return;
-    }
-
-    const homeVisible =
-        homePage.style.display !== "none";
-
-    if (homeVisible && bibleReaderOpen) {
-        closeButton.style.display = "flex";
-    } else {
-        closeButton.style.display = "none";
-    }
-}
 
 function hideBibleReaderForSearch() {
 
     const wrapper =
         document.querySelector(".bible-reader-wrapper");
 
-    const bottomClose =
-        document.querySelector(".bible-reader-bottom-close");
-
     if (wrapper) {
         wrapper.style.display = "none";
     }
 
-    if (bottomClose) {
-        bottomClose.style.display = "none";
-    }
 }
 
 </script>
