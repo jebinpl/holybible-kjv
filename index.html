@@ -4065,22 +4065,26 @@ main:has(
 
 /* =========================================================
    iPHONE / SAFARI
-   YOUTUBE PLAYER + PAGE CONTENT LAYOUT
+   PERSISTENT YOUTUBE PLAYER LAYOUT
 ========================================================= */
 
 @supports (-webkit-touch-callout: none) {
 
     @media (max-width: 450px) {
 
-        /* =========================================
+        /* =================================================
            YOUTUBE PLAYER
-        ========================================= */
+           ALWAYS BELOW HEADER + NAVIGATION
+        ================================================= */
 
         #videoPlayerContainer {
 
             position: fixed !important;
 
-            /* 90px header + 50px navigation */
+            /*
+               90px = main header
+               50px = testament navigation
+            */
             top: 140px !important;
 
             left: 0 !important;
@@ -4092,31 +4096,31 @@ main:has(
 
             box-sizing: border-box;
 
-            /* Below navigation */
+            /*
+               Navigation = 940
+               Player = 930
+            */
             z-index: 930 !important;
         }
 
 
-        /* =========================================
-           PUSH PAGE CONTENT BELOW YOUTUBE PLAYER
-        ========================================= */
+        /* =================================================
+           WHEN VIDEO IS OPEN
+           PUSH ALL PAGE CONTENT BELOW PLAYER
+        ================================================= */
 
-        main:has(
-            #videoPlayerContainer[style*="display: block"]
-        ) {
+        body.video-open .main {
 
             padding-top: 390px !important;
         }
 
 
-        /* =========================================
+        /* =================================================
            TESTAMENT NAVIGATION
-           KEEP ABOVE YOUTUBE PLAYER
-        ========================================= */
+           ALWAYS STAYS BELOW MAIN HEADER
+        ================================================= */
 
-        main:has(
-            #videoPlayerContainer[style*="display: block"]
-        ) ~ .testament-navigation {
+        .testament-navigation {
 
             top: 90px !important;
 
@@ -4124,13 +4128,14 @@ main:has(
         }
 
 
-        /* =========================================
+        /* =================================================
            CHAPTER HEADER
-        ========================================= */
+           WHEN VIDEO OPEN, PLACE BELOW PLAYER
+        ================================================= */
 
-        main:has(
-            #videoPlayerContainer[style*="display: block"]
-        ) #videoPage .chapter-heading-row {
+        body.video-open
+        #videoPage
+        .chapter-heading-row {
 
             position: relative !important;
 
@@ -4145,17 +4150,22 @@ main:has(
         }
 
 
-        /* =========================================
-           SEARCH HEADERS
-        ========================================= */
+        /* =================================================
+           SEARCH HEADER
+           WHEN VIDEO OPEN, PLACE BELOW PLAYER
+        ================================================= */
 
-        main:has(
-            #videoPlayerContainer[style*="display: block"]
-        ) .search-sticky-header {
+        body.video-open
+        .search-sticky-header {
 
-            top: 140px !important;
+            position: relative !important;
 
-            z-index: 940 !important;
+            top: auto !important;
+            left: auto !important;
+
+            width: 100% !important;
+
+            z-index: 1 !important;
         }
 
     }
