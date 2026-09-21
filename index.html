@@ -4994,14 +4994,20 @@ function renderFavorites() {
             item.chapter;
 
 
-        title.onclick = function() {
+title.onclick = function() {
 
-            openChapter(
-                item.book,
-                Number(item.chapter)
-            );
+    /* Remember that chapter was opened from Favorites */
+    sessionStorage.setItem(
+        "cameFromFavorite",
+        "true"
+    );
 
-        };
+    openChapter(
+        item.book,
+        Number(item.chapter)
+    );
+
+};
 
 
         const remove =
@@ -5457,11 +5463,14 @@ function openChapter(book, chapter) {
     sessionStorage.setItem("chapter", chapter);
     sessionStorage.setItem("page", "videos");
 
-    document.getElementById("chapterPage").style.display =
-        "none";
+document.getElementById("chapterPage").style.display =
+    "none";
 
-    document.getElementById("videoPage").style.display =
-        "block";
+document.getElementById("favoritesPage").style.display =
+    "none";
+
+document.getElementById("videoPage").style.display =
+    "block";
 
     document.getElementById("videoPageTitle").textContent =
         book + " - Ch " + chapter;
@@ -8490,6 +8499,46 @@ function openBibleSearchResult(book, chapter) {
 
 function goBackFromChapter() {
 
+    /* =====================================================
+   RETURN TO FAVORITES
+===================================================== */
+
+const cameFromFavorite =
+    sessionStorage.getItem(
+        "cameFromFavorite"
+    );
+
+if (cameFromFavorite === "true") {
+
+    /* Hide chapter/video page */
+    document.getElementById(
+        "videoPage"
+    ).style.display = "none";
+
+    /* Show Favorites page */
+    document.getElementById(
+        "favoritesPage"
+    ).style.display = "block";
+
+    /* Restore page state */
+    sessionStorage.setItem(
+        "page",
+        "favorites"
+    );
+
+    /* Refresh Favorites list */
+    renderFavorites();
+
+    /* Clear temporary return state */
+    sessionStorage.removeItem(
+        "cameFromFavorite"
+    );
+
+    updateTestamentNavigation();
+
+    return;
+}
+    
     /* =====================================================
        RETURN TO VIDEO SEARCH
     ===================================================== */
