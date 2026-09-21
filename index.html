@@ -1534,6 +1534,27 @@ body {
     }
 }
 
+/* =========================================================
+   iPHONE / SAFARI - KEEP CHAPTER READ HEADER FIXED
+========================================================= */
+@media (max-width: 450px) {
+
+    .chapter-heading-row {
+        position: fixed;
+        top: 140px;
+
+        left: 0;
+        transform: none;
+
+        width: 100%;
+        max-width: none;
+        margin: 0;
+
+        box-sizing: border-box;
+        z-index: 960;
+    }
+}
+
 /* TESTAMENT / BOOK PAGE HEADING */
 #bookPage .sticky-page-header {
     width: 100%;
@@ -2683,7 +2704,34 @@ body.dark-mode {
     color: #e8e6e3;
 }
 
+/* =========================================================
+   DARK MODE - PERSISTENT SELECTED BOOK
+========================================================= */
 
+body.dark-mode .book-button.selected {
+    background: #3a3a3a;
+    color: #ffffff;
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 15px rgba(0,0,0,0.55);
+}
+
+
+/* =========================================================
+   DARK MODE - PERSISTENT SELECTED CHAPTER
+========================================================= */
+
+body.dark-mode .chapter-button.selected {
+    background: #8e7440;
+    color: #ffffff;
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 15px rgba(0,0,0,0.55);
+}
 /* =========================
    SPLASH SCREEN
 ========================= */
