@@ -653,6 +653,20 @@ body {
         0 8px 15px rgba(0,0,0,0.15);
 }
 
+/* =========================
+   SELECTED BOOK
+   Keeps the hover color
+========================= */
+
+.book-button.selected {
+    background: #fff8df;
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 15px rgba(0,0,0,0.15);
+}
+
 .book-number {
     display: block;
 
@@ -728,6 +742,22 @@ body {
     color: white;
 
     transform: translateY(-3px);
+}
+
+/* =========================
+   SELECTED CHAPTER
+   Keeps the hover color
+========================= */
+
+.chapter-button.selected {
+    background: #d4af37;
+
+    color: white;
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 15px rgba(0,0,0,0.15);
 }
 
 
@@ -1448,27 +1478,30 @@ body {
 ============================== */
 
 .chapter-heading-row {
-    position: fixed;
+    position: sticky;
 
-    top: 140px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 105px;
 
-    width: calc(100% - 40px);
-    max-width: 850px;
+    z-index: 930;
+
+    width: 100%;
 
     box-sizing: border-box;
 
-    z-index: 960;
+    background: linear-gradient(
+        180deg,
+        #fffdf5,
+        #f5ecd5
+    );
 
-    background: var(--bg-color, #ffffff);
-
-    border-bottom: 2px solid #c7a85b;
+    border-bottom: none;
 
     padding: 10px;
+
     min-height: 48px;
 
     display: flex;
+
     align-items: center;
 }
 
@@ -1477,22 +1510,27 @@ body {
 @media (max-width: 700px) {
 
     .chapter-heading-row {
+        position: sticky;
         top: 140px;
 
-        width: calc(100% - 30px);
-        max-width: 850px;
+        width: 100%;
+        max-width: none;
+
+        margin: 0;
+        box-sizing: border-box;
     }
 }
 
-
-/* SMALL PHONES / iPHONE */
 @media (max-width: 450px) {
 
     .chapter-heading-row {
         top: 140px;
 
-        width: calc(100% - 20px);
-        max-width: 850px;
+        width: 100%;
+        max-width: none;
+
+        margin: 0;
+        box-sizing: border-box;
     }
 }
 
@@ -3663,10 +3701,16 @@ let buildingSearchIndex = false;
    SHOW BOOKS 
 ========================================================= */ 
  
-function showBooks(testament) { 
- 
-    sessionStorage.setItem("testament", testament); 
-    sessionStorage.setItem("page", "books"); 
+function showBooks(testament) {
+
+    sessionStorage.setItem("testament", testament);
+    sessionStorage.setItem("page", "books");
+
+    /* Remember selected testament */
+    localStorage.setItem(
+        "selectedTestament",
+        testament
+    );
  
     document.getElementById("homePage").style.display = 
         "none"; 
@@ -3723,8 +3767,16 @@ function showBooks(testament) {
             document.createElement("button"); 
  
  
-        button.className = 
-            "book-button"; 
+button.className =
+    "book-button";
+
+/* Restore previously selected book */
+const savedBook =
+    localStorage.getItem("selectedBook");
+
+if (savedBook === book[0]) {
+    button.classList.add("selected");
+}
  
  
         button.innerHTML = ` 
@@ -3743,14 +3795,32 @@ function showBooks(testament) {
         `; 
  
  
-        button.onclick = function() { 
- 
-            showChapters( 
-                book[0], 
-                book[1] 
-            ); 
- 
-        }; 
+button.onclick = function() {
+
+    const previousBook =
+        localStorage.getItem("selectedBook");
+
+    /* If a different book is selected,
+       clear the old chapter selection */
+    if (previousBook !== book[0]) {
+
+        localStorage.removeItem(
+            "selectedChapter"
+        );
+    }
+
+    /* Remember this book */
+    localStorage.setItem(
+        "selectedBook",
+        book[0]
+    );
+
+    showChapters(
+        book[0],
+        book[1]
+    );
+
+};
  
  
         grid.appendChild(button); 
@@ -3809,22 +3879,47 @@ function showChapters(bookName, chapterCount) {
             document.createElement("button"); 
  
  
-        button.className = 
-            "chapter-button"; 
+button.className =
+    "chapter-button";
+
+/* Restore previously selected chapter */
+const savedBook =
+    localStorage.getItem("selectedBook");
+
+const savedChapter =
+    localStorage.getItem("selectedChapter");
+
+if (
+    savedBook === bookName &&
+    savedChapter === String(chapter)
+) {
+    button.classList.add("selected");
+}
+
+button.textContent =
+    chapter;
  
  
-        button.textContent = 
-            chapter; 
- 
- 
-        button.onclick = function() { 
- 
-            openChapter( 
-                bookName, 
-                chapter 
-            ); 
- 
-        }; 
+button.onclick = function() {
+
+    /* Remember selected book */
+    localStorage.setItem(
+        "selectedBook",
+        bookName
+    );
+
+    /* Remember selected chapter */
+    localStorage.setItem(
+        "selectedChapter",
+        String(chapter)
+    );
+
+    openChapter(
+        bookName,
+        chapter
+    );
+
+};
  
  
         grid.appendChild(button); 
