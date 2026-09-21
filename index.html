@@ -4063,6 +4063,35 @@ main:has(
 
 }
 
+/* =========================================================
+   iPHONE / SAFARI
+   KEEP YOUTUBE PLAYER FIXED BELOW HOLY BIBLE HEADER
+========================================================= */
+
+@supports (-webkit-touch-callout: none) {
+
+    @media (max-width: 450px) {
+
+        #videoPlayerContainer {
+
+            position: fixed !important;
+
+            top: 90px !important;
+            left: 0 !important;
+
+            width: 100% !important;
+            max-width: none !important;
+
+            margin: 0 !important;
+
+            box-sizing: border-box;
+
+            z-index: 9500 !important;
+        }
+
+    }
+}
+
 </style>
 </head>
 
@@ -6830,14 +6859,6 @@ if (youtubePlayer && youtubePlayer.loadVideoById) {
     youtubePlayer.loadVideoById(videoId); 
  
 } 
- 
-    container.scrollIntoView({ 
- 
-        behavior: "smooth", 
- 
-        block: "start" 
- 
-    }); 
  
 } 
  
