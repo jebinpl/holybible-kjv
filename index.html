@@ -4065,60 +4065,42 @@ main:has(
 
 /* =========================================================
    iPHONE / SAFARI
-   PERSISTENT YOUTUBE PLAYER LAYOUT
+   YOUTUBE PLAYER - NORMAL PAGE FLOW
 ========================================================= */
 
 @supports (-webkit-touch-callout: none) {
 
     @media (max-width: 450px) {
 
-        /* =================================================
-           YOUTUBE PLAYER
-           ALWAYS BELOW HEADER + NAVIGATION
-        ================================================= */
+        /* YOUTUBE PLAYER */
 
         #videoPlayerContainer {
 
-            position: fixed !important;
+            position: relative !important;
 
-            /*
-               90px = main header
-               50px = testament navigation
-            */
-            top: 140px !important;
-
-            left: 0 !important;
+            top: auto !important;
+            left: auto !important;
 
             width: 100% !important;
-            max-width: none !important;
+            max-width: 650px !important;
 
-            margin: 0 !important;
+            margin: 10px auto 20px !important;
 
             box-sizing: border-box;
 
-            /*
-               Navigation = 940
-               Player = 930
-            */
-            z-index: 930 !important;
+            z-index: 10 !important;
         }
 
 
-        /* =================================================
-           WHEN VIDEO IS OPEN
-           PUSH ALL PAGE CONTENT BELOW PLAYER
-        ================================================= */
+        /* DO NOT PUSH THE WHOLE PAGE DOWN */
 
         body.video-open .main {
 
-            padding-top: 390px !important;
+            padding-top: 110px !important;
         }
 
 
-        /* =================================================
-           TESTAMENT NAVIGATION
-           ALWAYS STAYS BELOW MAIN HEADER
-        ================================================= */
+        /* TESTAMENT NAVIGATION */
 
         .testament-navigation {
 
@@ -4128,10 +4110,7 @@ main:has(
         }
 
 
-        /* =================================================
-           CHAPTER HEADER
-           WHEN VIDEO OPEN, PLACE BELOW PLAYER
-        ================================================= */
+        /* CHAPTER HEADER */
 
         body.video-open
         #videoPage
@@ -4150,10 +4129,7 @@ main:has(
         }
 
 
-        /* =================================================
-           SEARCH HEADER
-           WHEN VIDEO OPEN, PLACE BELOW PLAYER
-        ================================================= */
+        /* SEARCH HEADER */
 
         body.video-open
         .search-sticky-header {
@@ -4170,6 +4146,7 @@ main:has(
 
     }
 }
+
 </style>
 </head>
 
