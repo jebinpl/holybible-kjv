@@ -1437,7 +1437,7 @@ body {
 @media (max-width: 450px) {
 
     .bible-reader-wrapper {
-        margin-top: 10px;
+        margin-top: 0px;
     }
 
     .bible-reader-container {
@@ -1479,13 +1479,9 @@ body {
 
 .chapter-heading-row {
     position: sticky;
-
     top: 105px;
-
     z-index: 930;
-
     width: 100%;
-
     box-sizing: border-box;
 
     background: linear-gradient(
@@ -1501,36 +1497,171 @@ body {
     min-height: 48px;
 
     display: flex;
-
     align-items: center;
+
+    /* Important for heart + READ button */
+    justify-content: space-between;
+    gap: 8px;
 }
 
+.chapter-heading-row .page-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+}
 
-/* MOBILE */
+.chapter-heading-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.chapter-heading-actions button {
+    position: static !important;
+    transform: none !important;
+    flex-shrink: 0;
+}
+
 @media (max-width: 700px) {
 
     .chapter-heading-row {
         position: sticky;
         top: 140px;
-
         width: 100%;
         max-width: none;
-
         margin: 0;
+        padding: 8px 6px;
         box-sizing: border-box;
     }
+
 }
 
 @media (max-width: 450px) {
 
     .chapter-heading-row {
+        position: fixed;
         top: 140px;
-
+        left: 0;
         width: 100%;
         max-width: none;
-
         margin: 0;
+        padding: 7px 6px;
         box-sizing: border-box;
+        z-index: 930;
+    }
+
+    .chapter-heading-actions {
+        gap: 5px;
+    }
+
+    .favorite-chapter-button {
+        width: 36px !important;
+        height: 34px !important;
+        flex: 0 0 36px !important;
+        font-size: 22px !important;
+    }
+
+    .read-bible-button {
+        flex-shrink: 0 !important;
+    }
+}
+
+/* =========================================================
+   FINAL CHAPTER HEADER LAYOUT
+   FAVORITE + READ/CLOSE
+========================================================= */
+
+.chapter-heading-row {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.chapter-heading-row .page-title {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.chapter-heading-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+
+    gap: 6px !important;
+    margin-left: auto !important;
+
+    position: static !important;
+}
+
+.chapter-heading-actions button {
+    position: static !important;
+    flex-shrink: 0 !important;
+    transform: none !important;
+    margin: 0 !important;
+}
+
+/* FAVORITE */
+.favorite-chapter-button {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+
+    height: 38px !important;
+
+    flex: 0 0 40px !important;
+}
+
+/* READ / CLOSE */
+.read-bible-button {
+    width: auto !important;
+    min-width: 50px !important;
+
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 450px) {
+
+    .chapter-heading-row {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+    }
+
+    .chapter-heading-actions {
+        gap: 5px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .favorite-chapter-button {
+        width: 36px !important;
+        min-width: 36px !important;
+        max-width: 36px !important;
+
+        height: 34px !important;
+
+        flex: 0 0 36px !important;
+
+        font-size: 22px !important;
+    }
+
+    .read-bible-button {
+        min-width: 48px !important;
+        flex-shrink: 0 !important;
     }
 }
 
@@ -1716,6 +1847,41 @@ body {
     font-size: 14px;
 }
 
+/* =========================================================
+   SEARCH GROUP PAGE - CENTER TITLE
+========================================================= */
+
+#searchGroupPage .page-title,
+#searchGroupPage .page-subtitle {
+    text-align: center;
+}
+
+/* =========================================================
+   BIBLE GROUP PAGE - CENTER TITLE
+========================================================= */
+
+#bibleGroupPage .page-title,
+#bibleGroupPage .page-subtitle {
+    text-align: center;
+}
+
+/* =========================================================
+   FAVORITES PAGE - CENTER TITLE
+========================================================= */
+
+#favoritesPage .page-title,
+#favoritesPage .page-subtitle {
+    text-align: center;
+}
+
+/* =========================================================
+   SETTINGS PAGE - CENTER TITLE
+========================================================= */
+
+#settingsPage .page-title,
+#settingsPage .page-subtitle {
+    text-align: center;
+}
 
 /* SEARCH BOX */
 
@@ -2036,6 +2202,225 @@ body {
 /* =========================
    HOME SEARCH BUTTONS
 ========================= */
+/* =========================
+   HOME MAIN GROUP BUTTONS
+========================= */
+
+.home-main-buttons {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 25px auto;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 18px;
+
+    padding: 0 20px;
+}
+
+
+.home-main-button {
+    min-height: 120px;
+
+    border: 2px solid #b8943d;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fffdf5,
+            #f5ecd5
+        );
+
+    color: #3b2817;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,0.12);
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+
+.home-main-button:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 16px rgba(0,0,0,0.18);
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff8df,
+            #f1dfaa
+        );
+}
+
+
+.home-main-icon {
+    font-size: 30px;
+    line-height: 1;
+}
+
+
+.home-main-title {
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+
+/* =========================
+   GROUP PAGE BUTTONS
+========================= */
+
+.group-page-buttons {
+    width: 100%;
+    max-width: 700px;
+
+    margin: 25px auto;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+
+    padding: 0 20px;
+}
+
+
+.group-page-button {
+    width: 100%;
+
+    min-height: 58px;
+
+    border: 2px solid #b8943d;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #70451e,
+            #3b210d
+        );
+
+    color: #fff8dc;
+
+    font-family: Georgia, "Times New Roman", serif;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s,
+        background 0.2s;
+}
+
+
+.group-page-button:hover {
+    transform: translateY(-2px);
+
+    background:
+        linear-gradient(
+            to bottom,
+            #8a5a28,
+            #4a2b12
+        );
+}
+
+
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark-mode .home-main-button {
+    background:
+        linear-gradient(
+            135deg,
+            #2c2c2c,
+            #202020
+        );
+
+    color: #fff;
+}
+
+
+body.dark-mode .home-main-button:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #3a3a3a,
+            #292929
+        );
+}
+
+
+body.dark-mode .group-page-button {
+    background:
+        linear-gradient(
+            to bottom,
+            #4a351c,
+            #292016
+        );
+}
+
+/* =========================
+   MOBILE HOME GROUP BUTTONS
+========================= */
+
+@media (max-width: 700px) {
+
+    .home-main-buttons {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 12px;
+
+        padding: 0 12px;
+
+        margin-top: 20px;
+    }
+
+
+    .home-main-button {
+        min-height: 105px;
+
+        border-radius: 12px;
+    }
+
+
+    .home-main-icon {
+        font-size: 26px;
+    }
+
+
+    .home-main-title {
+        font-size: 15px;
+    }
+
+
+    .group-page-buttons {
+        padding: 0 15px;
+    }
+
+}
 
 .home-search-buttons {
     display: flex;
@@ -3126,6 +3511,532 @@ body.dark-mode .daily-reading-time {
     }
 }
 
+/* =========================
+   FAVORITE CHAPTER BUTTON
+========================= */
+
+.chapter-heading-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+
+.favorite-chapter-button {
+    width: 42px;
+    height: 38px;
+
+    border: 1px solid #b8943d;
+    border-radius: 8px;
+
+    background: #fffdf5;
+    color: #8e7440;
+
+    font-size: 25px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        background 0.2s,
+        color 0.2s,
+        transform 0.2s;
+}
+
+@media (max-width: 450px) {
+
+    .chapter-heading-row {
+        padding: 8px 6px;
+    }
+
+    .chapter-heading-actions {
+        gap: 5px;
+    }
+
+    .favorite-chapter-button {
+        width: 38px;
+        height: 36px;
+        font-size: 23px;
+    }
+
+}
+
+/* =========================================================
+   CHAPTER HEADING ACTIONS
+   KEEP FAVORITE + READ/CLOSE VISIBLE
+========================================================= */
+
+.chapter-heading-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.favorite-chapter-button,
+.read-bible-button {
+    flex-shrink: 0;
+}
+
+
+.favorite-chapter-button:hover {
+    background: #f1dfaa;
+    transform: translateY(-1px);
+}
+
+
+.favorite-chapter-button.active {
+    background: #d4af37;
+    color: white;
+}
+
+
+/* =========================
+   FAVORITES LIST
+========================= */
+
+.favorites-list {
+    width: 100%;
+    max-width: 800px;
+
+    margin: 20px auto;
+
+    padding: 0 15px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+.favorite-item {
+    min-height: 55px;
+
+    display: flex;
+    align-items: center;
+
+    border: 1px solid #b8943d;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #fffdf7,
+            #f8efd9
+        );
+
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.10);
+
+    overflow: hidden;
+}
+
+
+.favorite-item-title {
+    flex: 1;
+
+    padding: 15px;
+
+    color: #3b210d;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+.favorite-item-title:hover {
+    background: #f1dfaa;
+}
+
+
+.favorite-remove {
+    width: 48px;
+    height: 55px;
+
+    border: none;
+    border-left: 1px solid #b8943d;
+
+    background: transparent;
+
+    color: #9b3d32;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+.favorite-remove:hover {
+    background: #f3d8d4;
+}
+
+
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark-mode .favorite-chapter-button {
+    background: #2c2c2c;
+    color: #d4af37;
+    border-color: #8e7440;
+}
+
+
+body.dark-mode .favorite-chapter-button:hover {
+    background: #3a3a3a;
+}
+
+
+body.dark-mode .favorite-chapter-button.active {
+    background: #8e7440;
+    color: white;
+}
+
+
+body.dark-mode .favorite-item {
+    background:
+        linear-gradient(
+            to bottom,
+            #2c2c2c,
+            #202020
+        );
+
+    border-color: #8e7440;
+}
+
+
+body.dark-mode .favorite-item-title {
+    color: #ffffff;
+}
+
+
+body.dark-mode .favorite-item-title:hover {
+    background: #3a3a3a;
+}
+
+
+body.dark-mode .favorite-remove {
+    border-left-color: #8e7440;
+}
+
+/* =========================
+   SETTINGS PAGE
+========================= */
+
+.settings-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 25px auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.setting-item {
+    width: 100%;
+    min-height: 75px;
+    padding: 15px 18px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    border: 1px solid #b8943d;
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #fffdf7,
+            #f8efd9
+        );
+
+    box-shadow:
+        0 3px 8px rgba(0,0,0,0.10);
+}
+
+.setting-info {
+    flex: 1;
+}
+
+.setting-title {
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 17px;
+    font-weight: bold;
+    color: #3b210d;
+}
+
+.setting-description {
+    margin-top: 5px;
+
+    font-size: 13px;
+    color: #765f43;
+}
+
+
+/* =========================
+   SETTINGS SWITCH
+========================= */
+
+.settings-switch {
+    position: relative;
+
+    width: 52px;
+    height: 28px;
+
+    flex-shrink: 0;
+}
+
+.settings-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.settings-slider {
+    position: absolute;
+    inset: 0;
+
+    cursor: pointer;
+
+    background: #b9b9b9;
+
+    border-radius: 30px;
+
+    transition: 0.25s;
+}
+
+.settings-slider::before {
+    content: "";
+
+    position: absolute;
+
+    width: 22px;
+    height: 22px;
+
+    left: 3px;
+    top: 3px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 1px 4px rgba(0,0,0,0.25);
+
+    transition: 0.25s;
+}
+
+.settings-switch input:checked + .settings-slider {
+    background: #8e7440;
+}
+
+.settings-switch input:checked + .settings-slider::before {
+    transform: translateX(24px);
+}
+
+
+/* =========================
+   SETTINGS DARK MODE
+========================= */
+
+body.dark-mode .setting-item {
+    background:
+        linear-gradient(
+            to bottom,
+            #2c2c2c,
+            #202020
+        );
+
+    border-color: #8e7440;
+}
+
+body.dark-mode .setting-title {
+    color: #ffffff;
+}
+
+body.dark-mode .setting-description {
+    color: #cccccc;
+}
+
+
+/* =========================
+   MOBILE SETTINGS
+========================= */
+
+@media (max-width: 700px) {
+
+    .settings-container {
+        padding: 0 15px;
+        margin-top: 20px;
+    }
+
+    .setting-item {
+        min-height: 70px;
+        padding: 14px;
+    }
+
+    .setting-title {
+        font-size: 16px;
+    }
+
+    .setting-description {
+        font-size: 12px;
+    }
+
+}
+
+/* =========================================================
+   SEARCH PAGE BELOW YOUTUBE PLAYER
+========================================================= */
+
+#searchPage,
+#bibleTextSearchPage {
+    position: relative;
+    z-index: 1;
+}
+
+/* When YouTube player is visible,
+   keep search content below it */
+#videoPlayerContainer + .bible-reader-wrapper + #homePage {
+    margin-top: 0;
+}
+
+@media (max-width: 700px) {
+
+    #searchPage,
+    #bibleTextSearchPage {
+        margin-top: 0 !important;
+    }
+
+}
+
+/* =========================================================
+   SEARCH PAGE BELOW ACTIVE YOUTUBE PLAYER
+========================================================= */
+
+main:has(
+    #videoPlayerContainer[style*="display: block"]
+) #searchPage .search-sticky-header,
+
+main:has(
+    #videoPlayerContainer[style*="display: block"]
+) #bibleTextSearchPage .search-sticky-header {
+
+    position: relative !important;
+    top: auto !important;
+    z-index: 900 !important;
+}
+
+/* =========================================================
+   REMOVE EXTRA SEARCH RESULT GAP WHEN YOUTUBE PLAYER IS OPEN
+========================================================= */
+
+main:has(
+    #videoPlayerContainer[style*="display: block"]
+) #searchResults,
+
+main:has(
+    #videoPlayerContainer[style*="display: block"]
+) #bibleTextSearchResults {
+
+    padding-top: 0 !important;
+}
+
+/* =========================================
+   REDUCE CHAPTER CONTENT SPACING
+========================================= */
+
+#chapterPage .chapter-heading-row {
+    margin-bottom: 4px !important;
+}
+
+#chapterPage .video-buttons,
+#chapterPage .video-button-list {
+    margin-top: 4px !important;
+}
+
+#chapterPage .bible-reader-wrapper {
+    margin-top: 8px !important;
+}
+
+/* =========================================
+   REDUCE CHAPTER CONTENT SPACING
+========================================= */
+
+#chapterPage .chapter-heading-row {
+    margin-bottom: 4px !important;
+}
+
+#chapterPage .bible-reader-wrapper {
+    margin-top: 8px !important;
+}
+
+/* =========================================
+   REDUCE SPACE BELOW CHAPTER HEADER
+========================================= */
+
+@media (max-width: 450px) {
+
+    #chapterPage .bible-reader-wrapper {
+        margin-top: 0 !important;
+    }
+
+    #chapterPage .bible-reader-top-controls {
+        margin-top: 0 !important;
+        margin-bottom: 2px !important;
+        min-height: 30px !important;
+    }
+
+}
+
+/* =========================================
+   RESTORE OLD SEARCH SPACING
+   WHEN YOUTUBE PLAYER IS OPEN
+========================================= */
+
+@media (max-width: 700px) {
+
+    main:has(
+        #videoPlayerContainer[style*="display: block"]
+    ) #searchResults {
+
+        padding-top: 0 !important;
+        margin-top: 15px !important;
+        margin-bottom: 15px !important;
+    }
+
+    main:has(
+        #videoPlayerContainer[style*="display: block"]
+    ) #bibleTextSearchResults {
+
+        padding-top: 0 !important;
+        margin-top: 20px !important;
+        margin-bottom: 20px !important;
+    }
+
+}
+
 </style>
 </head>
 
@@ -3248,15 +4159,6 @@ body.dark-mode .daily-reading-time {
         </div>
 
         <button
-            id="themeToggle"
-            class="theme-toggle"
-            onclick="toggleDarkMode()"
-            aria-label="Toggle dark mode"
-            title="Toggle dark mode">
-            🌙
-        </button>
-
-        <button
             class="home-header-button"
             onclick="goHome()">
 
@@ -3361,85 +4263,235 @@ body.dark-mode .daily-reading-time {
      HOME PAGE
 ========================= -->
 
+<!-- =========================
+     HOME PAGE
+========================= -->
+
 <section
     id="homePage"
     class="page"
     style="display:block;">
 
-<div class="home-search-buttons">
-
-    <button 
-        class="search-open-button" 
-        onclick="openSearchPage()">
-
-        SEARCH VIDEOS
-
-    </button>
-
-    <button 
-        class="search-open-button bible-text-search-button" 
-        onclick="openBibleTextSearchPage()">
-
-        SEARCH BIBLE 
-
-    </button>
-
-</div>
-
-<!-- =========================
-     BIBLE TEXT SEARCH PAGE
-========================= -->
-
-    <div class="testaments">
+    <div class="home-main-buttons">
 
         <button
-            class="testament-button old-testament"
-            onclick="showBooks('old')">
+            class="home-main-button"
+            onclick="openSearchGroup()">
 
-            <div class="book-icon">
-                📜
-            </div>
-
-            <h2>
-                OLD 
-            </h2>
-
-            <h2> 
-                TESTAMENT
-            </h2>
-
-            <div class="book-count">
-                39 BOOKS
-            </div>
+            <div class="home-main-icon">🔍</div>
+            <div class="home-main-title">SEARCH</div>
 
         </button>
 
 
         <button
-            class="testament-button new-testament"
-            onclick="showBooks('new')">
+            class="home-main-button"
+            onclick="openBibleGroup()">
 
-            <div class="book-icon">
-                ✝️
-            </div>
+            <div class="home-main-icon">📖</div>
+            <div class="home-main-title">BIBLE</div>
 
-            <h2>
-                NEW 
-            </h2>
+        </button>
 
-            <h2> 
-                TESTAMENT
-            </h2>
 
-            <div class="book-count">
-                27 BOOKS
-            </div>
+        <button
+            class="home-main-button"
+            onclick="showFavorites()">
+
+            <div class="home-main-icon">♥</div>
+            <div class="home-main-title">FAVORITE</div>
+
+        </button>
+
+
+        <button
+            class="home-main-button"
+            onclick="openSettingsPage()">
+
+            <div class="home-main-icon">⚙️</div>
+            <div class="home-main-title">SETTING</div>
 
         </button>
 
     </div>
 
 </section>
+
+
+<!-- =========================
+     SEARCH GROUP PAGE
+========================= -->
+
+<section
+    id="searchGroupPage"
+    class="page">
+
+    <div class="sticky-page-header">
+
+        <h2 class="page-title">
+            SEARCH
+        </h2>
+
+        <p class="page-subtitle">
+            Search Bible Videos or Bible Text
+        </p>
+
+    </div>
+
+
+    <div class="group-page-buttons">
+
+        <button
+            class="group-page-button"
+            onclick="openSearchPage()">
+
+            SEARCH VIDEOS
+
+        </button>
+
+
+        <button
+            class="group-page-button"
+            onclick="openBibleTextSearchPage()">
+
+            SEARCH BIBLE
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     BIBLE GROUP PAGE
+========================= -->
+
+<section
+    id="bibleGroupPage"
+    class="page">
+
+    <div class="sticky-page-header">
+
+        <h2 class="page-title">
+            BIBLE
+        </h2>
+
+        <p class="page-subtitle">
+            Select Testament
+        </p>
+
+    </div>
+
+
+<div class="testaments">
+
+    <button
+        class="testament-button old-testament"
+        onclick="showBooks('old')">
+
+        <div class="book-icon">
+            📜
+        </div>
+
+        <h2>
+            OLD
+        </h2>
+
+        <h2>
+            TESTAMENT
+        </h2>
+
+        <div class="book-count">
+            39 BOOKS
+        </div>
+
+    </button>
+
+
+    <button
+        class="testament-button new-testament"
+        onclick="showBooks('new')">
+
+        <div class="book-icon">
+            ✝️
+        </div>
+
+        <h2>
+            NEW
+        </h2>
+
+        <h2>
+            TESTAMENT
+        </h2>
+
+        <div class="book-count">
+            27 BOOKS
+        </div>
+
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     SETTINGS PAGE
+========================= -->
+<section
+    id="settingsPage"
+    class="page">
+
+    <div class="sticky-page-header">
+
+        <h2 class="page-title">
+            SETTINGS
+        </h2>
+
+        <p class="page-subtitle">
+            Customize your Bible app
+        </p>
+
+    </div>
+
+
+    <div class="settings-container">
+
+        <!-- DARK MODE -->
+
+        <div class="setting-item">
+
+            <div class="setting-info">
+
+                <div class="setting-title">
+                    Dark Mode
+                </div>
+
+                <div class="setting-description">
+                    Use dark appearance throughout the app
+                </div>
+
+            </div>
+
+
+            <label class="settings-switch">
+
+                <input
+                    type="checkbox"
+                    id="settingsDarkMode"
+                    onchange="changeSettingsDarkMode()">
+
+                <span class="settings-slider"></span>
+
+            </label>
+
+        </div>
+
+    </div>
+
+</section>
+
 
 <!-- =========================
      BIBLE TEXT SEARCH PAGE
@@ -3582,20 +4634,39 @@ body.dark-mode .daily-reading-time {
 
 <section id="videoPage" class="page">
 
-    <div class="chapter-heading-row">
+<div class="chapter-heading-row">
 
-        <h2 id="videoPageTitle" class="page-title"></h2>
+    <h2
+        id="videoPageTitle"
+        class="page-title">
+    </h2>
+
+
+    <div class="chapter-heading-actions">
+
+        <button
+            id="favoriteChapterButton"
+            class="favorite-chapter-button"
+            onclick="toggleFavoriteCurrentChapter()"
+            title="Add to Favorites">
+
+            ♡
+
+        </button>
+
 
         <button
             id="readBibleButton"
             class="read-bible-button"
             onclick="toggleBibleReader()">
 
-            READ 
+            READ
 
         </button>
 
     </div>
+
+</div>
 
     <p class="page-subtitle">Bible Videos</p>
 
@@ -3611,6 +4682,36 @@ body.dark-mode .daily-reading-time {
 
 
 
+
+</section>
+
+
+<!-- =========================
+     FAVORITES PAGE
+========================= -->
+
+<section
+    id="favoritesPage"
+    class="page">
+
+    <div class="sticky-page-header">
+
+        <h2 class="page-title">
+            FAVORITES
+        </h2>
+
+        <p class="page-subtitle">
+            Saved Bible Chapters
+        </p>
+
+    </div>
+
+
+    <div
+        id="favoritesList"
+        class="favorites-list">
+
+    </div>
 
 </section>
 
@@ -3744,13 +4845,349 @@ const bible = {
 let allBibleVideos = []; 
  
 let buildingSearchIndex = false; 
- 
+
+/* =========================================================
+   FAVORITES
+========================================================= */
+
+function getFavorites() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem("bibleFavorites")
+        ) || [];
+
+    } catch (error) {
+
+        return [];
+
+    }
+}
+
+
+/* =========================================================
+   SAVE FAVORITES
+========================================================= */
+
+function saveFavorites(favorites) {
+
+    localStorage.setItem(
+        "bibleFavorites",
+        JSON.stringify(favorites)
+    );
+
+}
+
+
+/* =========================================================
+   SHOW FAVORITES PAGE
+========================================================= */
+
+function showFavorites() {
+
+    hideGroupedPages();
+
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+
+    document.getElementById("favoritesPage").style.display = "block";
+
+    sessionStorage.setItem(
+        "page",
+        "favorites"
+    );
+
+    renderFavorites();
+
+    updateTestamentNavigation();
+}
+
+
+/* =========================================================
+   RENDER FAVORITES
+========================================================= */
+
+function renderFavorites() {
+
+    const container =
+        document.getElementById("favoritesList");
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = "";
+
+    const favorites = getFavorites();
+
+
+    if (favorites.length === 0) {
+
+        container.innerHTML = `
+            <div class="favorite-item">
+
+                <div class="favorite-item-title"
+                     style="cursor:default;text-align:center;">
+
+                    No favorite chapters yet.
+
+                </div>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    favorites.forEach(function(item) {
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "favorite-item";
+
+
+        const title =
+            document.createElement("div");
+
+        title.className =
+            "favorite-item-title";
+
+        title.textContent =
+            "♥  " +
+            item.book +
+            " - Chapter " +
+            item.chapter;
+
+
+        title.onclick = function() {
+
+            openChapter(
+                item.book,
+                Number(item.chapter)
+            );
+
+        };
+
+
+        const remove =
+            document.createElement("button");
+
+        remove.className =
+            "favorite-remove";
+
+        remove.textContent =
+            "✕";
+
+        remove.title =
+            "Remove Favorite";
+
+
+        remove.onclick = function(event) {
+
+            event.stopPropagation();
+
+            removeFavorite(
+                item.book,
+                item.chapter
+            );
+
+        };
+
+
+        row.appendChild(title);
+        row.appendChild(remove);
+
+        container.appendChild(row);
+
+    });
+
+}
+
+
+/* =========================================================
+   REMOVE FAVORITE
+========================================================= */
+
+function removeFavorite(book, chapter) {
+
+    let favorites =
+        getFavorites();
+
+
+    favorites =
+        favorites.filter(function(item) {
+
+            return !(
+                item.book === book &&
+                String(item.chapter) ===
+                    String(chapter)
+            );
+
+        });
+
+
+    saveFavorites(favorites);
+
+    renderFavorites();
+
+}
+
+
+/* =========================================================
+   TOGGLE CURRENT CHAPTER FAVORITE
+========================================================= */
+
+function toggleFavoriteCurrentChapter() {
+
+    const book =
+        sessionStorage.getItem("book");
+
+    const chapter =
+        sessionStorage.getItem("chapter");
+
+
+    if (!book || !chapter) {
+        return;
+    }
+
+
+    let favorites =
+        getFavorites();
+
+
+    const existingIndex =
+        favorites.findIndex(function(item) {
+
+            return (
+                item.book === book &&
+                String(item.chapter) ===
+                    String(chapter)
+            );
+
+        });
+
+
+    /* =========================
+       REMOVE
+    ========================= */
+
+    if (existingIndex !== -1) {
+
+        favorites.splice(
+            existingIndex,
+            1
+        );
+
+        saveFavorites(favorites);
+
+        updateFavoriteButton();
+
+        return;
+    }
+
+
+    /* =========================
+       ADD
+    ========================= */
+
+    favorites.push({
+
+        book: book,
+
+        chapter: Number(chapter)
+
+    });
+
+
+    saveFavorites(favorites);
+
+    updateFavoriteButton();
+
+}
+
+
+/* =========================================================
+   UPDATE FAVORITE BUTTON
+========================================================= */
+
+function updateFavoriteButton() {
+
+    const button =
+        document.getElementById(
+            "favoriteChapterButton"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    const book =
+        sessionStorage.getItem("book");
+
+    const chapter =
+        sessionStorage.getItem("chapter");
+
+
+    if (!book || !chapter) {
+        return;
+    }
+
+
+    const favorites =
+        getFavorites();
+
+
+    const isFavorite =
+        favorites.some(function(item) {
+
+            return (
+                item.book === book &&
+                String(item.chapter) ===
+                    String(chapter)
+            );
+
+        });
+
+
+    if (isFavorite) {
+
+        button.textContent = "♥";
+
+        button.classList.add("active");
+
+        button.title =
+            "Remove from Favorites";
+
+    } else {
+
+        button.textContent = "♡";
+
+        button.classList.remove("active");
+
+        button.title =
+            "Add to Favorites";
+
+    }
+
+}
+
 /* ========================================================= 
    SHOW BOOKS 
 ========================================================= */ 
  
 function showBooks(testament) {
-
+    hideGroupedPages();
     sessionStorage.setItem("testament", testament);
     sessionStorage.setItem("page", "books");
 
@@ -4015,6 +5452,7 @@ if (bibleReaderOpen) {
 }
 
 updateTestamentNavigation();
+updateFavoriteButton();
 }
  
 function loadChapterVideos(book, chapter) { 
@@ -4769,13 +6207,167 @@ function buildVideoSearchIndex() {
  
 } 
  
- 
+/* =========================================================
+   HOME GROUP PAGES
+========================================================= */
+
+function hideGroupedPages() {
+
+    const pages = [
+        "searchGroupPage",
+        "bibleGroupPage",
+        "settingsPage",
+        "favoritesPage"
+    ];
+
+    pages.forEach(function(id) {
+
+        const page = document.getElementById(id);
+
+        if (page) {
+            page.style.display = "none";
+        }
+
+    });
+}
+
+
+/* =========================================================
+   OPEN SEARCH GROUP
+========================================================= */
+
+function openSearchGroup() {
+
+    hideBibleReaderForSearch();
+
+    hideGroupedPages();
+
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+
+    document.getElementById("searchGroupPage").style.display = "block";
+
+    sessionStorage.setItem("page", "searchGroup");
+
+    updateTestamentNavigation();
+}
+
+
+/* =========================================================
+   OPEN BIBLE GROUP
+========================================================= */
+
+function openBibleGroup() {
+
+    hideGroupedPages();
+
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+
+    document.getElementById("bibleGroupPage").style.display = "block";
+
+    sessionStorage.setItem("page", "bibleGroup");
+
+    updateTestamentNavigation();
+}
+
+/* =========================================================
+   OPEN SETTINGS PAGE
+========================================================= */
+
+function openSettingsPage() {
+
+    hideGroupedPages();
+
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+
+    document.getElementById("settingsPage").style.display = "block";
+
+    sessionStorage.setItem(
+        "page",
+        "settings"
+    );
+
+    updateSettingsDarkMode();
+
+    updateTestamentNavigation();
+}
+
+
+/* =========================================================
+   SETTINGS DARK MODE
+========================================================= */
+
+function changeSettingsDarkMode() {
+
+    const checkbox =
+        document.getElementById(
+            "settingsDarkMode"
+        );
+
+    if (!checkbox) {
+        return;
+    }
+
+    applyTheme(
+        checkbox.checked
+            ? "dark"
+            : "light"
+    );
+
+    localStorage.setItem(
+        "bibleTheme",
+        checkbox.checked
+            ? "dark"
+            : "light"
+    );
+}
+
+
+/* =========================================================
+   UPDATE SETTINGS DARK MODE SWITCH
+========================================================= */
+
+function updateSettingsDarkMode() {
+
+    const checkbox =
+        document.getElementById(
+            "settingsDarkMode"
+        );
+
+    if (!checkbox) {
+        return;
+    }
+
+    checkbox.checked =
+        document.body.classList.contains(
+            "dark-mode"
+        );
+}
+
 /* ========================================================= 
    OPEN SEARCH PAGE 
 ========================================================= */ 
  
 function openSearchPage() { 
-     hideBibleReaderForSearch();
+    hideBibleReaderForSearch();
+    hideGroupedPages();
     sessionStorage.setItem("page", "search");
     sessionStorage.setItem("searchType", "video");
     sessionStorage.removeItem("cameFromBibleSearch");
@@ -4796,7 +6388,7 @@ function openSearchPage() {
     document.getElementById("searchPage").style.display = 
         "block"; 
  
- 
+    positionSearchBelowVideo();
     buildVideoSearchIndex(); 
  
  
@@ -5416,6 +7008,7 @@ function goHome() {
     document.getElementById("videoPage").style.display = "none";
     document.getElementById("searchPage").style.display = "none";
     document.getElementById("bibleTextSearchPage").style.display = "none";
+    hideGroupedPages();
     document.getElementById("homePage").style.display = "block";
     /* RESTORE LAST BIBLE READER ON HOME */
 if (bibleReaderOpen) {
@@ -6163,6 +7756,17 @@ function headerBack() {
 
         }
 
+    } else if (
+        page === "searchGroup" ||
+        page === "bibleGroup" ||
+        page === "settings"
+    ) {
+
+        goHome();
+
+    } else if (page === "favorites") {
+        goHome();
+
     } else {
 
         goHome();
@@ -6222,11 +7826,15 @@ function updateTestamentNavigation() {
        HIDE NAVIGATION
     ========================= */
 
-    if (
-        !page ||
-        page === "home" ||
-        page === "search"
-    ) {
+if (
+    !page ||
+    page === "home" ||
+    page === "search" ||
+    page === "searchGroup" ||
+    page === "bibleGroup" ||
+    page === "settings" ||
+    page === "favorites"
+) {
 
         nav.style.display = "none";
 
@@ -6451,6 +8059,7 @@ async function buildBibleTextSearchDatabase() {
 
 async function openBibleTextSearchPage() {
     hideBibleReaderForSearch();
+    hideGroupedPages();
     sessionStorage.setItem("page", "search");
     sessionStorage.setItem("searchType", "bible");
     document.getElementById("homePage").style.display = "none";
@@ -6459,6 +8068,7 @@ async function openBibleTextSearchPage() {
     document.getElementById("videoPage").style.display = "none";
     document.getElementById("searchPage").style.display = "none";
     document.getElementById("bibleTextSearchPage").style.display = "block";
+    positionSearchBelowVideo();
 
 
     const input =
@@ -7556,6 +9166,38 @@ function hideBibleReaderForSearch() {
         wrapper.style.display = "none";
     }
 
+}
+
+/* =========================================================
+   SHOW SEARCH PAGE BELOW YOUTUBE PLAYER
+========================================================= */
+
+function positionSearchBelowVideo() {
+
+    const player =
+        document.getElementById(
+            "videoPlayerContainer"
+        );
+
+    const searchPage =
+        document.getElementById(
+            "searchPage"
+        );
+
+    const bibleSearchPage =
+        document.getElementById(
+            "bibleTextSearchPage"
+        );
+
+    if (!player) return;
+
+    if (searchPage) {
+        searchPage.style.marginTop = "0";
+    }
+
+    if (bibleSearchPage) {
+        bibleSearchPage.style.marginTop = "0";
+    }
 }
 
 </script>
