@@ -4037,6 +4037,32 @@ main:has(
 
 }
 
+/* =========================================================
+   MOBILE - CHAPTER HEADER BELOW YOUTUBE PLAYER
+   WHEN VIDEO IS PLAYING
+========================================================= */
+
+@media (max-width: 700px) {
+
+    main:has(
+        #videoPlayerContainer[style*="display: block"]
+    ) #videoPage .chapter-heading-row {
+
+        position: relative !important;
+
+        top: auto !important;
+        left: auto !important;
+
+        width: 100% !important;
+        margin: 0 !important;
+
+        z-index: 1 !important;
+
+        transform: none !important;
+    }
+
+}
+
 </style>
 </head>
 
