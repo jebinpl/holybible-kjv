@@ -4754,15 +4754,21 @@ main:has(
 
     <div class="chapter-heading-actions">
 
-        <button
-            id="favoriteChapterButton"
-            class="favorite-chapter-button"
-            onclick="toggleFavoriteCurrentChapter()"
-            title="Add to Favorites">
+<span
+    class="favorite-tooltip"
+    title="Click Read & Spend a few minutes to add to Treasure">
 
-            ♡
+    <button
+        id="favoriteChapterButton"
+        class="favorite-chapter-button"
+        onclick="toggleFavoriteCurrentChapter()"
+        disabled>
 
-        </button>
+        ♡
+
+    </button>
+
+</span>
 
 
         <button
@@ -5071,11 +5077,15 @@ function renderFavorites() {
         title.className =
             "favorite-item-title";
 
-        title.textContent =
-            "♥  " +
-            item.book +
-            " - Chapter " +
-            item.chapter;
+        title.innerHTML =
+    "♥  " +
+    item.book +
+    " - Chapter " +
+    item.chapter +
+    "<br>" +
+    "<small>" +
+    new Date(item.savedAt).toLocaleString() +
+    "</small>";
 
 
 title.onclick = function() {
@@ -5176,6 +5186,17 @@ function toggleFavoriteCurrentChapter() {
     }
 
 
+    const button =
+        document.getElementById(
+            "favoriteChapterButton"
+        );
+
+
+    if (!button || button.disabled) {
+        return;
+    }
+
+
     let favorites =
         getFavorites();
 
@@ -5192,44 +5213,72 @@ function toggleFavoriteCurrentChapter() {
         });
 
 
-    /* =========================
-       REMOVE
-    ========================= */
+    /* =====================================================
+       REMOVE FROM TREASURE
+       Bible text is still OPEN
+       Heart remains ENABLED
+    ===================================================== */
 
-    if (existingIndex !== -1) {
+if (existingIndex !== -1) {
 
-        favorites.splice(
-            existingIndex,
-            1
-        );
+    favorites.splice(
+        existingIndex,
+        1
+    );
 
-        saveFavorites(favorites);
+    saveFavorites(favorites);
 
-        updateFavoriteButton();
+    button.textContent = "♡";
 
-        return;
+    button.classList.remove("active");
+
+    button.disabled = false;
+
+    const tooltip =
+        document.querySelector(".favorite-tooltip");
+
+    if (tooltip) {
+        tooltip.title =
+            "Click Read & Spend a few minutes to add to Treasure";
     }
 
+    return;
+}
 
-    /* =========================
-       ADD
-    ========================= */
+
+    /* =====================================================
+       ADD TO TREASURE
+    ===================================================== */
 
     favorites.push({
 
         book: book,
 
-        chapter: Number(chapter)
+        chapter: Number(chapter),
+
+        savedAt:
+            new Date().toISOString()
 
     });
 
 
     saveFavorites(favorites);
 
-    updateFavoriteButton();
 
+    button.textContent = "♥";
+
+    button.classList.add("active");
+
+    const tooltip =
+    document.querySelector(".favorite-tooltip");
+
+if (tooltip) {
+    tooltip.removeAttribute("title");
 }
 
+    button.disabled = false;
+
+}
 
 /* =========================================================
    UPDATE FAVORITE BUTTON
@@ -5276,28 +5325,53 @@ function updateFavoriteButton() {
         });
 
 
+    /* =====================================================
+       ALREADY IN TREASURE
+       → HEART ENABLED
+    ===================================================== */
+
     if (isFavorite) {
 
-        button.textContent = "♥";
+    button.textContent = "♥";
 
-        button.classList.add("active");
+    button.classList.add("active");
 
-        button.title =
-            "Remove from Favorites";
+    button.disabled = false;
 
-    } else {
+    const tooltip =
+        document.querySelector(".favorite-tooltip");
 
-        button.textContent = "♡";
-
-        button.classList.remove("active");
-
-        button.title =
-            "Add to Favorites";
-
+    if (tooltip) {
+        tooltip.removeAttribute("title");
     }
 
 }
 
+
+    /* =====================================================
+       NOT IN TREASURE
+       → HEART DISABLED
+    ===================================================== */
+
+    else {
+
+    button.textContent = "♡";
+
+    button.classList.remove("active");
+
+    button.disabled = true;
+
+    const tooltip =
+        document.querySelector(".favorite-tooltip");
+
+    if (tooltip) {
+        tooltip.title =
+            "Click Read & Spend a few minutes to add to Treasure";
+    }
+
+}
+
+}
 /* ========================================================= 
    SHOW BOOKS 
 ========================================================= */ 
@@ -7149,6 +7223,7 @@ if (bibleReaderOpen) {
  
 let currentBibleData = null; 
 let bibleReaderOpen = false; 
+let favoriteEnableTimer = null;
 
 /* =========================================================
    BIBLE READER TEXT ZOOM
@@ -7268,11 +7343,44 @@ async function toggleBibleReader() {
 
     bibleReaderOpen = true;
 
+    /* =====================================================
+   ENABLE HEART AFTER 5 SECONDS
+===================================================== */
 
-    /*
-       Make sure Bible reader appears BEFORE
-       the existing video buttons.
-    */
+const favoriteButton =
+    document.getElementById(
+        "favoriteChapterButton"
+    );
+
+
+if (favoriteButton) {
+
+    /* Always start disabled */
+
+    favoriteButton.disabled = true;
+
+
+    /* Cancel previous timer */
+
+    clearTimeout(
+        favoriteEnableTimer
+    );
+
+
+    favoriteEnableTimer =
+        setTimeout(function() {
+
+            /* Bible reader is still open */
+
+            if (!bibleReaderOpen) {
+                return;
+            }
+
+
+            favoriteButton.disabled = false;
+
+        }, 30000);
+}
 
     const videoList =
     document.getElementById("videoList");
@@ -7459,9 +7567,19 @@ function closeBibleReader() {
     if (button) {
         button.textContent = "READ";
     }
+    clearTimeout(
+    favoriteEnableTimer
+    );
 
+    favoriteEnableTimer = null;
 
     bibleReaderOpen = false;
+
+    /* =====================================================
+    UPDATE HEART AFTER BIBLE TEXT CLOSES
+    ===================================================== */
+
+    updateFavoriteButton();
 
     currentBibleData = null;
     window.scrollTo(0, 0);
@@ -7849,18 +7967,18 @@ window.addEventListener("DOMContentLoaded", function () {
         */
 
         const videoTitle =
-            document.getElementById(
-                "videoChapterTitle"
-            );
+    document.getElementById(
+        "videoPageTitle"
+    );
 
-        if (videoTitle) {
+    if (videoTitle) {
 
-            videoTitle.textContent =
-                savedBook +
-                " " +
-                savedChapter;
+    videoTitle.textContent =
+        savedBook +
+        " - Ch " +
+        savedChapter;
 
-        }
+}
 
 
         /*
