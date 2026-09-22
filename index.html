@@ -7468,8 +7468,10 @@ function closeBibleReader() {
 
 }
  
+
 /* =========================================================
-   RESTORE CURRENT PAGE AFTER REFRESH
+   PAGE RESTORATION AFTER REFRESH
+   RESTORES EVERY PAGE
 ========================================================= */
 
 window.addEventListener("DOMContentLoaded", function () {
@@ -7486,23 +7488,45 @@ window.addEventListener("DOMContentLoaded", function () {
     const savedChapter =
         sessionStorage.getItem("chapter");
 
-    /* Hide all pages first */
 
-    document.getElementById("homePage").style.display = "none";
-    document.getElementById("bookPage").style.display = "none";
-    document.getElementById("chapterPage").style.display = "none";
-    document.getElementById("videoPage").style.display = "none";
-    document.getElementById("searchPage").style.display = "none";
-    document.getElementById("bibleTextSearchPage").style.display = "none";
+    /* =====================================================
+       HIDE ALL PAGES FIRST
+    ===================================================== */
+
+    const pageIds = [
+        "homePage",
+        "bookPage",
+        "chapterPage",
+        "videoPage",
+        "searchPage",
+        "bibleTextSearchPage",
+        "searchGroupPage",
+        "bibleGroupPage",
+        "settingsPage",
+        "favoritesPage"
+    ];
+
+    pageIds.forEach(function (id) {
+
+        const page =
+            document.getElementById(id);
+
+        if (page) {
+            page.style.display = "none";
+        }
+
+    });
 
 
-    /* =========================================
+    /* =====================================================
        HOME
-    ========================================= */
+    ===================================================== */
 
     if (!savedPage || savedPage === "home") {
 
-        document.getElementById("homePage").style.display = "block";
+        document.getElementById(
+            "homePage"
+        ).style.display = "block";
 
         updateTestamentNavigation();
 
@@ -7510,47 +7534,147 @@ window.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =========================================
-       SEARCH PAGE
-    ========================================= */
+    /* =====================================================
+       SEARCH GROUP
+    ===================================================== */
+
+    if (savedPage === "searchGroup") {
+
+        document.getElementById(
+            "searchGroupPage"
+        ).style.display = "block";
+
+        updateTestamentNavigation();
+
+        return;
+    }
+
+
+    /* =====================================================
+       BIBLE GROUP
+    ===================================================== */
+
+    if (savedPage === "bibleGroup") {
+
+        document.getElementById(
+            "bibleGroupPage"
+        ).style.display = "block";
+
+        updateTestamentNavigation();
+
+        return;
+    }
+
+
+    /* =====================================================
+       SETTINGS
+    ===================================================== */
+
+    if (savedPage === "settings") {
+
+        document.getElementById(
+            "settingsPage"
+        ).style.display = "block";
+
+        updateTestamentNavigation();
+
+        return;
+    }
+
+
+    /* =====================================================
+       FAVORITES / TREASURE
+    ===================================================== */
+
+    if (savedPage === "favorites") {
+
+        document.getElementById(
+            "favoritesPage"
+        ).style.display = "block";
+
+        /*
+           Rebuild favorites from localStorage
+        */
+        if (typeof renderFavorites === "function") {
+
+            renderFavorites();
+
+        }
+
+        updateTestamentNavigation();
+
+        return;
+    }
+
+
+    /* =====================================================
+       VIDEO SEARCH / BIBLE SEARCH
+    ===================================================== */
 
     if (savedPage === "search") {
 
-        /*
-           If Bible Search was the page
-        */
+        const searchType =
+            sessionStorage.getItem(
+                "searchType"
+            );
 
-        if (
-            sessionStorage.getItem("searchType") === "bible"
-        ) {
+
+        /* =================================================
+           BIBLE TEXT SEARCH
+        ================================================= */
+
+        if (searchType === "bible") {
 
             document.getElementById(
                 "bibleTextSearchPage"
             ).style.display = "block";
+
 
             const input =
                 document.getElementById(
                     "bibleTextSearchInput"
                 );
 
+
             const savedSearch =
                 sessionStorage.getItem(
                     "bibleSearchText"
                 );
 
-            input.value = savedSearch || "";
+
+            if (input) {
+
+                input.value =
+                    savedSearch || "";
+
+            }
+
 
             /*
                Rebuild Bible search database
             */
 
-            buildBibleTextSearchDatabase().then(function () {
+            if (
+                typeof buildBibleTextSearchDatabase ===
+                "function"
+            ) {
 
-                if (input.value.trim() !== "") {
-                    searchBibleText();
-                }
+                buildBibleTextSearchDatabase()
+                    .then(function () {
 
-            });
+                        if (
+                            input &&
+                            input.value.trim() !== ""
+                        ) {
+
+                            searchBibleText();
+
+                        }
+
+                    });
+
+            }
+
 
             updateTestamentNavigation();
 
@@ -7558,32 +7682,58 @@ window.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        /*
-           Otherwise restore Video Search
-        */
+        /* =================================================
+           VIDEO SEARCH
+        ================================================= */
 
         document.getElementById(
             "searchPage"
         ).style.display = "block";
+
 
         const videoInput =
             document.getElementById(
                 "videoSearchInput"
             );
 
-        buildVideoSearchIndex();
 
         const savedVideoSearch =
             sessionStorage.getItem(
                 "videoSearchText"
             );
 
-        videoInput.value =
-            savedVideoSearch || "";
 
-        if (videoInput.value.trim() !== "") {
-            searchBibleVideos();
+        if (videoInput) {
+
+            videoInput.value =
+                savedVideoSearch || "";
+
         }
+
+
+        /*
+           Rebuild video search index
+        */
+
+        if (
+            typeof buildVideoSearchIndex ===
+            "function"
+        ) {
+
+            buildVideoSearchIndex();
+
+        }
+
+
+        if (
+            videoInput &&
+            videoInput.value.trim() !== ""
+        ) {
+
+            searchBibleVideos();
+
+        }
+
 
         updateTestamentNavigation();
 
@@ -7591,16 +7741,18 @@ window.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =========================================
+    /* =====================================================
        BOOKS
-    ========================================= */
+    ===================================================== */
 
     if (
         savedPage === "books" &&
         savedTestament
     ) {
 
-        showBooks(savedTestament);
+        showBooks(
+            savedTestament
+        );
 
         updateTestamentNavigation();
 
@@ -7608,9 +7760,9 @@ window.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =========================================
+    /* =====================================================
        CHAPTERS
-    ========================================= */
+    ===================================================== */
 
     if (
         savedPage === "chapters" &&
@@ -7622,10 +7774,14 @@ window.addEventListener("DOMContentLoaded", function () {
             ...bible.new
         ];
 
+
         const book =
             allBooks.find(function (item) {
+
                 return item[0] === savedBook;
+
             });
+
 
         if (book) {
 
@@ -7638,22 +7794,44 @@ window.addEventListener("DOMContentLoaded", function () {
 
         } else {
 
-            sessionStorage.clear();
+            /*
+               Invalid saved book
+               Return to home
+            */
+
+            sessionStorage.removeItem(
+                "page"
+            );
+
+            sessionStorage.removeItem(
+                "testament"
+            );
+
+            sessionStorage.removeItem(
+                "book"
+            );
+
+            sessionStorage.removeItem(
+                "chapter"
+            );
+
 
             document.getElementById(
                 "homePage"
             ).style.display = "block";
 
+
             updateTestamentNavigation();
+
         }
 
         return;
     }
 
 
-    /* =========================================
-       VIDEOS
-    ========================================= */
+    /* =====================================================
+       VIDEOS / CHAPTER VIDEO PAGE
+    ===================================================== */
 
     if (
         savedPage === "videos" &&
@@ -7661,35 +7839,77 @@ window.addEventListener("DOMContentLoaded", function () {
         savedChapter
     ) {
 
-        /*
-           IMPORTANT:
-           Do NOT use openChapter() here because
-           openChapter() currently removes
-           cameFromBibleSearch.
-        */
-
-        currentVideoIndex = -1;
-
         document.getElementById(
             "videoPage"
         ).style.display = "block";
 
-        document.getElementById(
-            "videoPageTitle"
-        ).textContent =
-            savedBook + " - Ch " + savedChapter;
 
-        document.querySelector(
-            "#videoPage .page-subtitle"
-        ).textContent =
-            "Bible Videos";
+        /*
+           Restore chapter title
+        */
 
-        buildingSearchIndex = false;
+        const videoTitle =
+            document.getElementById(
+                "videoChapterTitle"
+            );
 
-        loadChapterVideos(
-            savedBook,
-            Number(savedChapter)
-        );
+        if (videoTitle) {
+
+            videoTitle.textContent =
+                savedBook +
+                " " +
+                savedChapter;
+
+        }
+
+
+        /*
+           Close Bible reader initially
+           The video page itself will be rebuilt.
+        */
+
+        if (
+            typeof closeBibleReader ===
+            "function"
+        ) {
+
+            closeBibleReader();
+
+        }
+
+
+        /*
+           Clear old video buttons
+        */
+
+        const videoList =
+            document.getElementById(
+                "videoList"
+            );
+
+        if (videoList) {
+
+            videoList.innerHTML = "";
+
+        }
+
+
+        /*
+           Restore chapter videos
+        */
+
+        if (
+            typeof loadChapterVideos ===
+            "function"
+        ) {
+
+            loadChapterVideos(
+                savedBook,
+                Number(savedChapter)
+            );
+
+        }
+
 
         updateTestamentNavigation();
 
@@ -7697,15 +7917,21 @@ window.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =========================================
-       FALLBACK → HOME
-    ========================================= */
-
-    sessionStorage.clear();
+    /* =====================================================
+       FALLBACK
+       UNKNOWN PAGE
+    ===================================================== */
 
     document.getElementById(
         "homePage"
     ).style.display = "block";
+
+
+    sessionStorage.setItem(
+        "page",
+        "home"
+    );
+
 
     updateTestamentNavigation();
 
