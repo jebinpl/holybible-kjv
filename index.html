@@ -1665,49 +1665,6 @@ body {
     }
 }
 
-.favorite-tooltip {
-    position: relative;
-}
-
-.favorite-tooltip::after {
-    content: "Click Read & Spend a few minutes to add to Treasure";
-
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    background: #333;
-    color: white;
-
-    padding: 7px 10px;
-    border-radius: 6px;
-
-    font-size: 12px;
-    white-space: nowrap;
-
-    opacity: 0;
-    visibility: hidden;
-
-    pointer-events: none;
-
-    transition: opacity 0.2s;
-    z-index: 9999;
-}
-
-/* Desktop hover */
-.favorite-tooltip:hover::after {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Mobile tap */
-.favorite-tooltip.show-tooltip::after {
-    opacity: 1;
-    visibility: visible;
-}
-
 /* =========================================================
    iPHONE / SAFARI - KEEP CHAPTER READ HEADER FIXED
 ========================================================= */
@@ -5181,42 +5138,7 @@ title.onclick = function() {
 
 }
 
-document.addEventListener("DOMContentLoaded", function () {
 
-    const tooltip =
-        document.querySelector(".favorite-tooltip");
-
-    const button =
-        document.getElementById(
-            "favoriteChapterButton"
-        );
-
-    if (!tooltip || !button) {
-        return;
-    }
-
-    button.addEventListener("touchstart", function () {
-
-        /* Only show message while heart is disabled */
-        if (button.disabled) {
-
-            tooltip.classList.add(
-                "show-tooltip"
-            );
-
-            setTimeout(function () {
-
-                tooltip.classList.remove(
-                    "show-tooltip"
-                );
-
-            }, 2500);
-
-        }
-
-    });
-
-});
 /* =========================================================
    REMOVE FAVORITE
 ========================================================= */
@@ -5408,7 +5330,7 @@ function updateFavoriteButton() {
        → HEART ENABLED
     ===================================================== */
 
-if (isFavorite) {
+    if (isFavorite) {
 
     button.textContent = "♥";
 
@@ -5420,7 +5342,6 @@ if (isFavorite) {
         document.querySelector(".favorite-tooltip");
 
     if (tooltip) {
-        tooltip.classList.remove("show-tooltip");
         tooltip.removeAttribute("title");
     }
 
@@ -5432,7 +5353,7 @@ if (isFavorite) {
        → HEART DISABLED
     ===================================================== */
 
-else {
+    else {
 
     button.textContent = "♡";
 
@@ -5447,6 +5368,8 @@ else {
         tooltip.title =
             "Click Read & Spend a few minutes to add to Treasure";
     }
+
+}
 
 }
 /* ========================================================= 
@@ -7373,8 +7296,6 @@ async function loadBibleBook(book) {
         return null; 
     } 
 } 
-
-
  
 async function toggleBibleReader() {
 
