@@ -5141,31 +5141,46 @@ async function shareTreasure(book, chapter) {
            SHARE
         ========================================= */
 
-        if (navigator.share) {
+try {
 
-            await navigator.share({
+    // 1. Copy the COMPLETE message
+    await navigator.clipboard.writeText(message);
 
-                title:
-                    "Today's Treasure - " +
-                    book +
-                    " Ch " +
-                    chapter,
+    // 2. Open the Share sheet
+    if (navigator.share) {
 
-                text: message
+        await navigator.share({
+            title:
+                "Today's Treasure - " +
+                book +
+                " Ch " +
+                chapter
+        });
 
-            });
+    } else {
 
-        } else {
+        alert(
+            "Today's Treasure copied completely.\n\n" +
+            "Open WhatsApp and paste it."
+        );
 
-            await navigator.clipboard.writeText(
-                message
-            );
+    }
 
-            alert(
-                "Treasure copied. You can paste it into WhatsApp."
-            );
+} catch (error) {
 
-        }
+    // User may close the Share sheet
+    if (error.name !== "AbortError") {
+
+        console.error("Share failed:", error);
+
+        alert(
+            "Today's Treasure copied completely.\n\n" +
+            "Open WhatsApp and paste it."
+        );
+
+    }
+
+}
 
     } catch (error) {
 
