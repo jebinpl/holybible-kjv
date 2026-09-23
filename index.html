@@ -5117,28 +5117,14 @@ for (let verseNumber = 1; ; verseNumber++) {
         break;
     }
 
-    bibleText +=
-        book +
-        " " +
-        chapter +
-        ":" +
-        verseNumber +
-        "\n" +
-        verse +
-        "\n\n";
+    bibleText += 
+    verseNumber + 
+    ". " + 
+    verse + 
+    "\n\n";
 }
 
-console.log(
-    "Sharing",
-    book,
-    "Chapter",
-    chapter,
-    "Verses:",
-    Object.keys(verses)
-        .filter(function(key) {
-            return /^\d+$/.test(key);
-        }).length
-);
+
 
         /* =========================================
            FINAL MESSAGE
