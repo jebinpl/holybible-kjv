@@ -1875,6 +1875,28 @@ body {
 }
 
 /* =========================================================
+   TREASURES HEADER — STAYS WHILE LIST SCROLLS
+========================================================= */
+
+#favoritesPage .sticky-page-header {
+    position: sticky;
+    top: 105px;
+    z-index: 900;
+}
+
+@media (max-width: 700px) {
+    #favoritesPage .sticky-page-header {
+        top: 95px;
+    }
+}
+
+@media (max-width: 450px) {
+    #favoritesPage .sticky-page-header {
+        top: 90px;
+    }
+}
+
+/* =========================================================
    SETTINGS PAGE - CENTER TITLE
 ========================================================= */
 
