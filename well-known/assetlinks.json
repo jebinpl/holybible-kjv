@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.jebinpl.twa",
-        "sha256_cert_fingerprints": ["BD:10:14:BF:9D:B3:57:45:67:54:C4:D3:80:13:A9:44:58:21:49:AA:7A:66:62:AA:86:3F:84:54:02:AA:35:DE"]
-      }
-    }]
