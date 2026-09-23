@@ -5143,10 +5143,10 @@ async function shareTreasure(book, chapter) {
 
 try {
 
-    // 1. Copy the COMPLETE message
+    // Copy the COMPLETE Treasure first
     await navigator.clipboard.writeText(message);
 
-    // 2. Open the Share sheet
+    // Open the system Share sheet
     if (navigator.share) {
 
         await navigator.share({
@@ -5154,7 +5154,11 @@ try {
                 "Today's Treasure - " +
                 book +
                 " Ch " +
-                chapter
+                chapter,
+
+            text:
+                "Today's Treasure copied. " +
+                "Open WhatsApp and paste it."
         });
 
     } else {
@@ -5163,23 +5167,19 @@ try {
             "Today's Treasure copied completely.\n\n" +
             "Open WhatsApp and paste it."
         );
-
     }
 
 } catch (error) {
 
-    // User may close the Share sheet
     if (error.name !== "AbortError") {
 
         console.error("Share failed:", error);
 
         alert(
-            "Today's Treasure copied completely.\n\n" +
+            "Today's Treasure was copied completely.\n\n" +
             "Open WhatsApp and paste it."
         );
-
     }
-
 }
 
     } catch (error) {
