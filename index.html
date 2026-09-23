@@ -3680,6 +3680,48 @@ body.dark-mode .daily-reading-time {
     cursor: pointer;
 }
 
+/* =========================
+   TREASURE SHARE BUTTON
+========================= */
+
+.favorite-share {
+    width: 42px;
+    height: 42px;
+
+    margin-right: 5px;
+
+    border: 1px solid #b8943d;
+    border-radius: 8px;
+
+    background: linear-gradient(
+        to bottom,
+        #fffdf7,
+        #f8efd9
+    );
+
+    color: #70451e;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.favorite-share:hover {
+    background: #f1dfaa;
+}
+
+.favorite-share:active {
+    transform: scale(0.94);
+}
+
 
 .favorite-remove:hover {
     background: #f3d8d4;
@@ -5018,6 +5060,143 @@ function showFavorites() {
     updateTestamentNavigation();
 }
 
+/* =========================================================
+   SHARE TREASURE
+========================================================= */
+
+async function shareTreasure(book, chapter) {
+
+    try {
+
+        /* ================================================
+           LOAD THE CORRESPONDING BIBLE JSON
+        ================================================ */
+
+        const response = await fetch(
+            "bible/" + encodeURIComponent(book) + ".json"
+        );
+
+        if (!response.ok) {
+            throw new Error("Bible file not found");
+        }
+
+        const data = await response.json();
+
+
+        /* ================================================
+           GET CHAPTER
+        ================================================ */
+
+        const verses =
+            data.chapters[String(chapter)];
+
+
+        if (!verses) {
+
+            alert(
+                "Bible text for this chapter is not available."
+            );
+
+            return;
+        }
+
+
+        /* ================================================
+           BUILD BIBLE TEXT
+        ================================================ */
+
+        const verseNumbers =
+            Object.keys(verses)
+                .filter(function(key) {
+                    return /^\d+$/.test(key);
+                })
+                .map(Number)
+                .sort(function(a, b) {
+                    return a - b;
+                });
+
+
+        let bibleText = "";
+
+
+        verseNumbers.forEach(function(verseNumber) {
+
+            bibleText +=
+                book +
+                " " +
+                chapter +
+                ":" +
+                verseNumber +
+                "\n";
+
+            bibleText +=
+                verses[String(verseNumber)];
+
+            bibleText += "\n\n";
+
+        });
+
+
+        /* ================================================
+           CREATE SHARE MESSAGE
+        ================================================ */
+
+        const message =
+            "Here's my Today's treasure from " +
+            book +
+            " Ch " +
+            chapter +
+            "\n\n" +
+            bibleText.trim();
+
+
+        /* ================================================
+           OPEN NATIVE SHARE
+        ================================================ */
+
+        if (navigator.share) {
+
+            await navigator.share({
+
+                title:
+                    "Today's Treasure - " +
+                    book +
+                    " Ch " +
+                    chapter,
+
+                text: message
+
+            });
+
+        } else {
+
+            /* Desktop / browser fallback */
+
+            await navigator.clipboard.writeText(
+                message
+            );
+
+            alert(
+                "Treasure copied. You can paste it into WhatsApp."
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Unable to share treasure:",
+            error
+        );
+
+        alert(
+            "Unable to share this treasure."
+        );
+
+    }
+
+}
 
 /* =========================================================
    RENDER FAVORITES
@@ -5104,6 +5283,29 @@ title.onclick = function() {
 
 };
 
+const share =
+    document.createElement("button");
+
+share.className =
+    "favorite-share";
+
+share.textContent =
+    "📤";
+
+share.title =
+    "Share Treasure";
+
+
+share.onclick = function(event) {
+
+    event.stopPropagation();
+
+    shareTreasure(
+        item.book,
+        Number(item.chapter)
+    );
+
+};
 
         const remove =
             document.createElement("button");
@@ -5131,6 +5333,7 @@ title.onclick = function() {
 
 
         row.appendChild(title);
+        row.appendChild(share);
         row.appendChild(remove);
 
         container.appendChild(row);
