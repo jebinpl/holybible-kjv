@@ -4213,6 +4213,143 @@ main:has(
     }
 }
 
+/* =========================================================
+   TREASURE CONFIRMATION DIALOG
+========================================================= */
+
+.treasure-confirm-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 99999;
+
+    padding: 20px;
+
+}
+
+
+.treasure-confirm-box {
+
+    width: min(90%, 380px);
+
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 24px;
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,0.3);
+
+}
+
+
+.treasure-confirm-title {
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    margin-bottom: 12px;
+
+}
+
+
+.treasure-confirm-message {
+
+    font-size: 15px;
+
+    line-height: 1.5;
+
+    margin-bottom: 24px;
+
+}
+
+
+.treasure-confirm-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+}
+
+
+.treasure-cancel-button,
+.treasure-remove-button {
+
+    border: none;
+
+    padding: 11px 20px;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+}
+
+
+.treasure-cancel-button {
+
+    background: #e5e5e5;
+
+}
+
+
+.treasure-remove-button {
+
+    background: #d9534f;
+
+    color: white;
+
+}
+
+/* =========================================================
+   TREASURE CONFIRMATION DIALOG - DARK MODE
+========================================================= */
+
+body.dark-mode .treasure-confirm-box {
+    background: #2c2c2c;
+    color: #eeeeee;
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,0.60);
+}
+
+body.dark-mode .treasure-confirm-title {
+    color: #f0e2b5;
+}
+
+body.dark-mode .treasure-confirm-message {
+    color: #e8e6e3;
+}
+
+body.dark-mode .treasure-cancel-button {
+    background: #444444;
+    color: #eeeeee;
+}
+
+body.dark-mode .treasure-remove-button {
+    background: #8e7440;
+    color: #ffffff;
+}
+
 </style>
 </head>
 
@@ -5344,14 +5481,14 @@ share.onclick = function(event) {
 
         remove.onclick = function(event) {
 
-            event.stopPropagation();
+    event.stopPropagation();
 
-            removeFavorite(
-                item.book,
-                item.chapter
-            );
+    confirmRemoveFavorite(
+        item.book,
+        item.chapter
+    );
 
-        };
+};
 
 
         row.appendChild(title);
@@ -5364,7 +5501,84 @@ share.onclick = function(event) {
 
 }
 
+/* =========================================================
+   CONFIRM REMOVE TREASURE DIALOG
+========================================================= */
 
+function confirmRemoveFavorite(book, chapter) {
+
+    const dialog =
+        document.createElement("div");
+
+    dialog.className =
+        "treasure-confirm-overlay";
+
+    dialog.innerHTML = `
+
+        <div class="treasure-confirm-box">
+
+            <div class="treasure-confirm-title">
+                Remove Treasure?
+            </div>
+
+            <div class="treasure-confirm-message">
+                Are you sure you want to remove
+                <strong>${book} - Chapter ${chapter}</strong>
+                from your treasures?
+            </div>
+
+            <div class="treasure-confirm-buttons">
+
+                <button
+                    class="treasure-cancel-button">
+                    No
+                </button>
+
+                <button
+                    class="treasure-remove-button">
+                    Yes, Remove
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+    document.body.appendChild(dialog);
+
+
+    /* =========================
+       NO / CANCEL
+    ========================= */
+
+    dialog
+        .querySelector(".treasure-cancel-button")
+        .onclick = function() {
+
+            dialog.remove();
+
+        };
+
+
+    /* =========================
+       YES / REMOVE
+    ========================= */
+
+    dialog
+        .querySelector(".treasure-remove-button")
+        .onclick = function() {
+
+            removeFavorite(
+                book,
+                chapter
+            );
+
+            dialog.remove();
+
+        };
+
+}
 /* =========================================================
    REMOVE FAVORITE
 ========================================================= */
