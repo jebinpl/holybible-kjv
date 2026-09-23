@@ -5060,17 +5060,9 @@ function showFavorites() {
     updateTestamentNavigation();
 }
 
-/* =========================================================
-   SHARE TREASURE
-========================================================= */
-
 async function shareTreasure(book, chapter) {
 
     try {
-
-        /* ================================================
-           LOAD THE CORRESPONDING BIBLE JSON
-        ================================================ */
 
         const response = await fetch(
             "bible/" + encodeURIComponent(book) + ".json"
@@ -5082,77 +5074,88 @@ async function shareTreasure(book, chapter) {
 
         const data = await response.json();
 
-
-        /* ================================================
-           GET CHAPTER
-        ================================================ */
-
         const verses =
             data.chapters[String(chapter)];
 
-
         if (!verses) {
-
             alert(
                 "Bible text for this chapter is not available."
             );
-
             return;
         }
 
 
-        /* ================================================
-           BUILD BIBLE TEXT
-        ================================================ */
+        /* =========================================
+           GET ALL VERSES
+        ========================================= */
 
         const verseNumbers =
             Object.keys(verses)
                 .filter(function(key) {
                     return /^\d+$/.test(key);
                 })
-                .map(Number)
+                .map(function(key) {
+                    return Number(key);
+                })
                 .sort(function(a, b) {
                     return a - b;
                 });
 
 
+        /* =========================================
+           BUILD FULL CHAPTER
+        ========================================= */
+
         let bibleText = "";
 
+for (let verseNumber = 1; ; verseNumber++) {
 
-        verseNumbers.forEach(function(verseNumber) {
+    const verse =
+        verses[String(verseNumber)];
 
-            bibleText +=
-                book +
-                " " +
-                chapter +
-                ":" +
-                verseNumber +
-                "\n";
+    if (verse === undefined) {
+        break;
+    }
 
-            bibleText +=
-                verses[String(verseNumber)];
+    bibleText +=
+        book +
+        " " +
+        chapter +
+        ":" +
+        verseNumber +
+        "\n" +
+        verse +
+        "\n\n";
+}
 
-            bibleText += "\n\n";
+console.log(
+    "Sharing",
+    book,
+    "Chapter",
+    chapter,
+    "Verses:",
+    Object.keys(verses)
+        .filter(function(key) {
+            return /^\d+$/.test(key);
+        }).length
+);
 
-        });
-
-
-        /* ================================================
-           CREATE SHARE MESSAGE
-        ================================================ */
+        /* =========================================
+           FINAL MESSAGE
+        ========================================= */
 
         const message =
-            "Here's my Today's treasure from " +
+            "*Here's my Today's Treasure from " +
             book +
             " Ch " +
             chapter +
-            "\n\n" +
+            "*\n\n" +
             bibleText.trim();
 
 
-        /* ================================================
-           OPEN NATIVE SHARE
-        ================================================ */
+        /* =========================================
+           SHARE
+        ========================================= */
 
         if (navigator.share) {
 
@@ -5170,8 +5173,6 @@ async function shareTreasure(book, chapter) {
 
         } else {
 
-            /* Desktop / browser fallback */
-
             await navigator.clipboard.writeText(
                 message
             );
@@ -5181,7 +5182,6 @@ async function shareTreasure(book, chapter) {
             );
 
         }
-
 
     } catch (error) {
 
