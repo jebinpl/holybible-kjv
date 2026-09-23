@@ -5086,7 +5086,7 @@ async function shareTreasure(book, chapter) {
 
 
         /* =========================================
-           GET ALL VERSES
+           GET ALL VERSE NUMBERS
         ========================================= */
 
         const verseNumbers =
@@ -5103,31 +5103,29 @@ async function shareTreasure(book, chapter) {
 
 
         /* =========================================
-           BUILD FULL CHAPTER
+           BUILD COMPLETE CHAPTER
         ========================================= */
 
         let bibleText = "";
 
-for (let verseNumber = 1; ; verseNumber++) {
+        verseNumbers.forEach(function(verseNumber) {
 
-    const verse =
-        verses[String(verseNumber)];
+            const verse =
+                String(
+                    verses[String(verseNumber)]
+                );
 
-    if (verse === undefined) {
-        break;
-    }
+            bibleText +=
+                verseNumber +
+                ". " +
+                verse +
+                "\n\n";
 
-    bibleText += 
-    verseNumber + 
-    ". " + 
-    verse + 
-    "\n\n";
-}
-
+        });
 
 
         /* =========================================
-           FINAL MESSAGE
+           MESSAGE
         ========================================= */
 
         const message =
@@ -5137,7 +5135,7 @@ for (let verseNumber = 1; ; verseNumber++) {
             chapter +
             "*\n\n" +
             bibleText.trim();
-            
+
 
         /* =========================================
            SHARE
@@ -5183,7 +5181,6 @@ for (let verseNumber = 1; ; verseNumber++) {
     }
 
 }
-
 /* =========================================================
    RENDER FAVORITES
 ========================================================= */
