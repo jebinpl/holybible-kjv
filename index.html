@@ -4506,6 +4506,38 @@ body.dark-mode #favoritesPage .export-treasure-button {
     gap: 12px;
 }
 
+dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    margin: 0;
+    border: none;
+    border-radius: 14px;
+    padding: 24px;
+    width: 300px;
+    max-width: 80%;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.5;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+dialog button {
+    display: block;
+    margin: 20px auto 0;
+    padding: 9px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
 </style>
 </head>
 
@@ -5734,18 +5766,39 @@ const favorites =
 
     });
 
+    if (favorites.length === 0) {
+
+    showDialog(
+        "Please select at least one Treasure to export."
+    );
+
+    return;
+}
+
 
 /* =====================================================
    NO TREASURES SELECTED
 ===================================================== */
 
-if (favorites.length === 0) {
+function showDialog(message) {
 
-    alert(
-        "Please select at least one Treasure to export."
-    );
+    const dialog = document.createElement("dialog");
 
-    return;
+    dialog.textContent = message;
+
+    const button = document.createElement("button");
+    button.textContent = "OK";
+
+    button.onclick = function() {
+        dialog.close();
+        dialog.remove();
+    };
+
+    dialog.appendChild(button);
+
+    document.body.appendChild(dialog);
+
+    dialog.showModal();
 }
 
 
