@@ -4538,6 +4538,24 @@ dialog button {
     font-size: 15px;
 }
 
+/* Stay Tuned - Videos Coming Soon */
+
+.coming-soon-message {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 18px;
+    color: #777;
+}
+
+.coming-soon-message h3 {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.coming-soon-message p {
+    margin: 0;
+}
+
 </style>
 </head>
 
@@ -7142,7 +7160,7 @@ function loadChapterVideos(book, chapter) {
         ); 
     } 
  
-/* ========================= 
+    /* ========================= 
        MATTHEW CHAPTER 6 
     ========================= */ 
  
@@ -7180,9 +7198,9 @@ function loadChapterVideos(book, chapter) {
             "Matthew 6:24-34", 
             "JFSqNSwOqUE" 
         ); 
-} 
+    } 
  
-/* ========================= 
+    /* ========================= 
        MATTHEW CHAPTER 7 
     ========================= */ 
  
@@ -7327,7 +7345,7 @@ function loadChapterVideos(book, chapter) {
             "Matthew 10:16-42", 
             "ZOamZCJXWkw" 
         ); 
-} 
+    } 
          /* ========================= 
        MATTHEW CHAPTER 11 
     ========================= */ 
@@ -7407,7 +7425,7 @@ function loadChapterVideos(book, chapter) {
             "Matthew 12:46-50", 
             "Y3gAs4JKzW8" 
         ); 
-} 
+    } 
           /* ========================= 
        MATTHEW CHAPTER 13 
     ========================= */ 
@@ -7462,7 +7480,7 @@ function loadChapterVideos(book, chapter) {
             "Matthew 13:53-58", 
             "iTvrqkHFOyw" 
         ); 
-} 
+    } 
        /* ========================= 
        MATTHEW CHAPTER 14 
     ========================= */ 
@@ -7492,7 +7510,7 @@ function loadChapterVideos(book, chapter) {
             "Matthew 14:34-36", 
             "9LMae_c1y_U" 
         ); 
-} 
+    } 
     /* ========================= 
        MATTHEW CHAPTER 15
     ========================= */ 
@@ -7657,6 +7675,17 @@ function loadChapterVideos(book, chapter) {
             "Matthew 19:27-30", 
             "hDY1G9LiUMY" 
         );
+    }
+
+    if (videoList.children.length === 0) {
+
+    videoList.innerHTML = `
+        <div class="coming-soon-message">
+            <h3>Stay Tuned!</h3>
+            <p>Videos Coming Soon</p>
+        </div>
+    `;
+
     }
 } 
     
@@ -7863,6 +7892,8 @@ function buildVideoSearchIndex() {
     document.getElementById("videoList").innerHTML = ""; 
  
 } 
+
+
  
 /* =========================================================
    HOME GROUP PAGES
