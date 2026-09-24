@@ -7732,11 +7732,9 @@ shareIcon.onclick = async function(event) {
 
             await navigator.share({
 
-                title: title,
+            title: title,
 
-                text: title + "\n" + reference,
-
-                url: videoUrl
+            text: title + "\n" + reference + "\n" + videoUrl
 
             });
 
