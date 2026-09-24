@@ -1,0 +1,10 @@
+Keep this file and signing.keystore in a safe place. You'll need these files if you want to upload future versions of your PWA to the Google Play Store.
+
+Key store file: signing.keystore
+Key store password: lD9e4Sdu968p
+Key alias: my-key-alias
+Key password: lD9e4Sdu968p
+Signer's full name: Bible KJV Admin
+Signer's organization: Holy Bible KJV
+Signer's organizational unit: Engineering
+Signer's country code: US
