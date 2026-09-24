@@ -4493,6 +4493,19 @@ body.dark-mode #favoritesPage .export-treasure-button {
     flex-shrink: 0;
 }
 
+.video-share-icon {
+    margin-left: auto;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.video-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 </style>
 </head>
 
@@ -7650,23 +7663,50 @@ function addVideoButton(
         videoId; 
  
  
-    button.innerHTML = ` 
- 
-        <span class="video-icon"> 
-            ▶️ 
-        </span> 
- 
-        <span class="video-content"> 
- 
-            ${title} 
- 
-            <br> 
- 
-            ${reference} 
- 
-        </span> 
- 
-    `; 
+    button.innerHTML = `
+
+    <span class="video-icon">
+        ▶️
+    </span>
+
+    <span class="video-content">
+
+        ${title}
+
+        <br>
+
+        ${reference}
+
+    </span>
+
+    <span class="video-share-icon"
+      role="button"
+      tabindex="0"
+      aria-label="Share video">
+
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <circle cx="18" cy="5" r="3"/>
+        <circle cx="6" cy="12" r="3"/>
+        <circle cx="18" cy="19" r="3"/>
+
+        <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/>
+        <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
+
+    </svg>
+
+</span>
+
+`;
  
  
     button.onclick = function() { 
@@ -7674,6 +7714,51 @@ function addVideoButton(
         openBibleVideo(videoId); 
  
     }; 
+
+    const shareIcon =
+    button.querySelector(".video-share-icon");
+
+
+shareIcon.onclick = async function(event) {
+
+    event.stopPropagation();
+
+    const videoUrl =
+        "https://www.youtube.com/watch?v=" + videoId;
+
+    try {
+
+        if (navigator.share) {
+
+            await navigator.share({
+
+                title: title,
+
+                text: reference,
+
+                url: videoUrl
+
+            });
+
+        } else {
+
+            await navigator.clipboard.writeText(videoUrl);
+
+            alert("Video link copied!");
+
+        }
+
+    } catch (error) {
+
+        if (error.name !== "AbortError") {
+
+            console.error("Sharing failed:", error);
+
+        }
+
+    }
+
+};
  
  
     videoList.appendChild(button); 
