@@ -1884,6 +1884,10 @@ body {
     position: sticky;
     top: 105px;
     z-index: 900;
+    background: #fbf6e9;
+    box-shadow:
+        0 0 12px rgba(255, 253, 245, 0.9);
+
 }
 
 @media (max-width: 700px) {
@@ -2223,9 +2227,7 @@ body {
         font-size: 22px;
     }   
 }
-/* =========================
-   HOME SEARCH BUTTONS
-========================= */
+
 /* =========================
    HOME MAIN GROUP BUTTONS
 ========================= */
@@ -4350,6 +4352,113 @@ body.dark-mode .treasure-remove-button {
     color: #ffffff;
 }
 
+/* =========================================================
+   TREASURE HEADER PDF BUTTON
+========================================================= */
+
+/* Keep TREASURES exactly centered */
+#favoritesPage .sticky-page-header .page-title,
+#favoritesPage .sticky-page-header .page-subtitle {
+    text-align: center;
+}
+
+
+/* PDF BUTTON ON RIGHT */
+#favoritesPage .export-treasure-button {
+
+    position: absolute;
+
+    right: 18px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    margin: 0;
+
+    padding: 9px 16px;
+
+    border: 2px solid #b8943d;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #70451e,
+            #3b210d
+        );
+
+    color: #fff8dc;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 3px 8px rgba(0,0,0,0.18);
+
+    white-space: nowrap;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+#favoritesPage .export-treasure-button:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #8a5a28,
+            #4a2b12
+        );
+}
+
+#favoritesPage .export-treasure-button:active {
+
+    transform:
+        translateY(-50%)
+        scale(0.96);
+}
+
+@media (max-width: 600px) {
+
+    #favoritesPage .export-treasure-button {
+
+        right: 8px;
+
+        padding: 7px 10px;
+
+        font-size: 12px;
+
+    }
+
+}
+
+/* =========================================================
+   TREASURE PDF SELECTION
+========================================================= */
+
+.treasure-select-checkbox {
+
+    width: 20px;
+    height: 20px;
+
+    margin-left: 12px;
+    margin-right: 2px;
+
+    accent-color: #b8943d;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
 </style>
 </head>
 
@@ -4571,10 +4680,6 @@ body.dark-mode .treasure-remove-button {
     </div>
 
 </div>
-
-<!-- =========================
-     HOME PAGE
-========================= -->
 
 <!-- =========================
      HOME PAGE
@@ -5003,28 +5108,36 @@ body.dark-mode .treasure-remove-button {
      FAVORITES PAGE
 ========================= -->
 
-<section
-    id="favoritesPage"
-    class="page">
+<section 
+    id="favoritesPage" 
+    class="page"> 
 
-    <div class="sticky-page-header">
+    <div class="sticky-page-header"> 
 
-        <h2 class="page-title">
-            TREASURES
-        </h2>
+        <h2 class="page-title"> 
+            TREASURES 
+        </h2> 
 
-        <p class="page-subtitle">
-            Saved Bible Chapters
-        </p>
+        <p class="page-subtitle"> 
+            Saved Bible Chapters 
+        </p> 
 
-    </div>
+        <button 
+            class="export-treasure-button" 
+            onclick="exportTreasuresPDF()"> 
+
+            📄 Export PDF 
+
+        </button>
+
+    </div> 
 
 
-    <div
-        id="favoritesList"
-        class="favorites-list">
+    <div 
+        id="favoritesList" 
+        class="favorites-list"> 
 
-    </div>
+    </div> 
 
 </section>
 
@@ -5032,6 +5145,7 @@ body.dark-mode .treasure-remove-button {
 </main>
 
 <script src="https://www.youtube.com/iframe_api"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
  
 <script> 
  
@@ -5358,7 +5472,7 @@ try {
 
 }
 /* =========================================================
-   RENDER FAVORITES
+   RENDER FAVORITES / TREASURES
 ========================================================= */
 
 function renderFavorites() {
@@ -5394,7 +5508,7 @@ function renderFavorites() {
     }
 
 
-    favorites.forEach(function(item) {
+    favorites.forEach(function(item, index) {
 
         const row =
             document.createElement("div");
@@ -5403,6 +5517,29 @@ function renderFavorites() {
             "favorite-item";
 
 
+        /* =================================================
+           CHECKBOX
+        ================================================= */
+
+        const checkbox =
+            document.createElement("input");
+
+        checkbox.type = "checkbox";
+
+        checkbox.className =
+            "treasure-select-checkbox";
+
+        checkbox.dataset.index =
+            index;
+
+        checkbox.title =
+            "Select this Treasure";
+
+
+        /* =================================================
+           TITLE
+        ================================================= */
+
         const title =
             document.createElement("div");
 
@@ -5410,61 +5547,72 @@ function renderFavorites() {
             "favorite-item-title";
 
         title.innerHTML =
-    "♥  " +
-    item.book +
-    " - Chapter " +
-    item.chapter +
-    "<br>" +
-    "<small>" +
-    new Date(item.savedAt).toLocaleString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
-    }) +
-    "</small>";
+            "♥  " +
+            item.book +
+            " - Chapter " +
+            item.chapter +
+            "<br>" +
+            "<small>" +
+            new Date(item.savedAt).toLocaleString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+            }) +
+            "</small>";
 
 
-title.onclick = function() {
+        title.onclick = function() {
 
-    /* Remember that chapter was opened from Favorites */
-    sessionStorage.setItem(
-        "cameFromFavorite",
-        "true"
-    );
+            /* Remember that chapter was opened from Favorites */
 
-    openChapter(
-        item.book,
-        Number(item.chapter)
-    );
+            sessionStorage.setItem(
+                "cameFromFavorite",
+                "true"
+            );
 
-};
+            openChapter(
+                item.book,
+                Number(item.chapter)
+            );
 
-const share =
-    document.createElement("button");
-
-share.className =
-    "favorite-share";
-
-share.textContent =
-    "📤";
-
-share.title =
-    "Share Treasure";
+        };
 
 
-share.onclick = function(event) {
+        /* =================================================
+           SHARE
+        ================================================= */
 
-    event.stopPropagation();
+        const share =
+            document.createElement("button");
 
-    shareTreasure(
-        item.book,
-        Number(item.chapter)
-    );
+        share.className =
+            "favorite-share";
 
-};
+        share.textContent =
+            "📤";
+
+        share.title =
+            "Share Treasure";
+
+
+        share.onclick = function(event) {
+
+            event.stopPropagation();
+
+            shareTreasure(
+                item.book,
+                Number(item.chapter)
+            );
+
+        };
+
+
+        /* =================================================
+           REMOVE
+        ================================================= */
 
         const remove =
             document.createElement("button");
@@ -5481,24 +5629,790 @@ share.onclick = function(event) {
 
         remove.onclick = function(event) {
 
-    event.stopPropagation();
+            event.stopPropagation();
 
-    confirmRemoveFavorite(
-        item.book,
-        item.chapter
-    );
+            confirmRemoveFavorite(
+                item.book,
+                item.chapter
+            );
 
-};
+        };
 
+
+        /* =================================================
+           ADD ELEMENTS
+        ================================================= */
+
+        row.appendChild(checkbox);
 
         row.appendChild(title);
+
         row.appendChild(share);
+
         row.appendChild(remove);
 
         container.appendChild(row);
 
     });
 
+}
+
+/* =========================================================
+   EXPORT TREASURES TO BEAUTIFUL KJV PDF
+========================================================= */
+
+async function exportTreasuresPDF() {
+
+    const allFavorites = getFavorites();
+
+
+/* =====================================================
+   GET SELECTED TREASURES
+===================================================== */
+
+const checkboxes =
+    document.querySelectorAll(
+        ".treasure-select-checkbox:checked"
+    );
+
+
+const favorites =
+    Array.from(checkboxes).map(function(checkbox) {
+
+        return allFavorites[
+            Number(checkbox.dataset.index)
+        ];
+
+    });
+
+
+/* =====================================================
+   NO TREASURES SELECTED
+===================================================== */
+
+if (favorites.length === 0) {
+
+    alert(
+        "Please select at least one Treasure to export."
+    );
+
+    return;
+}
+
+
+    /* =====================================================
+       CHECK jsPDF
+    ===================================================== */
+
+    if (!window.jspdf) {
+
+        alert(
+            "PDF library is still loading. Please try again."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const {
+            jsPDF
+        } = window.jspdf;
+
+
+        const pdf =
+            new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4"
+            });
+
+
+        /* =================================================
+           PAGE SETTINGS
+        ================================================= */
+
+        const pageWidth =
+            pdf.internal.pageSize.getWidth();
+
+        const pageHeight =
+            pdf.internal.pageSize.getHeight();
+
+        const margin = 18;
+
+        const contentWidth =
+            pageWidth - (margin * 2);
+
+        let y = 20;
+
+
+        /* =================================================
+   COVER / TITLE
+================================================= */
+
+/* COVER BORDER */
+
+pdf.setDrawColor(
+    180,
+    148,
+    61
+);
+
+pdf.setLineWidth(1);
+
+pdf.rect(
+    10,
+    10,
+    pageWidth - 20,
+    pageHeight - 20
+);
+
+
+/* =================================================
+   CENTER THE COMPLETE COVER GROUP
+================================================= */
+
+const coverCenterY = pageHeight / 2;
+
+
+/* CROSS */
+
+pdf.setFont(
+    "times",
+    "normal"
+);
+
+pdf.setFontSize(28);
+
+pdf.text(
+    "†",
+    pageWidth / 2,
+    coverCenterY - 55,
+    {
+        align: "center"
+    }
+);
+
+
+/* TITLE */
+
+pdf.setFont(
+    "times",
+    "bold"
+);
+
+pdf.setFontSize(24);
+
+pdf.text(
+    "MY TREASURES",
+    pageWidth / 2,
+    coverCenterY - 32,
+    {
+        align: "center"
+    }
+);
+
+
+/* GOLD LINE */
+
+pdf.setDrawColor(
+    180,
+    148,
+    61
+);
+
+pdf.setLineWidth(0.5);
+
+pdf.line(
+    35,
+    coverCenterY - 24,
+    pageWidth - 35,
+    coverCenterY - 24
+);
+
+
+/* SUBTITLE */
+
+pdf.setFont(
+    "times",
+    "normal"
+);
+
+pdf.setFontSize(13);
+
+pdf.text(
+    "KING JAMES VERSION",
+    pageWidth / 2,
+    coverCenterY - 12,
+    {
+        align: "center"
+    }
+);
+
+
+/* DESCRIPTION */
+
+pdf.setFontSize(11);
+
+pdf.text(
+    "My Saved Bible Treasures",
+    pageWidth / 2,
+    coverCenterY + 2,
+    {
+        align: "center"
+    }
+);
+
+
+/* NUMBER OF TREASURES */
+
+pdf.setFont(
+    "times",
+    "italic"
+);
+
+pdf.setFontSize(10);
+
+pdf.text(
+    favorites.length +
+    (
+        favorites.length === 1
+            ? " Treasure"
+            : " Treasures"
+    ),
+    pageWidth / 2,
+    coverCenterY + 15,
+    {
+        align: "center"
+    }
+);
+
+
+/* DATE */
+
+pdf.setFont(
+    "times",
+    "normal"
+);
+
+pdf.setFontSize(9);
+
+pdf.text(
+    new Date().toLocaleDateString(
+        "en-GB",
+        {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }
+    ),
+    pageWidth / 2,
+    coverCenterY + 29,
+    {
+        align: "center"
+    }
+);
+
+
+/* CROSS AT BOTTOM OF GROUP */
+
+pdf.setFontSize(18);
+
+pdf.text(
+    "†",
+    pageWidth / 2,
+    coverCenterY + 48,
+    {
+        align: "center"
+    }
+);
+
+
+        /* =================================================
+           NEW PAGE FOR TREASURES
+        ================================================= */
+
+        pdf.addPage();
+
+        y = 20;
+
+
+        /* =================================================
+           PROCESS EACH TREASURE
+        ================================================= */
+
+        for (
+            let i = 0;
+            i < favorites.length;
+            i++
+        ) {
+
+            const item =
+                favorites[i];
+
+
+            /* =============================================
+               LOAD BIBLE JSON
+            ============================================= */
+
+            let response;
+
+            try {
+
+                response =
+                    await fetch(
+                        "bible/" +
+                        encodeURIComponent(
+                            item.book
+                        ) +
+                        ".json"
+                    );
+
+            } catch (error) {
+
+                console.error(
+                    "Unable to load:",
+                    item.book,
+                    error
+                );
+
+                continue;
+            }
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "Bible file not found:",
+                    item.book
+                );
+
+                continue;
+            }
+
+
+            const data =
+                await response.json();
+
+
+            const verses =
+                data.chapters[
+                    String(item.chapter)
+                ];
+
+
+            if (!verses) {
+
+                console.error(
+                    "Chapter not found:",
+                    item.book,
+                    item.chapter
+                );
+
+                continue;
+            }
+
+
+            /* =============================================
+               TREASURE HEADING
+            ============================================= */
+
+            if (y > pageHeight - 50) {
+
+                pdf.addPage();
+
+                y = 20;
+            }
+
+
+            /* GOLD CROSS */
+
+            pdf.setFont(
+                "times",
+                "normal"
+            );
+
+            pdf.setFontSize(16);
+
+            pdf.text(
+                "†",
+                pageWidth / 2,
+                y,
+                {
+                    align: "center"
+                }
+            );
+
+            y += 8;
+
+
+            /* BOOK */
+
+            pdf.setFont(
+                "times",
+                "bold"
+            );
+
+            pdf.setFontSize(18);
+
+            pdf.text(
+                item.book.toUpperCase(),
+                pageWidth / 2,
+                y,
+                {
+                    align: "center"
+                }
+            );
+
+            y += 7;
+
+
+            /* CHAPTER */
+
+            pdf.setFontSize(13);
+
+            pdf.text(
+                "CHAPTER " +
+                item.chapter,
+                pageWidth / 2,
+                y,
+                {
+                    align: "center"
+                }
+            );
+
+            y += 6;
+
+
+            /* SAVED DATE */
+
+            if (item.savedAt) {
+
+                pdf.setFont(
+                    "times",
+                    "italic"
+                );
+
+                pdf.setFontSize(8);
+
+                const savedDate =
+                    new Date(
+                        item.savedAt
+                    ).toLocaleDateString(
+                        "en-GB",
+                        {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric"
+                        }
+                    );
+
+                pdf.text(
+                    "Saved: " + savedDate,
+                    pageWidth / 2,
+                    y,
+                    {
+                        align: "center"
+                    }
+                );
+
+                y += 7;
+            }
+
+
+            /* DECORATIVE LINE */
+
+            pdf.setDrawColor(
+                180,
+                148,
+                61
+            );
+
+            pdf.setLineWidth(0.5);
+
+            pdf.line(
+                margin,
+                y,
+                pageWidth - margin,
+                y
+            );
+
+            y += 8;
+
+
+            /* =============================================
+               VERSES
+            ============================================= */
+
+            const verseNumbers =
+                Object.keys(verses)
+                    .filter(function(key) {
+
+                        return /^\d+$/.test(key);
+
+                    })
+                    .map(function(key) {
+
+                        return Number(key);
+
+                    })
+                    .sort(function(a, b) {
+
+                        return a - b;
+
+                    });
+
+
+            pdf.setFont(
+                "times",
+                "normal"
+            );
+
+            pdf.setFontSize(11);
+
+
+            for (
+                const verseNumber
+                of verseNumbers
+            ) {
+
+                const verseText =
+                    String(
+                        verses[
+                            String(
+                                verseNumber
+                            )
+                        ]
+                    );
+
+
+                const fullVerse =
+                    verseNumber +
+                    ". " +
+                    verseText;
+
+
+                const lines =
+                    pdf.splitTextToSize(
+                        fullVerse,
+                        contentWidth
+                    );
+
+
+                const requiredHeight =
+                    lines.length * 5.2 + 3;
+
+
+                /* =========================================
+                   PAGE BREAK
+                ========================================= */
+
+                if (
+                    y + requiredHeight >
+                    pageHeight - 20
+                ) {
+
+                    pdf.addPage();
+
+                    y = 20;
+
+                    /* small continuation heading */
+
+                    pdf.setFont(
+                        "times",
+                        "italic"
+                    );
+
+                    pdf.setFontSize(9);
+
+                    pdf.text(
+                        item.book +
+                        " - Chapter " +
+                        item.chapter +
+                        " (continued)",
+
+                        pageWidth / 2,
+                        y,
+
+                        {
+                            align: "center"
+                        }
+                    );
+
+                    y += 10;
+
+                    pdf.setFont(
+                        "times",
+                        "normal"
+                    );
+
+                    pdf.setFontSize(11);
+                }
+
+
+                pdf.text(
+                    lines,
+                    margin,
+                    y
+                );
+
+
+                y +=
+                    requiredHeight;
+            }
+
+
+            /* =============================================
+               END OF TREASURE
+            ============================================= */
+
+            y += 6;
+
+
+            pdf.setFont(
+                "times",
+                "normal"
+            );
+
+            pdf.setFontSize(13);
+
+            pdf.text(
+                "†",
+                pageWidth / 2,
+                y,
+                {
+                    align: "center"
+                }
+            );
+
+
+            y += 12;
+
+
+            /* =============================================
+               NEXT TREASURE
+            ============================================= */
+
+            if (
+                i <
+                favorites.length - 1
+            ) {
+
+                if (
+                    y >
+                    pageHeight - 35
+                ) {
+
+                    pdf.addPage();
+
+                    y = 20;
+
+                } else {
+
+                    pdf.setDrawColor(
+                        200,
+                        180,
+                        120
+                    );
+
+                    pdf.line(
+                        margin,
+                        y,
+                        pageWidth - margin,
+                        y
+                    );
+
+                    y += 12;
+                }
+            }
+        }
+
+
+        /* =================================================
+           PAGE NUMBERS
+        ================================================= */
+
+        const totalPages =
+            pdf.internal.getNumberOfPages();
+
+
+        for (
+            let page = 1;
+            page <= totalPages;
+            page++
+        ) {
+
+            pdf.setPage(page);
+
+
+            /* Bottom gold line */
+
+            pdf.setDrawColor(
+                200,
+                180,
+                120
+            );
+
+            pdf.setLineWidth(0.3);
+
+            pdf.line(
+                margin,
+                pageHeight - 15,
+                pageWidth - margin,
+                pageHeight - 15
+            );
+
+
+            /* Footer */
+
+            pdf.setFont(
+                "times",
+                "normal"
+            );
+
+            pdf.setFontSize(8);
+
+            pdf.text(
+                "My Treasures • King James Version",
+                margin,
+                pageHeight - 9
+            );
+
+
+            /* Page number */
+
+            pdf.text(
+                "Page " + page,
+                pageWidth - margin,
+                pageHeight - 9,
+                {
+                    align: "right"
+                }
+            );
+        }
+
+
+        /* =================================================
+           SAVE PDF
+        ================================================= */
+
+        pdf.save(
+            "My-Treasures-KJV.pdf"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Treasure PDF error:",
+            error
+        );
+
+        alert(
+            "Unable to create the Treasure PDF."
+        );
+    }
 }
 
 /* =========================================================
