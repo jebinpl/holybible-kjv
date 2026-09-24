@@ -1890,6 +1890,13 @@ body {
 
 }
 
+body.dark-mode #favoritesPage .sticky-page-header {
+    background: #202020;
+
+    box-shadow:
+        0 0 12px rgba(0, 0, 0, 0.7);
+}
+
 @media (max-width: 700px) {
     #favoritesPage .sticky-page-header {
         top: 95px;
@@ -4364,6 +4371,10 @@ body.dark-mode .treasure-remove-button {
 
 
 /* PDF BUTTON ON RIGHT */
+/* =========================================================
+   TREASURE HEADER PDF
+========================================================= */
+
 #favoritesPage .export-treasure-button {
 
     position: absolute;
@@ -4373,40 +4384,63 @@ body.dark-mode .treasure-remove-button {
 
     transform: translateY(-50%);
 
-    margin: 0;
+    border: none;
 
-    padding: 9px 16px;
+    background: transparent;
 
-    border: 2px solid #b8943d;
-
-    border-radius: 22px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #70451e,
-            #3b210d
-        );
-
-    color: #fff8dc;
+    color: #70451e;
 
     font-family:
         Georgia,
         "Times New Roman",
         serif;
 
-    font-size: 14px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 2px 6px;
+
+    line-height: 1;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* PDF text */
+
+#favoritesPage .pdf-text {
+
+    font-size: 12px;
 
     font-weight: bold;
 
-    cursor: pointer;
+}
 
-    box-shadow:
-        0 3px 8px rgba(0,0,0,0.18);
 
-    white-space: nowrap;
+/* Download symbol */
 
-    -webkit-tap-highlight-color: transparent;
+#favoritesPage .pdf-download {
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    margin-top: 2px;
+
+}
+
+
+/* Dark mode */
+
+body.dark-mode #favoritesPage .export-treasure-button {
+
+    color: #d4af37;
+
 }
 
 #favoritesPage .export-treasure-button:hover {
@@ -5122,13 +5156,15 @@ body.dark-mode .treasure-remove-button {
             Saved Bible Chapters 
         </p> 
 
-        <button 
-            class="export-treasure-button" 
-            onclick="exportTreasuresPDF()"> 
+        <button
+    class="export-treasure-button"
+    onclick="exportTreasuresPDF()"
+    title="Download PDF">
 
-            📄 Export PDF 
+    <span class="pdf-text">PDF</span>
+    <span class="pdf-download">↓</span>
 
-        </button>
+</button>
 
     </div> 
 
