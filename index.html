@@ -1890,6 +1890,48 @@ body {
 
 }
 
+/* =========================================================
+   VERSE TREASURE HEADER — STAYS WHILE LIST SCROLLS
+========================================================= */
+
+#verseTreasurePage .sticky-page-header {
+    position: sticky;
+    top: 105px;
+    z-index: 900;
+    background: #fbf6e9;
+    box-shadow:
+        0 0 12px rgba(255, 253, 245, 0.9);
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+    #verseTreasurePage .sticky-page-header {
+        top: 95px;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 450px) {
+    #verseTreasurePage .sticky-page-header {
+        top: 90px;
+    }
+}
+
+/* VERSE TREASURE - DARK MODE HEADER */
+
+body.dark-mode #verseTreasurePage .sticky-page-header {
+    background: #2e2d2d !important;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode #verseTreasurePage .page-title,
+body.dark-mode #verseTreasurePage .page-subtitle {
+    color: #ffffff !important;
+}
+
 body.dark-mode #favoritesPage .sticky-page-header {
     background: #202020;
 
@@ -3531,6 +3573,63 @@ body.dark-mode .daily-reading-time {
 }
 
 
+/* =========================================
+   DARK MODE - MULTILINGUAL BIBLE TEXT
+========================================= */
+
+body.dark-mode .multilingual-verse {
+    color: #e8e6e3;
+    line-height: 1.9;
+}
+
+/* English */
+body.dark-mode .verse-english {
+    color: #f1f1f1;
+    line-height: 1.9;
+}
+
+/* Tamil */
+body.dark-mode .verse-tamil {
+    color: #e6d5ff;
+    line-height: 2;
+}
+
+/* Malayalam */
+body.dark-mode .verse-malayalam {
+    color: #bfe8ff;
+    line-height: 2;
+}
+
+/* Hindi */
+body.dark-mode .verse-hindi {
+    color: #ffe0b3;
+    line-height: 2;
+}
+
+/* Language spacing */
+body.dark-mode .multilingual-line {
+    margin-top: 8px;
+    margin-bottom: 10px;
+    overflow-wrap: anywhere;
+}
+
+/* Verse number */
+body.dark-mode .verse-number {
+    color: #e3c57a;
+    font-weight: bold;
+}
+
+/* DARK MODE - MAKE TEXT WHITE */
+body.dark-mode .bible-text,
+body.dark-mode .multilingual-verse,
+body.dark-mode .multilingual-line,
+body.dark-mode .verse-english,
+body.dark-mode .verse-tamil,
+body.dark-mode .verse-malayalam,
+body.dark-mode .verse-hindi {
+    color: #ffffff !important;
+}
+
 /* =========================
    MOBILE THEME BUTTON
 ========================= */
@@ -4556,6 +4655,425 @@ dialog button {
     margin: 0;
 }
 
+/* Multilingual Bible verse colors */
+
+.multilingual-line {
+    display: block;
+    margin-top: 8px;
+    white-space: pre-wrap;
+}
+
+.verse-english {
+    color: #000000 !important;
+}
+
+.verse-tamil {
+    color: #1976D2 !important;
+}
+
+.verse-malayalam {
+    color: #8E44AD !important;
+}
+
+.verse-hindi {
+    color: #01ad57 !important;
+}
+
+/* =====================================
+   VERSE TREASURE HEART
+===================================== */
+
+.verse-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.verse-treasure-heart {
+    border: none;
+    background: transparent;
+    color: #777;
+    font-size: 25px;
+    cursor: pointer;
+    padding: 2px 8px;
+    line-height: 1;
+}
+
+.verse-treasure-heart.active {
+    color: #e53935;
+}
+
+.verse-treasure-heart:active {
+    transform: scale(0.9);
+}
+
+/* =========================================
+   VERSE TREASURE
+========================================= */
+
+.verse-treasure-item {
+    background: #f7f4fc;
+    border: 1px solid #e0d8f0;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.verse-treasure-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.verse-treasure-text {
+    line-height: 1.7;
+    font-size: 15px;
+    color: #333;
+}
+
+.verse-treasure-heart {
+    border: none;
+    background: transparent;
+    color: #e53935;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+/* TREASURE MENU */
+
+.treasure-menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 16px;
+}
+
+.treasure-menu-button {
+    min-height: 105px;
+    background: #FBF7E9;
+    border: 2px solid #B58B24;
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    cursor: pointer;
+    color: #302719;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.treasure-menu-icon {
+    font-size: 30px;
+}
+
+.treasure-menu-title {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.treasure-menu-button:active {
+    transform: scale(0.98);
+}
+
+
+/* VERSE TREASURE COMPACT DESIGN */
+
+.verse-treasure-preview {
+    margin: 8px 0;
+    opacity: 0.8;
+}
+
+.verse-treasure-dropdown {
+    margin: 12px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.verse-treasure-dropdown summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 5px;
+}
+
+.verse-treasure-languages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 5px 5px;
+}
+
+.verse-treasure-language {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.verse-treasure-language input {
+    width: 18px;
+    height: 18px;
+}
+
+.verse-treasure-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.verse-treasure-actions button,
+.verse-treasure-open {
+    padding: 9px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.verse-treasure-share {
+    background: #218838;
+    color: white;
+    border: none;
+}
+
+.verse-treasure-pdf {
+    background: #2563eb;
+    color: white;
+    border: none;
+}
+
+.verse-treasure-open {
+    margin: 8px 5px 8px 0;
+}
+
+
+/* =====================================
+   VERSE TREASURE - CLEAN CARD LAYOUT
+===================================== */
+
+#verseFavoritesList .favorite-item {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px;
+    margin-bottom: 14px;
+    gap: 12px;
+    position: relative;
+}
+
+/* Verse reference and preview */
+#verseFavoritesList .favorite-info {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding-right: 35px;
+}
+
+#verseFavoritesList .favorite-info strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 8px;
+    white-space: normal;
+}
+
+#verseFavoritesList .verse-treasure-preview {
+    margin: 0;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* Language dropdown */
+#verseFavoritesList .verse-treasure-dropdown {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+/* Language options */
+#verseFavoritesList .verse-treasure-languages {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Open verse button */
+#verseFavoritesList .verse-treasure-open {
+    align-self: flex-start;
+    margin: 0;
+}
+
+/* Remove heart button */
+#verseFavoritesList .favorite-heart {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    margin: 0;
+}
+
+
+/* VERSE TREASURE OPEN + REMOVE BUTTONS */
+
+.verse-treasure-verse-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.verse-treasure-verse-actions .verse-treasure-open,
+.verse-treasure-remove {
+    margin: 0;
+    padding: 9px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.verse-treasure-remove {
+    background: #dc3545;
+    color: white;
+    border: none;
+}
+
+.custom-dialog {
+    border: none;
+    border-radius: 12px;
+    padding: 24px;
+    width: 85%;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+}
+
+.custom-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.custom-dialog p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.custom-dialog button {
+    padding: 10px 28px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+/* CENTER VERSE TREASURE HEADER */
+
+#verseTreasurePage .sticky-page-header {
+    text-align: center;
+}
+
+#verseTreasurePage .sticky-page-header .page-title {
+    text-align: center !important;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* CENTER TREASURE PAGE HEADER */
+
+#treasureListPage .sticky-page-header {
+    text-align: center;
+}
+
+#treasureListPage .sticky-page-header .page-title,
+#treasureListPage .sticky-page-header .page-subtitle {
+    width: 100%;
+    text-align: center !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.treasure-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+}
+
+.treasure-header .nav-back-button {
+    grid-column: 1;
+    justify-self: start;
+}
+
+.treasure-header .page-title {
+    grid-column: 2;
+    text-align: center;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.treasure-header .export-treasure-button {
+    grid-column: 3;
+    justify-self: end;
+}
+
+.treasure-back-button {
+    flex-shrink: 0;
+}
+
+.export-treasure-button {
+    flex-shrink: 0;
+}
+
+/* DARK MODE - TREASURE MENU BUTTONS */
+
+body.dark-mode #treasureListPage button {
+    background-color: #2c2c2c !important;
+    color: #ffffff !important;
+    border: 1px solid #444444 !important;
+}
+
+/* Button hover effect */
+body.dark-mode #treasureListPage button:hover {
+    background-color: #3a3a3a !important;
+}
+
+/* DARK MODE - GOLD BORDER */
+
+body.dark-mode #treasureListPage button {
+    background-color: #2c2c2c !important;
+    color: #ffffff !important;
+    border: 1px solid #d4af37 !important;
+    border-radius: 8px;
+}
+
+/* GOLD BORDER ON HOVER */
+body.dark-mode #treasureListPage button:hover {
+    background-color: #3a3a3a !important;
+    border-color: #ffd700 !important;
+}
+
+/* =====================================
+   MULTILINGUAL VERSE SEPARATOR
+===================================== */
+
+.multilingual-line {
+    padding: 10px 0;
+    border-bottom: 1px solid #d4af37;
+    line-height: 1.8;
+}
+
+/* Remove the line after the final language */
+.multilingual-line:last-of-type {
+    border-bottom: none;
+}
+
 </style>
 </head>
 
@@ -4825,6 +5343,64 @@ dialog button {
 
             <div class="home-main-icon">⚙️</div>
             <div class="home-main-title">SETTING</div>
+
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     TREASURE LIST PAGE
+========================= -->
+
+<section
+    id="treasureListPage"
+    class="page">
+
+    <div class="sticky-page-header">
+
+
+        <h2 class="page-title">
+            TREASURES
+        </h2>
+
+        <!-- Keeps the title centered -->
+        <div class="treasure-header-spacer"></div>
+
+    </div>
+
+    <p class="page-subtitle">
+        Treasure List
+    </p>
+
+</div>
+
+    <div class="treasure-menu">
+
+        <button
+            class="treasure-menu-button"
+            onclick="openChapterTreasure()">
+
+            <div class="treasure-menu-icon">📖</div>
+
+            <div class="treasure-menu-title">
+                CHAPTER TREASURES
+            </div>
+
+        </button>
+
+        <button
+            class="treasure-menu-button"
+            onclick="openVerseTreasure()">
+
+            <div class="treasure-menu-icon">♥</div>
+
+            <div class="treasure-menu-title">
+                VERSE TREASURE
+            </div>
 
         </button>
 
@@ -5209,44 +5785,99 @@ dialog button {
     id="favoritesPage" 
     class="page"> 
 
-    <div class="sticky-page-header"> 
+    <div class="sticky-page-header">
 
-        <h2 class="page-title"> 
-            TREASURES 
-        </h2> 
+    <div class="treasure-header">
+<button
+    class="nav-back-button"
+    onclick="backToTreasureMenu()">
+    ←
+    </button>
 
-        <p class="page-subtitle"> 
-            Saved Bible Chapters 
-        </p> 
+        <h2 class="page-title">
+            CHAPTER TREASURES
+        </h2>
 
         <button
-    class="export-treasure-button"
-    onclick="exportTreasuresPDF()"
-    title="Download PDF">
+            class="export-treasure-button"
+            onclick="exportTreasuresPDF()"
+            title="Download PDF">
 
-    <span class="pdf-text">PDF</span>
-    <span class="pdf-download">↓</span>
+            <span class="pdf-text">PDF</span>
+            <span class="pdf-download">↓</span>
 
-</button>
+        </button>
 
-    </div> 
+    </div>
+
+    <p class="page-subtitle">
+        Saved Bible Chapters
+    </p>
+
+</div>
 
 
-    <div 
-        id="favoritesList" 
-        class="favorites-list"> 
+    <!-- ============================= -->
+<!-- CHAPTER TREASURE -->
+<!-- ============================= -->
 
-    </div> 
+<div class="treasure-section">
+
+    <div
+        id="favoritesList"
+        class="favorites-list">
+    </div>
+
+</div>
 
 </section>
 
+<!-- =========================
+     VERSE TREASURE PAGE
+========================= -->
+
+<section
+    id="verseTreasurePage"
+    class="page">
+
+    <div class="sticky-page-header">
+
+        <div class="treasure-header">
+
+            <button
+                class="nav-back-button"
+                onclick="backToTreasureMenu()">
+                ←
+            </button>
+
+            <h2 class="page-title">
+                VERSE TREASURE
+            </h2>
+
+        </div>
+
+        <p class="page-subtitle">
+            Your Saved Bible Verses
+        </p>
+
+    </div>
+
+    <div
+        id="verseFavoritesList"
+        class="favorites-list">
+    </div>
+
+</section>
 
 </main>
 
 <script src="https://www.youtube.com/iframe_api"></script> 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
  
 <script> 
+
+    let currentReaderLanguage = "en";
  
 /* ========================================================= 
    BIBLE BOOKS 
@@ -5418,20 +6049,542 @@ function showFavorites() {
     document.getElementById("bookPage").style.display = "none";
     document.getElementById("chapterPage").style.display = "none";
     document.getElementById("videoPage").style.display = "none";
-
     document.getElementById("searchPage").style.display = "none";
     document.getElementById("bibleTextSearchPage").style.display = "none";
+    document.getElementById("favoritesPage").style.display = "none";
+
+    document.getElementById("treasureListPage").style.display = "block";
+
+    sessionStorage.setItem("page", "treasureList");
+
+    updateTestamentNavigation();
+}
+
+function openChapterTreasure() {
+
+    hideGroupedPages();
+
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+    document.getElementById("treasureListPage").style.display = "none";
 
     document.getElementById("favoritesPage").style.display = "block";
 
-    sessionStorage.setItem(
-        "page",
-        "favorites"
-    );
+    sessionStorage.setItem("page", "favorites");
 
     renderFavorites();
 
     updateTestamentNavigation();
+}
+
+function openVerseTreasure() {
+
+    hideGroupedPages();
+
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+    document.getElementById("favoritesPage").style.display = "none";
+    document.getElementById("treasureListPage").style.display = "none";
+    
+
+    document.getElementById("verseTreasurePage").style.display = "block";
+
+    sessionStorage.setItem("page", "verseTreasure");
+
+    renderVerseFavorites();
+
+    updateTestamentNavigation();
+}
+
+
+/* =========================================
+   SHARE SELECTED VERSE TREASURE
+========================================= */
+
+async function shareVerseTreasureSelected(
+    book,
+    chapter,
+    verseNumber,
+    texts,
+    selectedLanguages
+) {
+
+    const languageNames = {
+        english: "English",
+        tamil: "Tamil",
+        malayalam: "Malayalam",
+        hindi: "Hindi"
+    };
+
+    // Build selected verse text
+    let message =
+        "Today's Verse Treasure\n\n" +
+        book + " " + chapter + ":" + verseNumber +
+        "\n\n";
+
+    selectedLanguages.forEach(function(language) {
+
+        const verseText = texts[language];
+
+        if (verseText && verseText.trim()) {
+
+            message +=
+                languageNames[language] + "\n" +
+                verseText.trim() + "\n\n";
+
+        }
+
+    });
+
+    message = message.trim();
+
+    if (!message) {
+        alert("No verse text available for the selected languages.");
+        return;
+    }
+
+    // Share using the phone's share menu
+    try {
+
+        if (navigator.share) {
+
+            await navigator.share({
+                title:
+                    "Verse Treasure - " +
+                    book + " " +
+                    chapter + ":" +
+                    verseNumber,
+
+                text: message
+            });
+
+        } else {
+
+            await navigator.clipboard.writeText(message);
+
+            alert(
+                "Verse copied successfully. " +
+                "Open WhatsApp and paste it."
+            );
+
+        }
+
+    } catch (error) {
+
+        if (error.name !== "AbortError") {
+
+            console.error("Share failed:", error);
+
+            alert("Unable to share this verse.");
+
+        }
+
+    }
+
+}
+
+function renderVerseFavorites() {
+
+    const container =
+        document.getElementById("verseFavoritesList");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const treasures = JSON.parse(
+        localStorage.getItem("bibleVerseTreasures") || "[]"
+    );
+
+    if (treasures.length === 0) {
+
+        container.innerHTML = `
+            <p class="empty-message">
+                No verse treasures saved yet.
+            </p>
+        `;
+
+        return;
+    }
+
+    treasures.forEach(function(item) {
+
+        const book = item.book;
+        const chapter = item.chapter;
+
+        item.verses.forEach(function(verse) {
+
+            const box = document.createElement("div");
+            box.className = "favorite-item";
+
+            // =========================
+            // VERSE INFORMATION
+            // =========================
+
+            const info = document.createElement("div");
+            info.className = "favorite-info";
+
+            const reference = document.createElement("strong");
+
+            reference.textContent =
+                book + " " + chapter + ":" + verse.verse;
+
+            info.appendChild(reference);
+
+            // Support old saved English verses
+            const texts =
+                typeof verse.text === "object" && verse.text !== null
+                    ? verse.text
+                    : {
+                        english: verse.text || "",
+                        tamil: "",
+                        malayalam: "",
+                        hindi: ""
+                    };
+
+            // First three English words
+            const preview = document.createElement("p");
+
+            const words = (texts.english || "")
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean);
+
+            preview.textContent =
+                words.slice(0, 3).join(" ") + "...";
+
+            preview.className = "verse-treasure-preview";
+
+            info.appendChild(preview);
+
+            box.appendChild(info);
+
+            // =========================
+            // LANGUAGE DROPDOWN
+            // =========================
+
+            const dropdown = document.createElement("details");
+            dropdown.className = "verse-treasure-dropdown";
+
+            const summary = document.createElement("summary");
+            summary.textContent = "Select languages for Share / PDF";
+
+            dropdown.appendChild(summary);
+
+            const languageBox = document.createElement("div");
+            languageBox.className = "verse-treasure-languages";
+
+            const languages = [
+                { key: "english", label: "English" },
+                { key: "tamil", label: "தமிழ் (Tamil)" },
+                { key: "malayalam", label: "മലയാളം (Malayalam)" },
+                { key: "hindi", label: "हिन्दी (Hindi)" }
+            ];
+
+            const selectedLanguages = [];
+
+            languages.forEach(function(language) {
+
+                const label = document.createElement("label");
+                label.className = "verse-treasure-language";
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = language.key;
+
+                checkbox.addEventListener("change", function() {
+
+                    if (checkbox.checked) {
+
+                        if (!selectedLanguages.includes(language.key)) {
+                            selectedLanguages.push(language.key);
+                        }
+
+                    } else {
+
+                        const index =
+                            selectedLanguages.indexOf(language.key);
+
+                        if (index !== -1) {
+                            selectedLanguages.splice(index, 1);
+                        }
+
+                    }
+
+                });
+
+                const text = document.createElement("span");
+                text.textContent = language.label;
+
+                label.appendChild(checkbox);
+                label.appendChild(text);
+
+                languageBox.appendChild(label);
+
+            });
+
+            // =========================
+            // SHARE BUTTON
+            // =========================
+
+            const shareButton = document.createElement("button");
+            shareButton.textContent = "Share";
+            shareButton.className = "verse-treasure-share";
+
+            shareButton.onclick = function() {
+
+                if (selectedLanguages.length === 0) {
+                    showDialog("Please select at least one language.");
+                    return;
+                }
+
+                shareVerseTreasureSelected(
+                    book,
+                    chapter,
+                    verse.verse,
+                    texts,
+                    [...selectedLanguages]
+                );
+
+            };
+
+            // =========================
+            // PDF BUTTON
+            // =========================
+
+            const pdfButton = document.createElement("button");
+            pdfButton.textContent = "Download PDF";
+            pdfButton.className = "verse-treasure-pdf";
+
+            pdfButton.onclick = function() {
+
+                if (selectedLanguages.length === 0) {
+                    showDialog("Please select at least one language.");
+                    return;
+                }
+
+                exportVerseTreasureSelected(
+                    book,
+                    chapter,
+                    verse.verse,
+                    texts,
+                    [...selectedLanguages]
+                );
+
+            };
+
+            const actionButtons = document.createElement("div");
+            actionButtons.className = "verse-treasure-actions";
+
+            actionButtons.appendChild(shareButton);
+            actionButtons.appendChild(pdfButton);
+
+            languageBox.appendChild(actionButtons);
+            dropdown.appendChild(languageBox);
+
+            box.appendChild(dropdown);
+
+            
+            // =========================
+            // OPEN VERSE + REMOVE
+            // =========================
+
+            const verseActions = document.createElement("div");
+            verseActions.className = "verse-treasure-verse-actions";
+
+            // Open Verse button
+            const openButton = document.createElement("button");
+
+            openButton.textContent = "Open Verse";
+            openButton.className = "verse-treasure-open";
+
+            openButton.onclick = function() {
+
+                openVerseFromTreasure(
+                    book,
+                    chapter,
+                    verse.verse
+                );
+
+            };
+
+            verseActions.appendChild(openButton);
+
+            // Remove button
+            const removeButton = document.createElement("button");
+
+            removeButton.textContent = "Remove";
+            removeButton.className = "verse-treasure-remove";
+            removeButton.title = "Remove from Treasure";
+
+            removeButton.onclick = function() {
+
+                removeVerseFromTreasure(
+                    book,
+                    chapter,
+                    verse.verse
+                );
+
+            };
+
+            verseActions.appendChild(removeButton);
+
+            box.appendChild(verseActions);
+
+            container.appendChild(box);
+
+        });
+
+    });
+
+}
+
+
+// =====================================
+// CREATE TREASURE LANGUAGE LINE
+// =====================================
+
+function addTreasureLanguage(
+    container,
+    language,
+    text
+) {
+
+    if (!text) return;
+
+    const line = document.createElement("p");
+
+    line.className = "treasure-language-line";
+
+    const label = document.createElement("strong");
+
+    label.textContent = language + ": ";
+
+    const verseText = document.createElement("span");
+
+    verseText.textContent = text;
+
+    line.appendChild(label);
+    line.appendChild(verseText);
+
+    container.appendChild(line);
+}
+
+function removeVerseFromTreasure(book, chapter, verseNumber) {
+
+    const dialog = document.createElement("div");
+
+    dialog.className = "treasure-confirm-overlay";
+
+    dialog.innerHTML = `
+
+        <div class="treasure-confirm-box">
+
+            <div class="treasure-confirm-title">
+                Remove Treasure?
+            </div>
+
+            <div class="treasure-confirm-message">
+                Are you sure you want to remove
+                <strong>
+                    ${book} - Chapter ${chapter}, Verse ${verseNumber}
+                </strong>
+                from your treasures?
+            </div>
+
+            <div class="treasure-confirm-buttons">
+
+                <button class="treasure-cancel-button">
+                    No
+                </button>
+
+                <button class="treasure-remove-button">
+                    Yes, Remove
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+    document.body.appendChild(dialog);
+
+    // NO / CANCEL
+    dialog
+        .querySelector(".treasure-cancel-button")
+        .onclick = function() {
+            dialog.remove();
+        };
+
+    // YES / REMOVE
+    dialog
+        .querySelector(".treasure-remove-button")
+        .onclick = function() {
+
+            let treasures = JSON.parse(
+                localStorage.getItem("bibleVerseTreasures") || "[]"
+            );
+
+            treasures = treasures.map(function(item) {
+
+                if (
+                    item.book === book &&
+                    Number(item.chapter) === Number(chapter)
+                ) {
+
+                    item.verses = item.verses.filter(function(verse) {
+                        return Number(verse.verse) !== Number(verseNumber);
+                    });
+
+                }
+
+                return item;
+            });
+
+            // Remove chapters with no remaining verses
+            treasures = treasures.filter(function(item) {
+                return item.verses.length > 0;
+            });
+
+            localStorage.setItem(
+    "bibleVerseTreasures",
+    JSON.stringify(treasures)
+);
+
+// =====================================
+// SYNCHRONIZE BIBLE CHAPTER HEART
+// =====================================
+
+document
+    .querySelectorAll(".verse-treasure-heart")
+    .forEach(function(heart) {
+
+        if (
+            heart.dataset.book === book &&
+            String(heart.dataset.chapter) === String(chapter) &&
+            String(heart.dataset.verse) === String(verseNumber)
+        ) {
+
+            heart.textContent = "♡";
+            heart.classList.remove("active");
+        }
+
+    });
+
+// Refresh Verse Treasure list
+renderVerseFavorites();
+
+dialog.remove();
+        };
 }
 
 async function shareTreasure(book, chapter) {
@@ -5588,23 +6741,17 @@ function renderFavorites() {
     const favorites = getFavorites();
 
 
-    if (favorites.length === 0) {
+        if (favorites.length === 0) {
 
-        container.innerHTML = `
-            <div class="favorite-item">
-
-                <div class="favorite-item-title"
-                     style="cursor:default;text-align:center;">
-
-                    No treasure's yet? Grab it from Bible.
-
-                </div>
-
+    container.innerHTML = `
+        <div class="favorite-item">
+            <div class="favorite-item-title"
+                 style="cursor:default;text-align:center;">
+                No chapter treasure yet.
             </div>
-        `;
-
-        return;
-    }
+        </div>
+    `;
+    }                                                         
 
 
     favorites.forEach(function(item, index) {
@@ -5753,6 +6900,140 @@ function renderFavorites() {
         container.appendChild(row);
 
     });
+
+    // ============================================
+// VERSE TREASURE
+// ============================================
+
+const verseContainer =
+    document.getElementById("verseFavoritesList");
+
+if (verseContainer) {
+
+    verseContainer.innerHTML = "";
+
+    let verseTreasures = [];
+
+    try {
+
+        verseTreasures = JSON.parse(
+            localStorage.getItem("bibleVerseTreasures") || "[]"
+        );
+
+    } catch (error) {
+
+        verseTreasures = [];
+
+    }
+
+    if (verseTreasures.length === 0) {
+
+        verseContainer.innerHTML = `
+            <div class="favorite-item">
+                <div class="favorite-item-title"
+                     style="cursor:default;text-align:center;">
+                    No verse treasure yet.
+                </div>
+            </div>
+        `;
+
+    }
+
+    verseTreasures.forEach(function(item) {
+
+        // Chapter heading inside Verse Treasure
+
+        const chapterBox =
+            document.createElement("div");
+
+        chapterBox.className =
+            "favorite-item";
+
+        const chapterTitle =
+            document.createElement("div");
+
+        chapterTitle.className =
+            "favorite-item-title";
+
+        chapterTitle.textContent =
+            item.book + " - Chapter " + item.chapter;
+
+        chapterBox.appendChild(chapterTitle);
+
+        // Individual verse boxes
+
+        (item.verses || []).forEach(function(verseItem) {
+
+            const verseBox =
+                document.createElement("div");
+
+            verseBox.className =
+                "verse-treasure-item";
+
+            const verseHeader =
+                document.createElement("div");
+
+            verseHeader.className =
+                "verse-treasure-header";
+
+            const verseTitle =
+                document.createElement("strong");
+
+            verseTitle.textContent =
+                "Verse " + verseItem.verse;
+
+            const heart =
+                document.createElement("button");
+
+            heart.type = "button";
+
+            heart.className =
+                "verse-treasure-heart active";
+
+            heart.textContent = "♥";
+
+            heart.title = "Remove from Verse Treasure";
+
+            heart.onclick = function(event) {
+
+                event.stopPropagation();
+
+                toggleVerseTreasure(
+                    item.book,
+                    Number(item.chapter),
+                    Number(verseItem.verse),
+                    verseItem.text,
+                    heart
+                );
+
+                renderFavorites();
+
+            };
+
+            verseHeader.appendChild(verseTitle);
+            verseHeader.appendChild(heart);
+
+            const verseText =
+                document.createElement("div");
+
+            verseText.className =
+                "verse-treasure-text";
+
+            verseText.textContent =
+                verseItem.text || "";
+
+            verseBox.appendChild(verseHeader);
+            verseBox.appendChild(verseText);
+
+            chapterBox.appendChild(verseBox);
+
+        });
+
+        verseContainer.appendChild(chapterBox);
+
+    });
+
+    }
 
 }
 
@@ -7905,7 +9186,9 @@ function hideGroupedPages() {
         "searchGroupPage",
         "bibleGroupPage",
         "settingsPage",
-        "favoritesPage"
+        "favoritesPage",
+        "treasureListPage",
+        "verseTreasurePage"
     ];
 
     pages.forEach(function(id) {
@@ -8901,81 +10184,396 @@ if (videoList && videoList.parentNode) {
 
 }
  
-async function updateBibleReader(book, chapter) { 
- 
-    const data = 
-        await loadBibleBook(book); 
- 
- 
-    const textContainer = 
-        document.getElementById("bibleText"); 
- 
- 
-    if (!data) { 
- 
-        textContainer.innerHTML = 
-            "<p>Unable to load Bible text.</p>"; 
- 
-        return; 
-    } 
- 
- 
-    const verses = 
-        data.chapters[String(chapter)]; 
- 
- 
-    if (!verses) { 
- 
-        textContainer.innerHTML = 
-            "<p>Bible text for this chapter is not available yet.</p>"; 
- 
-        return; 
-    } 
- 
- 
-    document.getElementById("bibleReaderTitle").textContent = 
-        book + " - Ch " + chapter; 
- 
- 
-    textContainer.innerHTML = ""; 
- 
- 
-const verseNumbers = Object.keys(verses)
-    .filter(key => /^\d+$/.test(key))
-    .map(Number)
-    .sort((a, b) => a - b);
+async function updateBibleReader(book, chapter) {
 
-verseNumbers.forEach(function(verseNumber) {
+    const textContainer =
+        document.getElementById("bibleText");
 
-    // Get heading for this verse
-    const heading = verses["heading_" + verseNumber];
+    const title =
+        document.getElementById("bibleReaderTitle");
 
-    // Add heading BEFORE the verse
-    if (heading) {
-        const headingElement = document.createElement("div");
+    if (!textContainer) return;
 
-        headingElement.className = "bible-section-heading";
+    textContainer.innerHTML =
+        "<p>Loading Bible text...</p>";
 
-        headingElement.textContent = heading;
+    try {
 
-        textContainer.appendChild(headingElement);
+        // =====================================
+        // LOAD ALL FOUR LANGUAGE FILES
+        // =====================================
+
+        const englishData =
+            await loadBibleBook(book);
+
+        async function loadTranslation(folder) {
+
+            try {
+
+                const response = await fetch(
+                    "bible/" +
+                    folder +
+                    "/" +
+                    encodeURIComponent(book) +
+                    ".json"
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        folder + " file not found"
+                    );
+                }
+
+                return await response.json();
+
+            } catch (error) {
+
+                console.error(
+                    "Unable to load " + folder,
+                    error
+                );
+
+                return null;
+            }
+        }
+
+        const [tamilData, malayalamData, hindiData] =
+            await Promise.all([
+                loadTranslation("bible-ta"),
+                loadTranslation("bible-ml"),
+                loadTranslation("bible-hi")
+            ]);
+
+        // =====================================
+        // GET CHAPTER DATA
+        // =====================================
+
+        if (!englishData) {
+            textContainer.innerHTML =
+                "<p>Unable to load English Bible text.</p>";
+            return;
+        }
+
+        const englishVerses =
+            englishData.chapters[String(chapter)];
+
+        const tamilVerses =
+            tamilData?.[book]?.[String(chapter)] || {};
+
+        const malayalamVerses =
+            malayalamData?.[book]?.[String(chapter)] || {};
+
+        const hindiVerses =
+            hindiData?.[book]?.[String(chapter)] || {};
+
+        if (!englishVerses) {
+            textContainer.innerHTML =
+                "<p>Bible text for this chapter is not available yet.</p>";
+            return;
+        }
+
+        // =====================================
+        // SET CHAPTER TITLE
+        // =====================================
+
+        if (title) {
+            title.textContent =
+                book + " - Ch " + chapter;
+        }
+
+        textContainer.innerHTML = "";
+
+        // =====================================
+        // GET VERSE NUMBERS
+        // =====================================
+
+        const verseNumbers =
+            Object.keys(englishVerses)
+                .filter(key => /^\d+$/.test(key))
+                .map(Number)
+                .sort((a, b) => a - b);
+
+        // =====================================
+        // RENDER ALL FOUR LANGUAGES
+        // =====================================
+
+        verseNumbers.forEach(function(verseNumber) {
+
+            const key = String(verseNumber);
+
+            // Section heading from English
+            const heading =
+                englishVerses["heading_" + verseNumber];
+
+            if (heading) {
+
+                const headingElement =
+                    document.createElement("div");
+
+                headingElement.className =
+                    "bible-section-heading";
+
+                headingElement.textContent = heading;
+
+                textContainer.appendChild(
+                    headingElement
+                );
+            }
+
+            // Main verse container
+            // Main verse container
+const verseBox =
+    document.createElement("div");
+
+verseBox.className =
+    "bible-verse multilingual-verse";
+
+// Unique ID for direct verse navigation
+verseBox.id =
+    "bible-verse-" + verseNumber;
+
+            // Verse number
+            // =====================================
+// VERSE NUMBER + TREASURE HEART
+// =====================================
+
+const verseHeader =
+    document.createElement("div");
+
+verseHeader.className = "verse-header";
+
+// Verse number
+const number =
+    document.createElement("span");
+
+number.className = "verse-number";
+
+number.textContent = verseNumber;
+
+// Heart button
+const heart =
+    document.createElement("button");
+
+heart.className = "verse-treasure-heart";
+
+heart.type = "button";
+
+// Identify this verse for heart synchronization
+heart.dataset.book = book;
+heart.dataset.chapter = chapter;
+heart.dataset.verse = verseNumber;
+
+// Set initial heart state
+const isSaved =
+    isVerseInTreasure(
+        book,
+        chapter,
+        verseNumber
+    );
+
+heart.textContent = isSaved ? "♥" : "♡";
+
+if (isSaved) {
+    heart.classList.add("active");
+}
+
+// Toggle verse treasure
+
+heart.onclick = function () {
+
+    const verseTexts = {
+        english: englishVerses[key] || "",
+        tamil: tamilVerses[key] || "",
+        malayalam: malayalamVerses[key] || "",
+        hindi: hindiVerses[key] || ""
+    };
+
+    toggleVerseTreasure(
+        book,
+        chapter,
+        verseNumber,
+        verseTexts,
+        heart
+    );
+
+};
+
+// Add number and heart
+verseHeader.appendChild(number);
+
+verseHeader.appendChild(heart);
+
+verseBox.appendChild(verseHeader);
+
+            // English
+           addLanguageLine(
+    verseBox,
+    englishVerses[key],
+    "verse-english"
+);
+
+addLanguageLine(
+    verseBox,
+    tamilVerses[key],
+    "verse-tamil"
+);
+
+addLanguageLine(
+    verseBox,
+    malayalamVerses[key],
+    "verse-malayalam"
+);
+
+addLanguageLine(
+    verseBox,
+    hindiVerses[key],
+    "verse-hindi"
+);
+
+            textContainer.appendChild(verseBox);
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Bible reader error:",
+            error
+        );
+
+        textContainer.innerHTML =
+            "<p>Unable to display Bible text.</p>";
+    }
+}
+
+
+    // =====================================
+    // CREATE ONE LANGUAGE LINE
+    // =====================================
+
+function addLanguageLine(
+    container,
+    verseText,
+    className
+) {
+
+    if (!verseText) return;
+
+    const line = document.createElement("div");
+
+    line.className =
+        "multilingual-line " + className;
+
+    line.textContent = verseText;
+
+    container.appendChild(line);
+}
+
+// =====================================
+// CHECK IF VERSE IS IN TREASURE
+// =====================================
+
+function isVerseInTreasure(book, chapter, verseNumber) {
+
+    const treasures = JSON.parse(
+        localStorage.getItem("bibleVerseTreasures") || "[]"
+    );
+
+    return treasures.some(function(item) {
+
+        return (
+            item.book === book &&
+            String(item.chapter) === String(chapter) &&
+            Array.isArray(item.verses) &&
+            item.verses.some(function(verse) {
+                return String(verse.verse) === String(verseNumber);
+            })
+        );
+
+    });
+}
+
+
+// =====================================
+// TOGGLE VERSE TREASURE
+// =====================================
+
+
+function toggleVerseTreasure(
+    book,
+    chapter,
+    verseNumber,
+    verseText,
+    button
+) {
+
+    let treasures = JSON.parse(
+        localStorage.getItem("bibleVerseTreasures") || "[]"
+    );
+
+    // Find this chapter's treasure box
+    let treasure = treasures.find(function(item) {
+        return (
+            item.book === book &&
+            String(item.chapter) === String(chapter)
+        );
+    });
+
+    // Create chapter treasure box if missing
+    if (!treasure) {
+        treasure = {
+            book: book,
+            chapter: Number(chapter),
+            verses: [],
+            savedAt: new Date().toISOString()
+        };
+
+        treasures.push(treasure);
     }
 
-    // Get verse text
-    const verseText = verses[String(verseNumber)];
+    // Find this verse
+    const existingIndex = treasure.verses.findIndex(
+        function(item) {
+            return String(item.verse) === String(verseNumber);
+        }
+    );
 
-    // Create verse
-    const verse = document.createElement("div");
+    // REMOVE VERSE FROM TREASURE
+    if (existingIndex !== -1) {
 
-    verse.className = "bible-verse";
+        treasure.verses.splice(existingIndex, 1);
 
-    verse.innerHTML =
-        `<span class="verse-number">${verseNumber}</span> ${verseText}`;
+        // Remove empty chapter treasure box
+        if (treasure.verses.length === 0) {
+            treasures = treasures.filter(function(item) {
+                return item !== treasure;
+            });
+        }
 
-    textContainer.appendChild(verse);
-});
- 
-} 
+        button.textContent = "♡";
+        button.classList.remove("active");
+    }
+
+    // ADD VERSE TO TREASURE
+    else {
+
+        treasure.verses.push({
+            verse: Number(verseNumber),
+            text: verseText
+        });
+
+        treasure.savedAt = new Date().toISOString();
+
+        button.textContent = "♥";
+        button.classList.add("active");
+    }
+
+    // Save changes
+    localStorage.setItem(
+        "bibleVerseTreasures",
+        JSON.stringify(treasures)
+    );
+}
+
 function closeBibleReader() {
 
     const wrapper =
@@ -9063,17 +10661,19 @@ window.addEventListener("DOMContentLoaded", function () {
     ===================================================== */
 
     const pageIds = [
-        "homePage",
-        "bookPage",
-        "chapterPage",
-        "videoPage",
-        "searchPage",
-        "bibleTextSearchPage",
-        "searchGroupPage",
-        "bibleGroupPage",
-        "settingsPage",
-        "favoritesPage"
-    ];
+    "homePage",
+    "bookPage",
+    "chapterPage",
+    "videoPage",
+    "searchPage",
+    "bibleTextSearchPage",
+    "searchGroupPage",
+    "bibleGroupPage",
+    "settingsPage",
+    "favoritesPage",
+    "treasureListPage",
+    "verseTreasurePage"
+];
 
     pageIds.forEach(function (id) {
 
@@ -9174,6 +10774,39 @@ window.addEventListener("DOMContentLoaded", function () {
 
         return;
     }
+
+    /* =========================================
+   TREASURE MENU
+========================================= */
+
+if (savedPage === "treasureList") {
+
+    document.getElementById(
+        "treasureListPage"
+    ).style.display = "block";
+
+    updateTestamentNavigation();
+
+    return;
+}
+
+
+/* =========================================
+   VERSE TREASURE
+========================================= */
+
+if (savedPage === "verseTreasure") {
+
+    document.getElementById(
+        "verseTreasurePage"
+    ).style.display = "block";
+
+    renderVerseFavorites();
+
+    updateTestamentNavigation();
+
+    return;
+}
 
 
     /* =====================================================
@@ -9740,7 +11373,9 @@ if (
     page === "searchGroup" ||
     page === "bibleGroup" ||
     page === "settings" ||
-    page === "favorites"
+    page === "favorites" ||
+    page === "treasureList" ||
+    page === "verseTreasure"
 ) {
 
         nav.style.display = "none";
@@ -10591,7 +12226,44 @@ if (cameFromFavorite === "true") {
        NORMAL CHAPTER BACK
     ===================================================== */
 
-    backToChapters();
+    /* =========================================
+   RETURN TO VERSE TREASURE
+========================================= */
+
+if (
+    sessionStorage.getItem("cameFromVerseTreasure") === "true"
+) {
+    // Hide the chapter-number page
+    document.getElementById("chapterPage").style.display = "none";
+
+    // Hide the video page
+    document.getElementById("videoPage").style.display = "none";
+
+    // Close the Bible reader
+    closeBibleReader();
+
+    // Hide other pages
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("favoritesPage").style.display = "none";
+    document.getElementById("treasureListPage").style.display = "none";
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+
+    // Show only Verse Treasure
+    document.getElementById("verseTreasurePage").style.display = "block";
+
+    sessionStorage.setItem("page", "verseTreasure");
+    sessionStorage.removeItem("cameFromVerseTreasure");
+
+    renderVerseFavorites();
+    updateTestamentNavigation();
+
+    return;
+}
+
+/* NORMAL CHAPTER BACK */
+backToChapters();
 }
 /* =========================================
    MOBILE KEYBOARD / VIEWPORT FIX
@@ -11145,6 +12817,421 @@ function positionSearchBelowVideo() {
     if (bibleSearchPage) {
         bibleSearchPage.style.marginTop = "0";
     }
+}
+
+// =========================================
+// OPEN EXACT VERSE FROM VERSE TREASURE
+// =========================================
+
+async function openVerseFromTreasure(
+    book,
+    chapter,
+    verseNumber
+) {
+
+    // Save chapter information
+    sessionStorage.setItem("book", book);
+    sessionStorage.setItem("chapter", chapter);
+    sessionStorage.setItem("page", "videos");
+    sessionStorage.setItem("cameFromVerseTreasure", "true");
+    
+    
+
+    // Hide other pages
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+    document.getElementById("favoritesPage").style.display = "none";
+    
+
+    // Show video page
+    const videoPage =
+        document.getElementById("videoPage");
+
+    videoPage.style.display = "block";
+
+    // Set chapter title
+    document.getElementById("videoPageTitle").textContent =
+        book + " - Ch " + chapter;
+
+    const subtitle =
+        document.querySelector("#videoPage .page-subtitle");
+
+    if (subtitle) {
+        subtitle.textContent = "Bible Videos";
+    }
+
+    // Clear old video buttons
+    const videoList =
+        document.getElementById("videoList");
+
+    if (videoList) {
+        videoList.innerHTML = "";
+    }
+
+    // Close any previously open Bible reader
+    if (bibleReaderOpen) {
+        closeBibleReader();
+    }
+
+    // Load chapter videos
+    loadChapterVideos(book, Number(chapter));
+
+    // Open Bible reader
+    await toggleBibleReader();
+
+    // Scroll to the exact verse after loading
+    requestAnimationFrame(function () {
+
+        const verseElement =
+            document.getElementById(
+                "bible-verse-" + verseNumber
+            );
+
+        if (verseElement) {
+
+            verseElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        }
+
+    });
+
+    updateTestamentNavigation();
+}
+
+function showDialog(message) {
+
+    const dialog = document.createElement("dialog");
+
+    dialog.className = "custom-dialog";
+
+    const text = document.createElement("p");
+    text.textContent = message;
+
+    const button = document.createElement("button");
+    button.textContent = "OK";
+
+    button.onclick = function () {
+        dialog.close();
+        dialog.remove();
+    };
+
+    dialog.appendChild(text);
+    dialog.appendChild(button);
+
+    document.body.appendChild(dialog);
+
+    dialog.showModal();
+}
+
+shareButton.onclick = function() {
+
+    if (selectedLanguages.length === 0) {
+        showDialog("Please select at least one language.");
+        return;
+    }
+
+    shareVerseTreasureSelected(
+        book,
+        chapter,
+        verse.verse,
+        texts,
+        [...selectedLanguages]
+    );
+};
+
+// =====================================
+// EXPORT VERSE TREASURE AS PDF
+// =====================================
+
+async function exportVerseTreasureSelected(
+    book,
+    chapter,
+    verseNumber,
+    texts,
+    selectedLanguages
+) {
+
+    if (typeof window.jspdf === "undefined") {
+        showDialog("PDF library is not loaded.");
+        return;
+    }
+
+    if (typeof window.html2canvas === "undefined") {
+        showDialog("HTML2Canvas library is not loaded.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+
+    const languageNames = {
+        english: "English",
+        tamil: "Tamil",
+        malayalam: "Malayalam",
+        hindi: "Hindi"
+    };
+
+    const fontMap = {
+        english: "Arial, sans-serif",
+        tamil: "NotoTamil, sans-serif",
+        malayalam: "NotoMalayalam, sans-serif",
+        hindi: "NotoHindi, sans-serif"
+    };
+
+    // Create temporary PDF content
+    const container = document.createElement("div");
+
+    container.style.cssText = `
+        position: fixed;
+        left: -10000px;
+        top: 0;
+        width: 700px;
+        padding: 35px;
+        background: white;
+        color: black;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+    `;
+
+    // Add font definitions
+    const style = document.createElement("style");
+
+    style.textContent = `
+        @font-face {
+            font-family: NotoTamil;
+            src: url("fonts/NotoSansTamil-Regular.ttf");
+        }
+
+        @font-face {
+            font-family: NotoMalayalam;
+            src: url("fonts/NotoSansMalayalam-Regular.ttf");
+        }
+
+        @font-face {
+            font-family: NotoHindi;
+            src: url("fonts/NotoSansDevanagari-Regular.ttf");
+        }
+    `;
+
+    container.appendChild(style);
+
+    // Heading
+    const heading = document.createElement("h2");
+    heading.textContent = "Verse Treasure";
+    heading.className = "verse-treasure-page-heading";
+    heading.style.fontSize = "28px";
+    container.appendChild(heading);
+
+    // Reference
+    const reference = document.createElement("h3");
+
+    reference.textContent =
+        book + " " + chapter + ":" + verseNumber;
+
+    reference.style.fontSize = "20px";
+    container.appendChild(reference);
+
+    // Selected languages
+    selectedLanguages.forEach(function(language) {
+
+        const verseText = texts[language];
+
+        if (!verseText || !verseText.trim()) {
+            return;
+        }
+
+        const section = document.createElement("div");
+
+        section.style.marginTop = "25px";
+
+        const languageTitle = document.createElement("h3");
+
+        languageTitle.textContent =
+            languageNames[language] || language;
+
+        languageTitle.style.fontSize = "18px";
+
+        section.appendChild(languageTitle);
+
+        const verse = document.createElement("p");
+
+        verse.textContent = verseText.trim();
+
+        verse.style.fontFamily =
+            fontMap[language] || "Arial, sans-serif";
+
+        verse.style.fontSize = "22px";
+        verse.style.lineHeight = "1.8";
+        verse.style.whiteSpace = "pre-wrap";
+        verse.style.overflowWrap = "break-word";
+
+        section.appendChild(verse);
+
+        container.appendChild(section);
+    });
+
+    document.body.appendChild(container);
+
+    try {
+
+        // Wait for fonts to load
+        await document.fonts.ready;
+
+        await Promise.all([
+            document.fonts.load('22px NotoTamil'),
+            document.fonts.load('22px NotoMalayalam'),
+            document.fonts.load('22px NotoHindi')
+        ]);
+
+        // Render HTML as an image
+        const canvas = await html2canvas(container, {
+            scale: 2,
+            backgroundColor: "#ffffff",
+            useCORS: true
+        });
+
+        const imageData = canvas.toDataURL("image/png");
+
+        const doc = new jsPDF("p", "mm", "a4");
+
+        const pageWidth = 210;
+        const pageHeight = 297;
+
+        const margin = 10;
+
+        const contentWidth = pageWidth - margin * 2;
+
+        const contentHeight =
+            (canvas.height * contentWidth) / canvas.width;
+
+        // Add image to PDF
+        let heightLeft = contentHeight;
+        let position = margin;
+
+        doc.addImage(
+            imageData,
+            "PNG",
+            margin,
+            position,
+            contentWidth,
+            contentHeight
+        );
+
+        heightLeft -= pageHeight - margin * 2;
+
+        while (heightLeft > 0) {
+
+            position = margin - (contentHeight - heightLeft);
+
+            doc.addPage();
+
+            doc.addImage(
+                imageData,
+                "PNG",
+                margin,
+                position,
+                contentWidth,
+                contentHeight
+            );
+
+            heightLeft -= pageHeight - margin * 2;
+        }
+
+        doc.save(
+            "Verse-Treasure-" +
+            book + "-" +
+            chapter + "-" +
+            verseNumber +
+            ".pdf"
+        );
+
+    } catch (error) {
+
+        console.error("PDF generation failed:", error);
+
+        showDialog("Unable to generate PDF. Please check the Console.");
+
+    } finally {
+
+        container.remove();
+
+    }
+}
+
+// =====================================
+// LOAD UNICODE FONTS FOR PDF
+// =====================================
+
+async function loadVerseTreasureFonts(doc) {
+
+    const fonts = [
+        {
+            file: "NotoSansTamil-Regular.ttf",
+            name: "NotoTamil",
+            path: "/fonts/NotoSansTamil-Regular.ttf"
+        },
+        {
+            file: "NotoSansMalayalam-Regular.ttf",
+            name: "NotoMalayalam",
+            path: "fonts/NotoSansMalayalam-Regular.ttf"
+        },
+        {
+            file: "NotoSansDevanagari-Regular.ttf",
+            name: "NotoHindi",
+            path: "fonts/NotoSansDevanagari-Regular.ttf"
+        }
+    ];
+
+    for (const font of fonts) {
+
+        const response = await fetch(font.path);
+
+        if (!response.ok) {
+            throw new Error("Font not found: " + font.path);
+        }
+
+        const buffer = await response.arrayBuffer();
+
+        const bytes = new Uint8Array(buffer);
+
+        let binary = "";
+
+        for (let i = 0; i < bytes.length; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+
+        const base64 = btoa(binary);
+
+        doc.addFileToVFS(font.file, base64);
+
+        doc.addFont(
+            font.file,
+            font.name,
+            "normal"
+        );
+    }
+}
+
+function backToTreasureMenu() {
+
+    // Hide Chapter Treasure
+    document.getElementById("favoritesPage").style.display = "none";
+
+    // Hide Verse Treasure
+    document.getElementById("verseTreasurePage").style.display = "none";
+
+    // Show Treasure menu
+    document.getElementById("treasureListPage").style.display = "block";
+
+    // Update page state
+    sessionStorage.setItem("page", "treasureList");
+
+    updateTestamentNavigation();
 }
 
 </script>
