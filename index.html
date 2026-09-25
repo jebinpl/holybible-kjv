@@ -1351,7 +1351,7 @@ body {
 ========================= */
 
 .bible-verse {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .verse-number {
@@ -4659,7 +4659,7 @@ dialog button {
 
 .multilingual-line {
     display: block;
-    margin-top: 8px;
+    margin-top: 0px;
     white-space: pre-wrap;
 }
 
@@ -4687,7 +4687,7 @@ dialog button {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 0px;
 }
 
 .verse-treasure-heart {
@@ -5074,6 +5074,45 @@ body.dark-mode #treasureListPage button:hover {
     border-bottom: none;
 }
 
+/* =====================================
+   TREASURE MENU BUTTON ANIMATION
+   Same as HOME MAIN BUTTONS
+===================================== */
+
+.treasure-menu-button {
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+.treasure-menu-button:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 16px rgba(0,0,0,0.18);
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff8df,
+            #f1dfaa
+        );
+}
+
+/* TREASURE MENU BUTTON ANIMATION — DARK MODE */
+body.dark-mode .treasure-menu-button {
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+body.dark-mode .treasure-menu-button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(to bottom, #3a3a3a, #222222);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+}
 </style>
 </head>
 
@@ -5356,7 +5395,7 @@ body.dark-mode #treasureListPage button:hover {
      TREASURE LIST PAGE
 ========================= -->
 
-<section
+    <section
     id="treasureListPage"
     class="page">
 
@@ -5376,7 +5415,7 @@ body.dark-mode #treasureListPage button:hover {
         Treasure List
     </p>
 
-</div>
+    </div>
 
     <div class="treasure-menu">
 
@@ -5387,7 +5426,7 @@ body.dark-mode #treasureListPage button:hover {
             <div class="treasure-menu-icon">📖</div>
 
             <div class="treasure-menu-title">
-                CHAPTER TREASURES
+                CHAPTER 
             </div>
 
         </button>
@@ -5399,7 +5438,7 @@ body.dark-mode #treasureListPage button:hover {
             <div class="treasure-menu-icon">♥</div>
 
             <div class="treasure-menu-title">
-                VERSE TREASURE
+                VERSE 
             </div>
 
         </button>
@@ -5795,8 +5834,7 @@ body.dark-mode #treasureListPage button:hover {
     </button>
 
         <h2 class="page-title">
-            CHAPTER TREASURES
-        </h2>
+            CHAPTERS         </h2>
 
         <button
             class="export-treasure-button"
@@ -5811,7 +5849,7 @@ body.dark-mode #treasureListPage button:hover {
     </div>
 
     <p class="page-subtitle">
-        Saved Bible Chapters
+        Saved Treasures
     </p>
 
 </div>
@@ -5851,13 +5889,13 @@ body.dark-mode #treasureListPage button:hover {
             </button>
 
             <h2 class="page-title">
-                VERSE TREASURE
+                VERSES
             </h2>
 
         </div>
 
         <p class="page-subtitle">
-            Your Saved Bible Verses
+            Saved Treasures 
         </p>
 
     </div>
@@ -6206,14 +6244,17 @@ function renderVerseFavorites() {
 
     if (treasures.length === 0) {
 
-        container.innerHTML = `
-            <p class="empty-message">
+    container.innerHTML = `
+        <div class="favorite-item">
+            <div class="favorite-item-title"
+                 style="cursor:default;text-align:center;">
                 No verse treasures saved yet.
-            </p>
-        `;
+            </div>
+        </div>
+    `;
 
-        return;
-    }
+    return;
+}
 
     treasures.forEach(function(item) {
 
