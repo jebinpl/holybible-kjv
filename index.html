@@ -5113,6 +5113,31 @@ body.dark-mode .treasure-menu-button:hover {
     background: linear-gradient(to bottom, #3a3a3a, #222222);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
 }
+
+/* BIBLE LANGUAGE DROPDOWN */
+
+.bible-language-select {
+    height: 32px;
+    max-width: 145px;
+    padding: 4px 8px;
+
+    border: 1px solid #b8943d;
+    border-radius: 6px;
+
+    background: linear-gradient(
+        to bottom,
+        #fffdf5,
+        #ead9ad
+    );
+
+    color: #5b3a00;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
 </style>
 </head>
 
@@ -5297,6 +5322,7 @@ body.dark-mode .treasure-menu-button:hover {
 
 <div class="bible-reader-wrapper">
 
+
     <!-- Controls OUTSIDE the box -->
     <div class="bible-reader-top-controls">
 
@@ -5313,6 +5339,20 @@ body.dark-mode .treasure-menu-button:hover {
                     onclick="changeBibleFontSize(1)"
                     title="Zoom In">A+</button>
         </div>
+
+                <!-- LANGUAGE SELECTOR -->
+    <select
+        id="bibleLanguageSelect"
+        class="bible-language-select"
+        onchange="changeBibleLanguage(this.value)">
+
+        <option value="english">ENGLISH</option>
+        <option value="tamil">TAMIL</option>
+        <option value="malayalam">MALAYALAM</option>
+        <option value="hindi">HINDI</option>
+        <option value="all">ALL</option>
+
+    </select>
 
 
     </div>
@@ -10224,6 +10264,24 @@ if (videoList && videoList.parentNode) {
     );
 
 }
+
+// =====================================
+// CHANGE BIBLE LANGUAGE
+// =====================================
+
+let selectedBibleLanguage = "english";
+
+async function changeBibleLanguage(language) {
+
+    selectedBibleLanguage = language;
+
+    const book = sessionStorage.getItem("book");
+    const chapter = sessionStorage.getItem("chapter");
+
+    if (!book || !chapter) return;
+
+    await updateBibleReader(book, chapter);
+}
  
 async function updateBibleReader(book, chapter) {
 
@@ -10447,29 +10505,53 @@ verseHeader.appendChild(heart);
 verseBox.appendChild(verseHeader);
 
             // English
-           addLanguageLine(
-    verseBox,
-    englishVerses[key],
-    "verse-english"
-);
+// =====================================
+// RENDER SELECTED LANGUAGE
+// =====================================
 
-addLanguageLine(
-    verseBox,
-    tamilVerses[key],
-    "verse-tamil"
-);
+if (
+    selectedBibleLanguage === "english" ||
+    selectedBibleLanguage === "all"
+) {
+    addLanguageLine(
+        verseBox,
+        englishVerses[key],
+        "verse-english"
+    );
+}
 
-addLanguageLine(
-    verseBox,
-    malayalamVerses[key],
-    "verse-malayalam"
-);
+if (
+    selectedBibleLanguage === "tamil" ||
+    selectedBibleLanguage === "all"
+) {
+    addLanguageLine(
+        verseBox,
+        tamilVerses[key],
+        "verse-tamil"
+    );
+}
 
-addLanguageLine(
-    verseBox,
-    hindiVerses[key],
-    "verse-hindi"
-);
+if (
+    selectedBibleLanguage === "malayalam" ||
+    selectedBibleLanguage === "all"
+) {
+    addLanguageLine(
+        verseBox,
+        malayalamVerses[key],
+        "verse-malayalam"
+    );
+}
+
+if (
+    selectedBibleLanguage === "hindi" ||
+    selectedBibleLanguage === "all"
+) {
+    addLanguageLine(
+        verseBox,
+        hindiVerses[key],
+        "verse-hindi"
+    );
+}
 
             textContainer.appendChild(verseBox);
         });
