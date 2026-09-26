@@ -7187,9 +7187,27 @@ if (verseContainer) {
                 verseItem.text || "";
 
             verseBox.appendChild(verseHeader);
-            verseBox.appendChild(verseText);
+verseBox.appendChild(verseText);
 
-            chapterBox.appendChild(verseBox);
+
+// OPEN VERSE IN BIBLE READER
+verseBox.onclick = function() {
+
+    sessionStorage.setItem(
+        "treasureVerse",
+        verseItem.verse
+    );
+
+
+    openChapter(
+        item.book,
+        Number(item.chapter)
+    );
+
+};
+
+
+chapterBox.appendChild(verseBox);
 
         });
 
@@ -8465,7 +8483,7 @@ button.onclick = function() {
    OPEN CHAPTER 
 ========================================================= */ 
  
-function openChapter(book, chapter) {
+function openChapter(book, chapter, verseNumber = null) {
 
     /* Normal chapter navigation 
     sessionStorage.removeItem("cameFromBibleSearch");
@@ -10511,8 +10529,7 @@ verseBox.className =
     "bible-verse multilingual-verse";
 
 // Unique ID for direct verse navigation
-verseBox.id =
-    "bible-verse-" + verseNumber;
+
 
             // Verse number
             // =====================================
@@ -10783,16 +10800,20 @@ if (
 }
 
             textContainer.appendChild(verseBox);
-            const searchVerse =
-    sessionStorage.getItem("searchVerse");
+                    
+            });
 
-if (searchVerse) {
+            // TREASURE VERSE SCROLL
+const treasureVerse =
+    sessionStorage.getItem("treasureVerse");
+
+if (treasureVerse) {
 
     setTimeout(() => {
 
         const target =
             document.getElementById(
-                "verse-" + searchVerse
+                "verse-" + treasureVerse
             );
 
         if (target) {
@@ -10802,35 +10823,37 @@ if (searchVerse) {
                 block: "center"
             });
 
-            target.classList.add(
-                "search-highlight"
-            );
         }
 
-        sessionStorage.removeItem("searchVerse");
+        sessionStorage.removeItem(
+            "treasureVerse"
+        );
 
-            }, 500);
-        }
-        
-        });
+    }, 1000);
 
-        // ================================
-// JUMP TO SEARCH RESULT VERSE
-// ================================
+}
 
-const searchVerse =
-    sessionStorage.getItem("searchVerse");
 
-if (searchVerse) {
 
-    setTimeout(() => {
 
-        const target =
+
+         // ================================
+            // JUMP TO SEARCH RESULT VERSE
+            // ================================
+
+            const searchVerse =
+            sessionStorage.getItem("searchVerse");
+
+            if (searchVerse) {
+
+            setTimeout(() => {
+
+            const target =
             document.getElementById(
                 "verse-" + searchVerse
             );
 
-        if (target) {
+            if (target) {
 
             target.scrollIntoView({
                 behavior: "smooth",
@@ -10844,73 +10867,73 @@ if (searchVerse) {
             setTimeout(() => {
                 target.classList.remove(
                     "search-highlight"
-                );
-            }, 2000);
-        }
+                    );
+                    }, 2000);
+                    }
 
-    }, 500);
+                    }, 500);
 
-    sessionStorage.removeItem("searchVerse");
-}
+                    sessionStorage.removeItem("searchVerse");
+                    }
 
-    } catch (error) {
+                    } catch (error) {
 
-        console.error(
-            "Bible reader error:",
-            error
-        );
+                    console.error(
+                     "Bible reader error:",
+                     error
+                         );
 
-        textContainer.innerHTML =
-            "<p>Unable to display Bible text.</p>";
-    }
-}
+                            textContainer.innerHTML =
+                            "<p>Unable to display Bible text.</p>";
+                             }
+                                }
 
 
-    // =====================================
-    // CREATE ONE LANGUAGE LINE
-    // =====================================
+                                // =====================================
+                                // CREATE ONE LANGUAGE LINE
+                                 // =====================================
 
-function addLanguageLine(
-    container,
-    verseText,
-    className
-) {
+                                                function addLanguageLine(
+                                                container,
+                                                verseText,
+                                             className
+                                                ) {
 
-    if (!verseText) return;
+                                        if (!verseText) return;
 
-    const line = document.createElement("div");
+                                        const line = document.createElement("div");
 
-    line.className =
-        "multilingual-line " + className;
+                                            line.className =
+                                            "multilingual-line " + className;
 
-    line.textContent = verseText;
+                                            line.textContent = verseText;
 
-    container.appendChild(line);
-}
+                                            container.appendChild(line);
+                                            }
 
-// =====================================
-// CHECK IF VERSE IS IN TREASURE
-// =====================================
+                                            // =====================================
+                                            // CHECK IF VERSE IS IN TREASURE
+                                            // =====================================
 
-function isVerseInTreasure(book, chapter, verseNumber) {
+                                            function isVerseInTreasure(book, chapter, verseNumber) {
 
-    const treasures = JSON.parse(
-        localStorage.getItem("bibleVerseTreasures") || "[]"
-    );
+                                            const treasures = JSON.parse(
+                                            localStorage.getItem("bibleVerseTreasures") || "[]"
+                                            );
 
-    return treasures.some(function(item) {
+                                            return treasures.some(function(item) {
 
-        return (
-            item.book === book &&
-            String(item.chapter) === String(chapter) &&
-            Array.isArray(item.verses) &&
-            item.verses.some(function(verse) {
-                return String(verse.verse) === String(verseNumber);
-            })
-        );
+                                             return (
+                                             item.book === book &&
+                                                 String(item.chapter) === String(chapter) &&
+                                                    Array.isArray(item.verses) &&
+                                                    item.verses.some(function(verse) {
+                                                        return String(verse.verse) === String(verseNumber);
+                                                    })
+                                                        );
 
-    });
-}
+                                                            });
+            }
 
 
 // =====================================
@@ -13331,23 +13354,30 @@ async function openVerseFromTreasure(
     await toggleBibleReader();
 
     // Scroll to the exact verse after loading
-    requestAnimationFrame(function () {
+    setTimeout(function () {
 
-        const verseElement =
-            document.getElementById(
-                "bible-verse-" + verseNumber
-            );
+    const verseElement =
+        document.getElementById(
+            "verse-" + verseNumber
+        );
 
-        if (verseElement) {
+    if (verseElement) {
 
-            verseElement.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
+        verseElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
 
-        }
+    } else {
 
-    });
+        console.log(
+            "Verse not found:",
+            "verse-" + verseNumber
+        );
+
+    }
+
+}, 1000);
 
     updateTestamentNavigation();
 }
