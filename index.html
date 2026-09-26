@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
 <title>Bible - King James Version</title>
 <link rel="manifest" href="https://jebinpl.github.io/holybible-kjv/manifest.json">
@@ -33,7 +33,7 @@ body {
 
 html,
 body {
-    touch-action: manipulation;
+    touch-action: pan-x pan-y;
     overscroll-behavior: none;
 }
 
@@ -1350,8 +1350,38 @@ body {
    VERSES
 ========================= */
 
+/* =========================
+   BIBLE VERSE CARD DESIGN
+========================= */
+
 .bible-verse {
-    margin-bottom: 10px;
+    display: block;
+
+    background: #ffffff;
+
+    border: 1px solid #e5d8b8;
+    border-radius: 12px;
+
+    padding: 12px 15px;
+
+    margin-bottom: 12px;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+    line-height: 1.8;
+
+    box-sizing: border-box;
+}
+
+/* DARK MODE */
+
+body.dark-mode .bible-verse {
+    background: #252525;
+    border: 1px solid #444444;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+    color: #f1f1f1;
 }
 
 .verse-number {
@@ -5138,6 +5168,59 @@ body.dark-mode .treasure-menu-button:hover {
 
     cursor: pointer;
 }
+
+.search-highlight {
+    background: #ffe58a !important;
+    border: 2px solid #d4af37 !important;
+    transition: 0.3s;
+}
+
+.verse-share-icon {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    margin-left:8px;
+}
+
+.verse-share-icon svg {
+    width:18px;
+    height:18px;
+}
+
+.verse-copy-icon {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    margin-left:8px;
+}
+
+.verse-copy-icon svg {
+    width:18px;
+    height:18px;
+}
+
+.verse-header {
+    display:flex;
+    align-items:center;
+    width:100%;
+}
+
+
+.verse-actions {
+    margin-left:auto;
+
+    display:flex;
+    align-items:center;
+
+    gap:8px;
+}
+
 </style>
 </head>
 
@@ -6416,9 +6499,9 @@ function renderVerseFavorites() {
             // SHARE BUTTON
             // =========================
 
-            const shareButton = document.createElement("button");
+            const shareButton = document.createElement("span");
             shareButton.textContent = "Share";
-            shareButton.className = "verse-treasure-share";
+            shareButton.className = "verse-share-icon";
 
             shareButton.onclick = function() {
 
@@ -8384,9 +8467,9 @@ button.onclick = function() {
  
 function openChapter(book, chapter) {
 
-    /* Normal chapter navigation */
+    /* Normal chapter navigation 
     sessionStorage.removeItem("cameFromBibleSearch");
-    sessionStorage.removeItem("bibleSearchText");
+    sessionStorage.removeItem("bibleSearchText");*/
     sessionStorage.removeItem("bibleSearchScroll");
 
     currentVideoIndex = -1;
@@ -10500,9 +10583,155 @@ heart.onclick = function () {
 // Add number and heart
 verseHeader.appendChild(number);
 
-verseHeader.appendChild(heart);
+
+// ACTION GROUP
+const verseActions = document.createElement("div");
+
+verseActions.className = "verse-actions";
+
+verseActions.appendChild(heart);
+
+// COPY BUTTON
+const copyButton = document.createElement("span");
+
+copyButton.className = "verse-copy-icon";
+
+copyButton.innerHTML = `
+<svg
+ xmlns="http://www.w3.org/2000/svg"
+ width="18"
+ height="18"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ stroke-width="1.8"
+ stroke-linecap="round"
+ stroke-linejoin="round">
+
+ <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+
+ <path d="M5 15H4a2 2 0 0 1-2-2V4
+ a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1">
+ </path>
+
+</svg>
+`;
+
+copyButton.title = "Copy Verse";
+
+
+copyButton.onclick = function(event){
+
+    event.stopPropagation();
+
+    navigator.clipboard.writeText(
+        englishVerses[key] || ""
+    );
+
+
+    copyButton.innerHTML = "✓";
+
+
+    setTimeout(()=>{
+
+        copyButton.innerHTML = `
+        <svg
+         xmlns="http://www.w3.org/2000/svg"
+         width="18"
+         height="18"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="1.8"
+         stroke-linecap="round"
+         stroke-linejoin="round">
+
+         <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+
+         <path d="M5 15H4a2 2 0 0 1-2-2V4
+         a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1">
+         </path>
+
+        </svg>
+        `;
+
+    },1500);
+
+};
+
+
+// SHARE BUTTON
+const shareButton = document.createElement("span");
+
+shareButton.type = "button";
+shareButton.className = "video-share-icon";
+
+shareButton.innerHTML = `
+<svg
+ xmlns="http://www.w3.org/2000/svg"
+ width="18"
+ height="18"
+ viewBox="0 0 24 24"
+ fill="none"
+ stroke="currentColor"
+ stroke-width="1.8"
+ stroke-linecap="round"
+ stroke-linejoin="round">
+
+ <circle cx="18" cy="5" r="3"/>
+ <circle cx="6" cy="12" r="3"/>
+ <circle cx="18" cy="19" r="3"/>
+
+ <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/>
+ <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
+
+</svg>
+`;
+
+shareButton.title = "Share Verse";
+
+
+shareButton.onclick = function(event){
+
+    event.stopPropagation();
+
+    const text =
+        book +
+        " " +
+        chapter +
+        ":" +
+        key +
+        "\n\n" +
+        (englishVerses[key] || "");
+
+
+    if(navigator.share){
+
+        navigator.share({
+            title:
+                "Bible Verse",
+            text:
+                text
+        });
+
+    } else {
+
+        navigator.clipboard.writeText(text);
+
+    }
+
+};
+
+// Add buttons
+verseActions.appendChild(copyButton);
+
+verseActions.appendChild(shareButton);
+
+verseHeader.appendChild(verseActions);
 
 verseBox.appendChild(verseHeader);
+// Give each verse a unique ID for search navigation
+verseBox.id = "verse-" + key;
 
             // English
 // =====================================
@@ -10554,7 +10783,75 @@ if (
 }
 
             textContainer.appendChild(verseBox);
+            const searchVerse =
+    sessionStorage.getItem("searchVerse");
+
+if (searchVerse) {
+
+    setTimeout(() => {
+
+        const target =
+            document.getElementById(
+                "verse-" + searchVerse
+            );
+
+        if (target) {
+
+            target.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            target.classList.add(
+                "search-highlight"
+            );
+        }
+
+        sessionStorage.removeItem("searchVerse");
+
+            }, 500);
+        }
+        
         });
+
+        // ================================
+// JUMP TO SEARCH RESULT VERSE
+// ================================
+
+const searchVerse =
+    sessionStorage.getItem("searchVerse");
+
+if (searchVerse) {
+
+    setTimeout(() => {
+
+        const target =
+            document.getElementById(
+                "verse-" + searchVerse
+            );
+
+        if (target) {
+
+            target.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            target.classList.add(
+                "search-highlight"
+            );
+
+            setTimeout(() => {
+                target.classList.remove(
+                    "search-highlight"
+                );
+            }, 2000);
+        }
+
+    }, 500);
+
+    sessionStorage.removeItem("searchVerse");
+}
 
     } catch (error) {
 
@@ -11905,15 +12202,42 @@ function searchBibleText() {
              * that chapter in the Bible reader.
              */
 
-            result.onclick =
-                function() {
+            result.onclick = function() {
 
-                    openBibleSearchResult(
-                        item.book,
-                        item.chapter
-                    );
+    // remember search return
+    sessionStorage.setItem(
+        "cameFromBibleSearch",
+        "true"
+    );
 
-                };
+    sessionStorage.setItem(
+        "bibleSearchText",
+        document.getElementById(
+            "bibleTextSearchInput"
+        ).value
+    );
+
+
+    // save verse
+    sessionStorage.setItem(
+        "searchVerse",
+        item.verse
+    );
+
+
+    // hide search page
+    document.getElementById(
+        "bibleTextSearchPage"
+    ).style.display = "none";
+
+
+    // open Bible directly
+    openChapter(
+        item.book,
+        Number(item.chapter)
+    );
+
+};
 
 
             results.appendChild(result);
@@ -12063,7 +12387,7 @@ function backFromBibleTextSearch() {
    OPEN SEARCH RESULT
 ========================= */
 
-function openBibleSearchResult(book, chapter) {
+function openBibleSearchResult(book, chapter, verse) {
 
     // Remember search origin
     sessionStorage.setItem(
@@ -12084,6 +12408,7 @@ function openBibleSearchResult(book, chapter) {
     // Save chapter
     sessionStorage.setItem("book", book);
     sessionStorage.setItem("chapter", chapter);
+    sessionStorage.setItem("verse",verse);
     sessionStorage.setItem("page", "videos");
 
     // Hide Bible search
