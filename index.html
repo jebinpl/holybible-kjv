@@ -6036,27 +6036,7 @@ body.dark-mode .treasure-menu-button:hover {
  
 <script> 
 
-    let currentReaderLanguage = "en";
-    let bibleWakeLock = null;
-
-async function keepBibleScreenOn() {
-console.log("KEEP SCREEN ON CALLED");
-    try {
-        bibleWakeLock = await navigator.wakeLock.request("screen");
-        console.log("Bible reading screen ON");
-    } catch (err) {
-        console.log("Wake Lock error:", err);
-    }
-}
-
-function releaseBibleScreenOn() {
-    if (bibleWakeLock !== null) {
-        bibleWakeLock.release();
-        bibleWakeLock = null;
-        console.log("Bible reading screen OFF");
-    }
-}
- 
+    let currentReaderLanguage = "en";    
 /* ========================================================= 
    BIBLE BOOKS 
 ========================================================= */ 
@@ -8274,7 +8254,7 @@ function updateFavoriteButton() {
 ========================================================= */ 
  
 function showBooks(testament) {
-    releaseBibleScreenOn();
+    
     hideGroupedPages();
     sessionStorage.setItem("testament", testament);
     sessionStorage.setItem("page", "books");
@@ -8409,7 +8389,7 @@ button.onclick = function() {
  
 function showChapters(bookName, chapterCount) { 
 
-    releaseBibleScreenOn();
+    
  
     sessionStorage.setItem("book", bookName); 
     sessionStorage.setItem("page", "chapters"); 
@@ -8546,7 +8526,7 @@ if (bibleReaderOpen) {
 toggleBibleReader();
 
 if (bibleReaderOpen) {
-    keepBibleScreenOn();
+    
 }
 
 updateTestamentNavigation();
@@ -10155,7 +10135,7 @@ function backToBooks() {
 ========================================================= */ 
  
 function goHome() {
-    releaseBibleScreenOn();
+    
 
     // Keep the splash-screen status
     const splashShown =
@@ -10307,8 +10287,6 @@ async function toggleBibleReader() {
 
     closeBibleReader();
 
-    releaseBibleScreenOn();
-
     return; 
 }
 
@@ -10322,9 +10300,6 @@ const chapter =
 if (!book || !chapter) {
     return;
 }
-
-
-keepBibleScreenOn();
 
 
     if (!book || !chapter) {
@@ -11146,7 +11121,7 @@ function toggleVerseTreasure(
 
 function closeBibleReader() {
 
-    releaseBibleScreenOn();
+    
 
     const wrapper =
         document.querySelector(".bible-reader-wrapper");
