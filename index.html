@@ -6040,6 +6040,7 @@ body.dark-mode .treasure-menu-button:hover {
     let bibleWakeLock = null;
 
 async function keepBibleScreenOn() {
+console.log("KEEP SCREEN ON CALLED");
     try {
         bibleWakeLock = await navigator.wakeLock.request("screen");
         console.log("Bible reading screen ON");
@@ -6052,6 +6053,7 @@ function releaseBibleScreenOn() {
     if (bibleWakeLock !== null) {
         bibleWakeLock.release();
         bibleWakeLock = null;
+        console.log("Bible reading screen OFF");
     }
 }
  
