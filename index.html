@@ -8272,6 +8272,7 @@ function updateFavoriteButton() {
 ========================================================= */ 
  
 function showBooks(testament) {
+    releaseBibleScreenOn();
     hideGroupedPages();
     sessionStorage.setItem("testament", testament);
     sessionStorage.setItem("page", "books");
@@ -8405,6 +8406,8 @@ button.onclick = function() {
 ========================================================= */ 
  
 function showChapters(bookName, chapterCount) { 
+
+    releaseBibleScreenOn();
  
     sessionStorage.setItem("book", bookName); 
     sessionStorage.setItem("page", "chapters"); 
@@ -10150,6 +10153,7 @@ function backToBooks() {
 ========================================================= */ 
  
 function goHome() {
+    releaseBibleScreenOn();
 
     // Keep the splash-screen status
     const splashShown =
@@ -10306,18 +10310,19 @@ async function toggleBibleReader() {
     return; 
 }
 
-    keepBibleScreenOn();
-
-
-    /* =====================================================
-       GET CURRENT BOOK + CHAPTER
-    ===================================================== */
-
     const book =
-        sessionStorage.getItem("book");
+    sessionStorage.getItem("book");
 
-    const chapter =
-        sessionStorage.getItem("chapter");
+const chapter =
+    sessionStorage.getItem("chapter");
+
+
+if (!book || !chapter) {
+    return;
+}
+
+
+keepBibleScreenOn();
 
 
     if (!book || !chapter) {
