@@ -6039,6 +6039,23 @@ body.dark-mode .treasure-menu-button:hover {
 <script> 
 
     let currentReaderLanguage = "en";
+    let bibleWakeLock = null;
+
+async function keepBibleScreenOn() {
+    try {
+        bibleWakeLock = await navigator.wakeLock.request("screen");
+        console.log("Bible reading screen ON");
+    } catch (err) {
+        console.log("Wake Lock error:", err);
+    }
+}
+
+function releaseBibleScreenOn() {
+    if (bibleWakeLock !== null) {
+        bibleWakeLock.release();
+        bibleWakeLock = null;
+    }
+}
  
 /* ========================================================= 
    BIBLE BOOKS 
@@ -7160,19 +7177,24 @@ if (verseContainer) {
 
             heart.onclick = function(event) {
 
-                event.stopPropagation();
+    event.stopPropagation();
 
-                toggleVerseTreasure(
-                    item.book,
-                    Number(item.chapter),
-                    Number(verseItem.verse),
-                    verseItem.text,
-                    heart
-                );
+    // Heart touch vibration
+    if (navigator.vibrate) {
+        navigator.vibrate(50);
+    }
 
-                renderFavorites();
+    toggleVerseTreasure(
+        item.book,
+        Number(item.chapter),
+        Number(verseItem.verse),
+        verseItem.text,
+        heart
+    );
 
-            };
+    renderFavorites();
+
+};
 
             verseHeader.appendChild(verseTitle);
             verseHeader.appendChild(heart);
@@ -10272,12 +10294,16 @@ async function toggleBibleReader() {
        CLOSE BIBLE TEXT
     ===================================================== */
 
-    if (bibleReaderOpen) {
+    if (bibleReaderOpen) { 
 
-        closeBibleReader();
+    closeBibleReader();
 
-        return;
-    }
+    releaseBibleScreenOn();
+
+    return; 
+}
+
+    keepBibleScreenOn();
 
 
     /* =====================================================
@@ -10641,9 +10667,55 @@ copyButton.onclick = function(event){
 
     event.stopPropagation();
 
-    navigator.clipboard.writeText(
-        englishVerses[key] || ""
-    );
+    let copyText = "";
+    let verseReference =
+    book +
+    " " +
+    chapter +
+    ":" +
+    key +
+    "\n\n";
+
+
+if (selectedBibleLanguage === "english") {
+    copyText =
+        verseReference +
+        (englishVerses[key] || "");
+}
+
+else if (selectedBibleLanguage === "tamil") {
+    copyText =
+        verseReference +
+        (tamilVerses[key] || "");
+}
+
+else if (selectedBibleLanguage === "malayalam") {
+    copyText =
+        verseReference +
+        (malayalamVerses[key] || "");
+}
+
+else if (selectedBibleLanguage === "hindi") {
+    copyText =
+        verseReference +
+        (hindiVerses[key] || "");
+}
+
+else if (selectedBibleLanguage === "all") {
+
+    copyText =
+        verseReference +
+        (englishVerses[key] || "") +
+        "\n\n" +
+        (tamilVerses[key] || "") +
+        "\n\n" +
+        (malayalamVerses[key] || "") +
+        "\n\n" +
+        (hindiVerses[key] || "");
+}
+
+
+navigator.clipboard.writeText(copyText);
 
 
     copyButton.innerHTML = "✓";
@@ -10712,14 +10784,54 @@ shareButton.onclick = function(event){
 
     event.stopPropagation();
 
-    const text =
-        book +
-        " " +
-        chapter +
-        ":" +
-        key +
+    let shareText = "";
+
+if (selectedBibleLanguage === "english") {
+
+    shareText = englishVerses[key] || "";
+
+}
+
+else if (selectedBibleLanguage === "tamil") {
+
+    shareText = tamilVerses[key] || "";
+
+}
+
+else if (selectedBibleLanguage === "malayalam") {
+
+    shareText = malayalamVerses[key] || "";
+
+}
+
+else if (selectedBibleLanguage === "hindi") {
+
+    shareText = hindiVerses[key] || "";
+
+}
+
+else if (selectedBibleLanguage === "all") {
+
+    shareText =
+        (englishVerses[key] || "") +
         "\n\n" +
-        (englishVerses[key] || "");
+        (tamilVerses[key] || "") +
+        "\n\n" +
+        (malayalamVerses[key] || "") +
+        "\n\n" +
+        (hindiVerses[key] || "");
+
+}
+
+
+const text =
+    book +
+    " " +
+    chapter +
+    ":" +
+    key +
+    "\n\n" +
+    shareText;
 
 
     if(navigator.share){
@@ -13712,6 +13824,19 @@ function backToTreasureMenu() {
 
     updateTestamentNavigation();
 }
+
+// Block Android system back navigation
+(function () {
+
+    history.pushState(null, "", location.href);
+
+    window.addEventListener("popstate", function () {
+
+        history.pushState(null, "", location.href);
+
+    });
+
+})();
 
 </script>
 </body>
