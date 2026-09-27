@@ -1362,7 +1362,7 @@ body {
     border: 1px solid #e5d8b8;
     border-radius: 12px;
 
-    padding: 12px 15px;
+    padding: 3px 15px;
 
     margin-bottom: 12px;
 
@@ -5900,11 +5900,9 @@ body.dark-mode .treasure-menu-button:hover {
         <button
             id="favoriteChapterButton"
             class="favorite-chapter-button"
-            onclick="toggleFavoriteCurrentChapter()"
+            onclick="chapterHeartClick()"
             title="Add to Favorites">
-
             ♡
-
         </button>
 
 
@@ -8127,7 +8125,7 @@ function removeFavorite(book, chapter) {
 }
 
 
-/* =========================================================
+    /* =========================================================
    TOGGLE CURRENT CHAPTER FAVORITE
 ========================================================= */
 
@@ -8541,6 +8539,11 @@ if (bibleReaderOpen) {
     closeBibleReader();
 }
 toggleBibleReader();
+
+if (bibleReaderOpen) {
+    keepBibleScreenOn();
+}
+
 updateTestamentNavigation();
 updateFavoriteButton();
 }
@@ -11135,6 +11138,8 @@ function toggleVerseTreasure(
 }
 
 function closeBibleReader() {
+
+    releaseBibleScreenOn();
 
     const wrapper =
         document.querySelector(".bible-reader-wrapper");
@@ -13842,6 +13847,16 @@ function backToTreasureMenu() {
     });
 
 })();
+
+function chapterHeartClick() { 
+
+    if (navigator.vibrate) { 
+        navigator.vibrate(300); 
+    } 
+
+    toggleFavoriteCurrentChapter(); 
+
+}
 
 </script>
 </body>
