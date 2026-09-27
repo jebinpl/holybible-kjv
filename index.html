@@ -7181,7 +7181,7 @@ if (verseContainer) {
 
     // Heart touch vibration
     if (navigator.vibrate) {
-        navigator.vibrate(50);
+        navigator.vibrate(300);
     }
 
     toggleVerseTreasure(
@@ -10605,6 +10605,11 @@ if (isSaved) {
 // Toggle verse treasure
 
 heart.onclick = function () {
+
+    if (navigator.vibrate) {
+        navigator.vibrate(300);
+        console.log("Heart vibration triggered");
+    }
 
     const verseTexts = {
         english: englishVerses[key] || "",
