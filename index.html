@@ -437,17 +437,14 @@ body {
     display: none;
 }
 
-.page-title {
-    text-align: left;
-    font-size: 24px;
+.page-title { 
 
-    margin: 0;
-    padding: 0;
+    grid-column: 2; 
 
-    background: none;
-    border: none;
+    text-align: center; 
 
-    flex: 1;
+    margin: 0; 
+
 }
 
 
@@ -3779,28 +3776,125 @@ body.dark-mode .verse-hindi {
 }
 
 
-.favorite-item {
-    min-height: 55px;
+.favorite-item { 
+    min-height: 55px; 
+ 
+    display: flex; 
+    align-items: center; 
 
-    display: flex;
-    align-items: center;
-
-    border: 1px solid #b8943d;
-    border-radius: 10px;
-
-    background:
-        linear-gradient(
-            to bottom,
-            #fffdf7,
-            #f8efd9
-        );
-
-    box-shadow:
-        0 2px 6px rgba(0,0,0,0.10);
-
-    overflow: hidden;
+    position: relative;
+ 
+    border: 1px solid #b8943d; 
+    border-radius: 10px; 
+ 
+    background: 
+        linear-gradient( 
+            to bottom, 
+            #fffdf7, 
+            #f8efd9 
+        ); 
+ 
+    box-shadow: 
+        0 2px 6px rgba(0,0,0,0.10); 
+ 
+    overflow: hidden; 
 }
 
+.verse-select-checkbox { 
+
+    width:18px; 
+    height:18px; 
+
+    margin-left:auto;
+
+    cursor:pointer;
+
+}
+
+
+.favorite-info {
+
+    width:100%;
+
+}
+
+
+.header-icon-button {
+
+    width:38px;
+    height:38px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    border:1px solid #b8943d;
+
+    border-radius:50%;
+
+
+    background:
+    linear-gradient(
+        135deg,
+        #fffdf5,
+        #f3e3bd
+    );
+
+
+    color:#70451e;
+
+    cursor:pointer;
+
+}
+
+
+.header-icon-button:disabled {
+
+    opacity:0.4;
+
+    cursor:not-allowed;
+
+}
+
+
+.header-icon-button svg {
+
+    display:block;
+
+}
+
+
+.verse-card-header {
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    width:100%;
+
+}
+
+
+.verse-select-checkbox {
+
+    position:absolute;
+
+    top:12px;
+
+    right:12px;
+
+    width:18px;
+
+    height:18px;
+
+    cursor:pointer;
+
+}
 
 .favorite-item-title {
     flex: 1;
@@ -5036,6 +5130,34 @@ dialog button {
     gap: 8px;
 }
 
+
+
+
+.nav-back-button {
+
+    flex:0 0 auto;
+
+}
+
+
+
+
+
+.verse-header-actions { 
+
+    grid-column: 3; 
+
+    justify-self: end; 
+
+    display: flex; 
+
+    align-items: center; 
+
+    gap: 6px; 
+
+}
+
+
 .treasure-header .nav-back-button {
     grid-column: 1;
     justify-self: start;
@@ -5947,7 +6069,7 @@ body.dark-mode .treasure-menu-button:hover {
 
     <div class="sticky-page-header">
 
-    <div class="treasure-header">
+        <div class="treasure-header">
 <button
     class="nav-back-button"
     onclick="backToTreasureMenu()">
@@ -6003,17 +6125,100 @@ body.dark-mode .treasure-menu-button:hover {
 
         <div class="treasure-header">
 
-            <button
-                class="nav-back-button"
-                onclick="backToTreasureMenu()">
-                ←
-            </button>
+    <button 
+        class="nav-back-button"
+        onclick="backToTreasureMenu()">
+        ←
+    </button>
+    <h2 class="page-title">
+        VERSES
+    </h2>
+<div class="verse-header-actions">
 
-            <h2 class="page-title">
-                VERSES
-            </h2>
+        <button 
+    id="shareSelectedVersesBtn"
+    class="header-icon-button"
+    disabled
+    title="Share Selected Verses">
 
-        </div>
+    <svg 
+        width="22" 
+        height="22" 
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg">
+
+        <path 
+        d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z"
+        stroke="currentColor"
+        stroke-width="2"/>
+
+        <path 
+        d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z"
+        stroke="currentColor"
+        stroke-width="2"/>
+
+        <path 
+        d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z"
+        stroke="currentColor"
+        stroke-width="2"/>
+
+        <path 
+        d="M8.7 10.8L15.3 7.2M8.7 13.2L15.3 16.8"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"/>
+
+    </svg>
+
+</button>
+
+ <button
+    id="pdfSelectedVersesBtn"
+    class="header-icon-button"
+    disabled
+    title="Download PDF">
+
+<svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <!-- PDF file shape -->
+    <path
+    d="M6 2H14L20 8V21C20 21.5523 19.5523 22 19 22H6C4.89543 22 4 21.1046 4 20V4C4 2.89543 4.89543 2 6 2Z"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linejoin="round"/>
+
+
+    <!-- Fold corner -->
+    <path
+    d="M14 2V8H20"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linejoin="round"/>
+
+
+    <!-- PDF text -->
+    <text
+    x="5.2"
+    y="17"
+    font-size="6"
+    font-family="Arial"
+    font-weight="bold"
+    fill="currentColor">
+        PDF
+    </text>
+
+
+</svg>
+
+</button> 
+ </div>
+</div>
 
         <p class="page-subtitle">
             Saved Treasures 
@@ -6348,6 +6553,106 @@ async function shareVerseTreasureSelected(
     }
 
 }
+let selectedVerseTreasures = [];
+function updateVerseHeaderButtons(){
+
+    const shareBtn =
+    document.getElementById(
+        "shareSelectedVersesBtn"
+    );
+
+
+    const pdfBtn =
+    document.getElementById(
+        "pdfSelectedVersesBtn"
+    );
+
+
+    if(!shareBtn || !pdfBtn)
+        return;
+
+
+    const enabled =
+    selectedVerseTreasures.length > 0;
+
+
+    shareBtn.disabled =
+    !enabled;
+
+
+    pdfBtn.disabled =
+    !enabled;
+
+}
+
+document
+.getElementById("shareSelectedVersesBtn")
+.onclick=function(){
+
+
+let message =
+"Verse Treasure\n\n";
+
+
+selectedVerseTreasures.forEach(v=>{
+
+
+message +=
+v.book+" "+
+v.chapter+":"+
+v.verse+
+"\n\n";
+
+
+v.languages.forEach(lang=>{
+
+
+if(v.texts[lang]){
+
+
+message +=
+v.texts[lang]+
+"\n\n";
+
+
+}
+
+
+});
+
+
+});
+
+
+if(navigator.share){
+
+navigator.share({
+
+title:"Verse Treasure",
+
+text:message
+
+});
+
+}
+else{
+
+navigator.clipboard.writeText(message);
+
+alert("Verse copied");
+
+}
+
+
+};
+
+document
+.getElementById("pdfSelectedVersesBtn")
+.onclick=function(){
+
+    exportSelectedVerseTreasuresPDF();
+
+};
 
 function renderVerseFavorites() {
 
@@ -6387,18 +6692,83 @@ function renderVerseFavorites() {
             box.className = "favorite-item";
 
             // =========================
+// VERSE SELECT CHECKBOX
+// =========================
+
+
+
+            // =========================
             // VERSE INFORMATION
             // =========================
 
             const info = document.createElement("div");
-            info.className = "favorite-info";
+info.className = "favorite-info";
 
-            const reference = document.createElement("strong");
 
-            reference.textContent =
-                book + " " + chapter + ":" + verse.verse;
+const verseHeader = document.createElement("div");
+verseHeader.className = "verse-card-header";
 
-            info.appendChild(reference);
+
+const reference = document.createElement("strong");
+
+reference.textContent =
+    book + " " + chapter + ":" + verse.verse;
+
+
+
+const selectBox = document.createElement("input");
+
+selectBox.type = "checkbox";
+
+selectBox.className =
+"verse-select-checkbox";
+selectBox.disabled = true;
+
+selectBox.onchange = function(){
+
+    if(selectBox.checked){
+
+        selectedVerseTreasures.push({
+
+            book: book,
+
+            chapter: chapter,
+
+            verse: verse.verse,
+
+            texts: texts,
+
+            languages: [...selectedLanguages]
+
+        });
+
+    }
+    else{
+
+        selectedVerseTreasures =
+        selectedVerseTreasures.filter(item =>
+
+            !(
+              item.book === book &&
+              item.chapter === chapter &&
+              item.verse === verse.verse
+            )
+
+        );
+
+    }
+
+
+    updateVerseHeaderButtons();
+
+};
+
+verseHeader.appendChild(reference);
+
+verseHeader.appendChild(selectBox);
+
+
+info.appendChild(verseHeader);
 
             // Support old saved English verses
             const texts =
@@ -6420,7 +6790,7 @@ function renderVerseFavorites() {
                 .filter(Boolean);
 
             preview.textContent =
-                words.slice(0, 3).join(" ") + "...";
+                words.slice(0, 10).join(" ") + "...";
 
             preview.className = "verse-treasure-preview";
 
@@ -6479,6 +6849,14 @@ function renderVerseFavorites() {
                         }
 
                     }
+                    selectBox.disabled =
+    selectedLanguages.length === 0;
+
+if (selectBox.disabled) {
+
+    selectBox.checked = false;
+
+}
 
                 });
 
@@ -7998,6 +8376,395 @@ pdf.text(
             "Unable to create the Treasure PDF."
         );
     }
+}
+
+async function exportSelectedVerseTreasuresPDF(){
+
+    if(selectedVerseTreasures.length === 0){
+
+        showDialog("Please select verses.");
+
+        return;
+
+    }
+
+
+    if(!window.jspdf){
+
+        alert(
+            "PDF library is still loading. Please try again."
+        );
+
+        return;
+
+    }
+
+
+    const {
+        jsPDF
+    } = window.jspdf;
+
+
+    const pdf = new jsPDF({
+
+        orientation:"portrait",
+        unit:"mm",
+        format:"a4"
+
+    });
+
+    // ================================
+// COVER PAGE
+// ================================
+
+const pageWidth =
+    pdf.internal.pageSize.getWidth();
+
+const pageHeight =
+    pdf.internal.pageSize.getHeight();
+
+
+// Gold border
+
+pdf.setDrawColor(
+    180,
+    148,
+    61
+);
+
+pdf.setLineWidth(1);
+
+pdf.rect(
+    10,
+    10,
+    pageWidth - 20,
+    pageHeight - 20
+);
+
+
+// Center position
+
+const centerY =
+    pageHeight / 2;
+
+
+// Cross
+
+pdf.setFont(
+    "times",
+    "normal"
+);
+
+pdf.setFontSize(28);
+
+pdf.text(
+    "†",
+    pageWidth / 2,
+    centerY - 55,
+    {
+        align:"center"
+    }
+);
+
+
+// Title
+
+pdf.setFont(
+    "times",
+    "bold"
+);
+
+pdf.setFontSize(24);
+
+pdf.text(
+    "VERSE TREASURE",
+    pageWidth / 2,
+    centerY - 30,
+    {
+        align:"center"
+    }
+);
+
+
+// Gold line
+
+pdf.setLineWidth(0.5);
+
+pdf.line(
+    35,
+    centerY - 22,
+    pageWidth - 35,
+    centerY - 22
+);
+
+
+// Subtitle
+
+pdf.setFont(
+    "times",
+    "normal"
+);
+
+pdf.setFontSize(13);
+
+pdf.text(
+    "KING JAMES VERSION",
+    pageWidth / 2,
+    centerY - 10,
+    {
+        align:"center"
+    }
+);
+
+
+// Description
+
+pdf.setFontSize(11);
+
+pdf.text(
+    "My Saved Bible Verses",
+    pageWidth / 2,
+    centerY + 5,
+    {
+        align:"center"
+    }
+);
+
+
+// Number of verses
+
+pdf.setFont(
+    "times",
+    "italic"
+);
+
+pdf.setFontSize(10);
+
+pdf.text(
+    selectedVerseTreasures.length +
+    (
+        selectedVerseTreasures.length === 1
+        ? " Verse"
+        : " Verses"
+    ),
+    pageWidth / 2,
+    centerY + 18,
+    {
+        align:"center"
+    }
+);
+
+
+// Date
+
+pdf.setFont(
+    "times",
+    "normal"
+);
+
+pdf.text(
+    new Date().toLocaleDateString(
+        "en-GB",
+        {
+            day:"2-digit",
+            month:"long",
+            year:"numeric"
+        }
+    ),
+    pageWidth / 2,
+    centerY + 32,
+    {
+        align:"center"
+    }
+);
+
+
+// Bottom cross
+
+pdf.setFontSize(18);
+
+pdf.text(
+    "†",
+    pageWidth / 2,
+    centerY + 50,
+    {
+        align:"center"
+    }
+);
+
+
+// New page for verses
+
+pdf.addPage();
+
+
+    pdf.setFont(
+        "times",
+        "normal"
+    );
+
+
+    pdf.setFontSize(18);
+
+
+    pdf.text(
+        "VERSE TREASURE",
+        105,
+        30,
+        {
+            align:"center"
+        }
+    );
+
+
+    pdf.setFontSize(12);
+
+
+    pdf.text(
+        "King James Version",
+        105,
+        40,
+        {
+            align:"center"
+        }
+    );
+
+
+    let imageY = 20;
+
+
+    for (const v of selectedVerseTreasures) {
+
+
+    const verseContainer =
+        document.createElement("div");
+
+
+    verseContainer.style.width = "700px";
+    verseContainer.style.padding = "30px";
+    verseContainer.style.background = "#fffdf7";
+    verseContainer.style.fontFamily = "Noto Sans, Arial";
+    verseContainer.style.color = "#000";
+
+
+    verseContainer.innerHTML = `
+
+        <h2 style="
+            text-align:center;
+            margin-bottom:20px;
+        ">
+            ${v.book} ${v.chapter}:${v.verse}
+        </h2>
+
+    `;
+
+
+    v.languages.forEach(function(lang){
+
+
+        if(v.texts[lang]){
+
+
+            const langTitle =
+                document.createElement("h3");
+
+            langTitle.textContent =
+                lang.toUpperCase();
+
+
+            langTitle.style.marginTop =
+                "20px";
+
+
+            const text =
+                document.createElement("p");
+
+
+            text.textContent =
+                v.texts[lang];
+
+
+            text.style.fontSize =
+                "22px";
+
+
+            text.style.lineHeight =
+                "1.6";
+
+
+            verseContainer.appendChild(
+                langTitle
+            );
+
+
+            verseContainer.appendChild(
+                text
+            );
+
+        }
+
+    });
+
+
+    document.body.appendChild(
+        verseContainer
+    );
+
+
+    const canvas =
+        await html2canvas(
+            verseContainer,
+            {
+                scale:2
+            }
+        );
+
+
+    document.body.removeChild(
+        verseContainer
+    );
+
+
+    const imageData =
+        canvas.toDataURL(
+            "image/png"
+        );
+
+
+    const imageHeight =
+    (canvas.height * 180) / canvas.width;
+
+
+if(imageY + imageHeight > pageHeight - 20){
+
+    pdf.addPage();
+
+    imageY = 20;
+
+}
+
+
+pdf.addImage(
+    imageData,
+    "PNG",
+    15,
+    imageY,
+    180,
+    imageHeight
+);
+
+
+imageY += imageHeight + 10;
+
+
+}
+
+
+    pdf.save(
+        "Verse-Treasure.pdf"
+    );
+
+
 }
 
 /* =========================================================
