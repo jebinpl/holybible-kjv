@@ -5356,6 +5356,195 @@ body.dark-mode .treasure-menu-button:hover {
     display:none;
 }
 
+/* =====================================
+   CHAPTER TREASURE LANGUAGE DIALOG
+===================================== */
+
+.custom-dialog { 
+
+    width: 320px; 
+
+    border: none; 
+
+    border-radius: 15px; 
+
+    padding: 18px 20px; 
+
+    background: white; 
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.3); 
+
+}
+
+
+/* Title */
+
+.custom-dialog label {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:2px 0;
+
+    margin:6px 0;
+
+    font-size:17px;
+
+}
+
+
+/* Language rows */
+
+.custom-dialog label {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:4px 0;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+}
+
+
+/* Radio button */
+
+.custom-dialog input[type="radio"] {
+
+    width:18px;
+
+    height:18px;
+
+}
+
+
+/* Button container */
+
+.custom-dialog button {
+
+    padding:8px 22px;
+
+    border:none;
+
+    border-radius:8px;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+
+
+/* Keep buttons inline */
+
+.custom-dialog {
+
+    text-align:center;
+
+}
+
+/* Reduce language spacing */
+
+.custom-dialog label {
+
+    display:flex;
+    align-items:center;
+
+    gap:10px;
+
+    padding:2px 0;
+
+    margin:2px 0;
+
+    font-size:17px;
+}
+
+
+/* Radio size */
+
+.custom-dialog input[type="radio"] {
+
+    width:18px;
+    height:18px;
+
+}
+
+
+/* Button row */
+
+.chapter-language-actions {
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-top:10px;
+
+}
+
+
+.chapter-language-actions button {
+
+    width:100px;
+
+    height:40px;
+
+    padding:0;
+
+    margin:0;
+
+    border:none;
+
+    border-radius:8px;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+#chapterLanguageOK {
+
+    background:#2e7d32;
+
+    color:white;
+
+}
+
+
+#chapterLanguageCancel {
+
+    background:#777;
+
+    color:white;
+
+}
+
 </style>
 </head>
 
@@ -6103,15 +6292,7 @@ body.dark-mode .treasure-menu-button:hover {
         <h2 class="page-title">
             CHAPTERS         </h2>
 
-        <button
-            class="export-treasure-button"
-            onclick="exportTreasuresPDF()"
-            title="Download PDF">
-
-            <span class="pdf-text">PDF</span>
-            <span class="pdf-download">↓</span>
-
-        </button>
+        
 
     </div>
 
@@ -6449,6 +6630,7 @@ function showFavorites() {
 }
 
 function openChapterTreasure() {
+    updateHomeHeader("other");
 
     hideGroupedPages();
 
@@ -7151,6 +7333,425 @@ dialog.remove();
         };
 }
 
+function showChapterTreasureLanguageDialog(book, chapter, action) {
+
+    const dialog = document.createElement("dialog");
+
+    dialog.className = "custom-dialog";
+
+
+    dialog.innerHTML = `
+
+        <h3>Select Language</h3>
+
+        <label>
+            <input type="radio" name="chapterLanguage" value="english" checked>
+            English
+        </label>
+        <br>
+
+        <label>
+            <input type="radio" name="chapterLanguage" value="tamil">
+            தமிழ் (Tamil)
+        </label>
+        <br>
+
+        <label>
+            <input type="radio" name="chapterLanguage" value="malayalam">
+            മലയാളം (Malayalam)
+        </label>
+        <br>
+
+        <label>
+            <input type="radio" name="chapterLanguage" value="hindi">
+            हिन्दी (Hindi)
+        </label>
+
+        <br><br>
+
+        <div class="chapter-language-actions">
+
+    <button id="chapterLanguageOK">
+        OK
+    </button>
+
+    <button id="chapterLanguageCancel">
+        Cancel
+    </button>
+
+</div>
+
+    `;
+
+
+    document.body.appendChild(dialog);
+
+
+    dialog
+    .querySelector("#chapterLanguageOK")
+    .onclick = function(){
+
+
+        const selected =
+            dialog.querySelector(
+                'input[name="chapterLanguage"]:checked'
+            ).value;
+
+
+        dialog.close();
+        dialog.remove();
+
+
+        if(action === "share") {
+
+    if(selected === "english") {
+
+        shareTreasure(
+            book,
+            chapter
+        );
+
+    }
+    else {
+
+        shareTreasureLanguage(
+            book,
+            chapter,
+            selected
+        );
+
+    }
+
+}
+
+
+if(action === "download"){
+
+    if(selected === "english"){
+
+        exportTreasuresPDF(selected);
+
+    }
+    else {
+
+        exportChapterCanvasPDF(selected);
+
+    }
+
+}
+
+    };
+
+
+    dialog
+    .querySelector("#chapterLanguageCancel")
+    .onclick = function(){
+
+        dialog.close();
+        dialog.remove();
+
+    };
+
+
+    dialog.showModal();
+
+}
+
+async function createChapterCanvasImage(
+    book,
+    chapter,
+    language
+) {
+
+    try {
+
+        let folder = "bible/";
+
+        if (language === "tamil") {
+            folder = "bible/bible-ta/";
+        }
+
+        else if (language === "malayalam") {
+            folder = "bible/bible-ml/";
+        }
+
+        else if (language === "hindi") {
+            folder = "bible/bible-hi/";
+        }
+
+
+        const response = await fetch(
+            folder + encodeURIComponent(book) + ".json"
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Language Bible file not found"
+            );
+
+        }
+
+
+        const data = await response.json();
+
+
+        const bookKey =
+    Object.keys(data).find(
+        key => key.toLowerCase() === book.toLowerCase()
+    );
+
+
+const verses =
+    bookKey &&
+    data[bookKey][String(chapter)];
+
+    if (!verses) {
+
+    throw new Error(
+        "Chapter not found: " + book + " " + chapter
+    );
+
+}
+
+
+        if (!verses) {
+
+            alert(
+                "Chapter text not available."
+            );
+
+            return;
+
+        }
+
+
+        const canvas =
+            document.createElement("canvas");
+
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        canvas.width = 1200;
+        canvas.height = 1600;
+
+
+        // Background
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        let y = 100;
+
+
+        // Title
+
+        ctx.fillStyle = "#000000";
+
+        ctx.font =
+            "bold 50px Arial";
+
+        ctx.fillText(
+            "✝ Holy Bible KJV",
+            80,
+            y
+        );
+
+
+        y += 90;
+
+
+        ctx.font =
+            "bold 40px Arial";
+
+
+        ctx.fillText(
+            book + " - Chapter " + chapter,
+            80,
+            y
+        );
+
+
+        y += 80;
+
+
+        let fontFamily = "Arial";
+
+
+        if (language === "tamil") {
+
+            fontFamily =
+                "NotoTamil";
+
+        }
+
+        else if (language === "malayalam") {
+
+            fontFamily =
+                "NotoMalayalam";
+
+        }
+
+        else if (language === "hindi") {
+
+            fontFamily =
+                "NotoHindi";
+
+        }
+
+
+        ctx.font =
+            "32px " + fontFamily;
+
+
+        const verseNumbers =
+            Object.keys(verses)
+            .filter(key => /^\d+$/.test(key))
+            .sort(
+                (a,b)=>Number(a)-Number(b)
+            );
+
+
+        for (const verseNumber of verseNumbers) {
+
+
+            const text =
+                verseNumber +
+                ". " +
+                verses[verseNumber];
+
+
+            const lines =
+                wrapCanvasText(
+                    ctx,
+                    text,
+                    1000
+                );
+
+
+            for (const line of lines) {
+
+
+                if (y > 1450) {
+
+                    // stop if page is full
+
+                    break;
+
+                }
+
+
+                ctx.fillText(
+                    line,
+                    80,
+                    y
+                );
+
+
+                y += 45;
+
+            }
+
+
+            y += 15;
+
+        }
+
+
+        const image =
+            canvas.toDataURL(
+                "image/png"
+            );
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.download =
+            book +
+            "-Chapter-" +
+            chapter +
+            "-" +
+            language +
+            ".png";
+
+
+        link.href =
+            image;
+
+
+        link.click();
+
+
+
+    }
+    catch(error) {
+
+        console.error(
+            "Canvas image failed:",
+            error
+        );
+
+
+        alert(
+            "Unable to create image."
+        );
+
+    }
+
+}
+
+function wrapCanvasText(ctx, text, maxWidth) {
+
+    const words =
+        text.split(" ");
+
+    const lines = [];
+
+    let line = "";
+
+
+    words.forEach(function(word){
+
+        const test =
+            line + word + " ";
+
+        const width =
+            ctx.measureText(test).width;
+
+
+        if(width > maxWidth) {
+
+            lines.push(line);
+
+            line = word + " ";
+
+        }
+        else {
+
+            line = test;
+
+        }
+
+    });
+
+
+    lines.push(line);
+
+    return lines;
+
+}
+
 async function shareTreasure(book, chapter) {
 
     try {
@@ -7165,8 +7766,10 @@ async function shareTreasure(book, chapter) {
 
         const data = await response.json();
 
-        const verses =
-            data.chapters[String(chapter)];
+        const bookName = Object.keys(data)[0];
+
+const verses =
+    data[bookName][String(chapter)];
 
         if (!verses) {
             alert(
@@ -7287,6 +7890,118 @@ try {
     }
 
 }
+
+async function shareTreasureLanguage(
+    book,
+    chapter,
+    language
+){
+
+    try {
+
+        let folder = "bible/";
+
+        if(language === "tamil"){
+            folder = "bible/bible-ta/";
+        }
+
+        else if(language === "malayalam"){
+            folder = "bible/bible-ml/";
+        }
+
+        else if(language === "hindi"){
+            folder = "bible/bible-hi/";
+        }
+
+
+        const response = await fetch(
+            folder + encodeURIComponent(book) + ".json"
+        );
+
+
+        const data =
+            await response.json();
+
+            console.log("Selected book:", book);
+console.log("JSON keys:", Object.keys(data));
+
+
+        const verses =
+            data.chapters[String(chapter)];
+
+
+        let bibleText =
+            "";
+
+
+        Object.keys(verses)
+        .filter(key => /^\d+$/.test(key))
+        .forEach(function(number){
+
+            bibleText +=
+                number +
+                ". " +
+                verses[number] +
+                "\n\n";
+
+        });
+
+
+        const languageName = {
+
+            tamil:"தமிழ்",
+            malayalam:"മലയാളം",
+            hindi:"हिन्दी"
+
+        };
+
+
+        const message =
+            "*Today's Treasure - " +
+            book +
+            " Ch " +
+            chapter +
+            "*\n\n" +
+            (languageName[language] || "") +
+            "\n\n" +
+            bibleText.trim();
+
+
+
+        await navigator.clipboard.writeText(message);
+
+
+        if(navigator.share){
+
+            await navigator.share({
+
+                title:
+                "Today's Treasure",
+
+                text:
+                "Treasure copied. Open WhatsApp and paste it."
+
+            });
+
+        }
+
+
+    }
+    catch(error){
+
+    console.error(
+        "Share language failed:",
+        error.message,
+        error
+    );
+
+    alert(
+        "Error: " + error.message
+    );
+
+}
+
+}
 /* =========================================================
    RENDER FAVORITES / TREASURES
 ========================================================= */
@@ -7401,8 +8116,37 @@ function renderFavorites() {
         share.className =
             "favorite-share";
 
-        share.textContent =
-            "📤";
+        share.innerHTML = `
+<svg 
+width="22" 
+height="22" 
+viewBox="0 0 24 24"
+fill="none"
+xmlns="http://www.w3.org/2000/svg">
+
+<path 
+d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z"
+stroke="currentColor"
+stroke-width="2"/>
+
+<path 
+d="M6 15C7.65685 15 9 13.65685 9 12C9 10.34315 7.65685 9 6 9C4.34315 9 3 10.34315 3 12C3 13.65685 4.34315 15 6 15Z"
+stroke="currentColor"
+stroke-width="2"/>
+
+<path 
+d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z"
+stroke="currentColor"
+stroke-width="2"/>
+
+<path 
+d="M8.7 10.8L15.3 7.2M8.7 13.2L15.3 16.8"
+stroke="currentColor"
+stroke-width="2"
+stroke-linecap="round"/>
+
+</svg>
+`;
 
         share.title =
             "Share Treasure";
@@ -7410,14 +8154,75 @@ function renderFavorites() {
 
         share.onclick = function(event) {
 
-            event.stopPropagation();
+    event.stopPropagation();
 
-            shareTreasure(
-                item.book,
-                Number(item.chapter)
-            );
+    showChapterTreasureLanguageDialog(
+    item.book,
+    Number(item.chapter),
+    "share"
+);
 
-        };
+};
+
+/* ================================================= 
+   PDF DOWNLOAD
+================================================= */
+
+const pdf =
+    document.createElement("button");
+
+pdf.className =
+"favorite-share";
+
+pdf.title =
+    "Download PDF";
+
+
+pdf.innerHTML = `
+<svg
+width="24"
+height="24"
+viewBox="0 0 24 24"
+fill="none"
+xmlns="http://www.w3.org/2000/svg">
+
+<path 
+d="M6 2H14L20 8V21C20 21.5523 19.5523 22 19 22H6C4.89543 22 4 21.1046 4 20V4C4 2.89543 4.89543 2 6 2Z"
+stroke="currentColor"
+stroke-width="1.8"
+stroke-linejoin="round"/>
+
+<path 
+d="M14 2V8H20"
+stroke="currentColor"
+stroke-width="1.8"
+stroke-linejoin="round"/>
+
+<text 
+x="5.2"
+y="17"
+font-size="6"
+font-family="Arial"
+font-weight="bold"
+fill="currentColor">
+PDF
+</text>
+
+</svg>
+`;
+
+
+pdf.onclick = function(event) {
+
+    event.stopPropagation();
+
+    showChapterTreasureLanguageDialog(
+        item.book,
+        Number(item.chapter),
+        "download"
+    );
+
+};
 
 
         /* =================================================
@@ -7455,11 +8260,13 @@ function renderFavorites() {
 
         row.appendChild(checkbox);
 
-        row.appendChild(title);
+row.appendChild(title);
 
-        row.appendChild(share);
+row.appendChild(share);
 
-        row.appendChild(remove);
+row.appendChild(pdf);
+
+row.appendChild(remove);
 
         container.appendChild(row);
 
@@ -7628,7 +8435,7 @@ chapterBox.appendChild(verseBox);
    EXPORT TREASURES TO BEAUTIFUL KJV PDF
 ========================================================= */
 
-async function exportTreasuresPDF() {
+async function exportTreasuresPDF(language = "english") {
 
     const allFavorites = getFavorites();
 
@@ -7948,14 +8755,29 @@ pdf.text(
 
             try {
 
-                response =
-                    await fetch(
-                        "bible/" +
-                        encodeURIComponent(
-                            item.book
-                        ) +
-                        ".json"
-                    );
+                let folder = "bible/";
+
+if(language === "tamil"){
+    folder = "bible/bible-ta/";
+}
+
+else if(language === "malayalam"){
+    folder = "bible/bible-ml/";
+}
+
+else if(language === "hindi"){
+    folder = "bible/bible-hi/";
+}
+
+
+response =
+    await fetch(
+        folder +
+        encodeURIComponent(
+            item.book
+        ) +
+        ".json"
+    );
 
             } catch (error) {
 
@@ -11264,13 +12086,13 @@ async function updateBibleReader(book, chapter) {
             englishData.chapters[String(chapter)];
 
         const tamilVerses =
-            tamilData?.[book]?.[String(chapter)] || {};
+            tamilData?.chapters?.[String(chapter)] || {};
 
         const malayalamVerses =
-            malayalamData?.[book]?.[String(chapter)] || {};
+            malayalamData?.chapters?.[String(chapter)] || {};
 
         const hindiVerses =
-            hindiData?.[book]?.[String(chapter)] || {};
+            hindiData?.chapters?.[String(chapter)] || {};
 
         if (!englishVerses) {
             textContainer.innerHTML =
@@ -11786,15 +12608,11 @@ if (treasureVerse) {
                                 }
 
 
-                                // =====================================
-                                // CREATE ONE LANGUAGE LINE
-                                 // =====================================
+// =====================================
+// CREATE ONE LANGUAGE LINE
+// // =====================================
 
-                                                function addLanguageLine(
-                                                container,
-                                                verseText,
-                                             className
-                                                ) {
+ function addLanguageLine(container,verseText,className) {
 
                                         if (!verseText) return;
 
@@ -12579,7 +13397,7 @@ document.addEventListener("touchmove", function (event) {
 // OFFLINE BIBLE APP
 // =========================================================
 
-if ("serviceWorker" in navigator) {
+/*if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function () {
 
@@ -12603,7 +13421,7 @@ if ("serviceWorker" in navigator) {
 
     });
 
-}
+}*/
 
 function headerBack() {
 
@@ -12770,7 +13588,20 @@ window.addEventListener("DOMContentLoaded", function () {
     if (splashAlreadyShown) {
 
         splash.style.display = "none";
-        updateHomeHeader("home");
+        const currentPage =
+    sessionStorage.getItem("page");
+
+
+if (!currentPage || currentPage === "home") {
+
+    updateHomeHeader("home");
+
+}
+else {
+
+    updateHomeHeader("other");
+
+}
 
         setTimeout(function () {
 
@@ -12814,7 +13645,20 @@ window.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
 
         splash.style.display = "none";
-        updateHomeHeader("home");
+        const currentPage =
+    sessionStorage.getItem("page");
+
+
+if (!currentPage || currentPage === "home") {
+
+    updateHomeHeader("home");
+
+}
+else {
+
+    updateHomeHeader("other");
+
+}
 
         showDailyReadingPopup();
 
@@ -14470,10 +15314,18 @@ async function exportVerseTreasureSelected(
 
         // Render HTML as an image
         const canvas = await html2canvas(container, {
-            scale: 2,
-            backgroundColor: "#ffffff",
-            useCORS: true
-        });
+
+    scale: 2,
+
+    backgroundColor: "#ffffff",
+
+    useCORS: true,
+
+    height: container.scrollHeight,
+
+    windowHeight: container.scrollHeight
+
+});
 
         const imageData = canvas.toDataURL("image/png");
 
@@ -14657,16 +15509,213 @@ function updateHomeHeader(page){
     }
 }
 
+async function exportChapterCanvasPDF(language){
 
-document.addEventListener("DOMContentLoaded", function(){
+    const pdf =
+        new jspdf.jsPDF({
+            orientation:"portrait",
+            unit:"mm",
+            format:"a4"
+        });
 
-    setTimeout(function(){
 
-        updateHomeHeader("home");
+    const favorites =
+        getFavorites();
 
-    }, 500);
 
-});
+    const folder =
+        language === "tamil"
+        ? "bible/bible-ta/"
+        :
+        language === "malayalam"
+        ? "bible/bible-ml/"
+        :
+        "bible/bible-hi/";
+
+
+    const pageContainer =
+        document.createElement("div");
+
+
+    pageContainer.style.width = "800px";
+    pageContainer.style.padding = "40px";
+    pageContainer.style.background = "white";
+    pageContainer.style.fontSize = "22px";
+    pageContainer.style.lineHeight = "1.8";
+
+
+    document.body.appendChild(pageContainer);
+
+
+    let firstPage = true;
+
+
+    for(const item of favorites){
+
+
+        const response =
+            await fetch(
+                folder +
+                item.book +
+                ".json"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        const verses =
+            data.chapters[
+                String(item.chapter)
+            ];
+
+
+        pageContainer.innerHTML =
+        `
+        <h2>
+        ${item.book} Chapter ${item.chapter}
+        </h2>
+        `;
+
+
+        for(const v of Object.keys(verses)){
+
+
+            const verse =
+            document.createElement("p");
+
+
+            verse.innerHTML =
+            v + ". " + verses[v];
+
+
+            pageContainer.appendChild(verse);
+
+
+            // Check page height
+            if(pageContainer.scrollHeight > 1000){
+
+
+                const canvas =
+                await html2canvas(
+                    pageContainer,
+                    {
+                        scale:2,
+                        backgroundColor:"#ffffff"
+                    }
+                );
+
+
+                const img =
+                canvas.toDataURL("image/png");
+
+
+                if(!firstPage){
+                    pdf.addPage();
+                }
+
+
+                addPDFBorder(pdf);
+
+
+                pdf.addImage(
+                    img,
+                    "PNG",
+                    20,
+                    20,
+                    170,
+                    250
+                );
+
+
+                firstPage = false;
+
+
+                pageContainer.innerHTML = "";
+
+            }
+
+        }
+
+
+        // Remaining verses
+        if(pageContainer.innerHTML.trim() !== ""){
+
+
+            const canvas =
+            await html2canvas(
+                pageContainer,
+                {
+                    scale:2,
+                    backgroundColor:"#ffffff"
+                }
+            );
+
+
+            const img =
+            canvas.toDataURL("image/png");
+
+
+            if(!firstPage){
+                pdf.addPage();
+            }
+
+
+            addPDFBorder(pdf);
+
+
+            pdf.addImage(
+                img,
+                "PNG",
+                20,
+                20,
+                170,
+                250
+            );
+
+
+            firstPage = false;
+
+        }
+
+    }
+
+
+    document.body.removeChild(pageContainer);
+
+
+    pdf.save(
+        "Bible-Treasure-" + language + ".pdf"
+    );
+
+}
+
+function addPDFBorder(pdf) {
+
+    const pageWidth =
+        pdf.internal.pageSize.getWidth();
+
+    const pageHeight =
+        pdf.internal.pageSize.getHeight();
+
+
+    pdf.setDrawColor(
+        180,
+        148,
+        61
+    );
+
+    pdf.setLineWidth(1);
+
+    pdf.rect(
+        10,
+        10,
+        pageWidth - 20,
+        pageHeight - 20
+    );
+
+}
 
 </script>
 </body>
