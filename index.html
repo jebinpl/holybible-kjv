@@ -5343,6 +5343,19 @@ body.dark-mode .treasure-menu-button:hover {
     gap:8px;
 }
 
+.home-toggle {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.cross-header-logo {
+    width:35px;
+    height:35px;
+    object-fit:contain;
+    display:none;
+}
+
 </style>
 </head>
 
@@ -5464,13 +5477,24 @@ body.dark-mode .treasure-menu-button:hover {
             Video Version
         </div>
 
-        <button
-            class="home-header-button"
-            onclick="goHome()">
+        <div class="home-toggle">
 
-            HOME
+    <button 
+        id="homeButton"
+        class="home-header-button" 
+        onclick="goHome()"> 
 
-        </button>
+        HOME 
+
+    </button>
+
+
+    <img 
+        id="crossLogo"
+        src="cross.png"
+        class="cross-header-logo">
+
+</div>
 
     </div>
 
@@ -6405,6 +6429,7 @@ function saveFavorites(favorites) {
 ========================================================= */
 
 function showFavorites() {
+    updateHomeHeader("other");
 
     hideGroupedPages();
 
@@ -10167,6 +10192,7 @@ function hideGroupedPages() {
 ========================================================= */
 
 function openSearchGroup() {
+    updateHomeHeader("other");
 
     hideBibleReaderForSearch();
 
@@ -10193,6 +10219,7 @@ function openSearchGroup() {
 ========================================================= */
 
 function openBibleGroup() {
+    updateHomeHeader("other");
 
     hideGroupedPages();
 
@@ -10216,6 +10243,7 @@ function openBibleGroup() {
 ========================================================= */
 
 function openSettingsPage() {
+    updateHomeHeader("other");
 
     hideGroupedPages();
 
@@ -10903,7 +10931,7 @@ function backToBooks() {
  
 function goHome() {
     
-
+    updateHomeHeader("home");
     // Keep the splash-screen status
     const splashShown =
         sessionStorage.getItem("holyBibleSplashShown");
@@ -12742,6 +12770,7 @@ window.addEventListener("DOMContentLoaded", function () {
     if (splashAlreadyShown) {
 
         splash.style.display = "none";
+        updateHomeHeader("home");
 
         setTimeout(function () {
 
@@ -12785,6 +12814,7 @@ window.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
 
         splash.style.display = "none";
+        updateHomeHeader("home");
 
         showDailyReadingPopup();
 
@@ -14606,6 +14636,37 @@ function chapterHeartClick() {
     toggleFavoriteCurrentChapter(); 
 
 }
+
+function updateHomeHeader(page){
+
+    const homeButton = document.getElementById("homeButton");
+    const crossLogo = document.getElementById("crossLogo");
+
+    if(!homeButton || !crossLogo) return;
+
+    if(page === "home"){
+
+        homeButton.style.display = "none";
+        crossLogo.style.display = "block";
+
+    } else {
+
+        homeButton.style.display = "block";
+        crossLogo.style.display = "none";
+
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    setTimeout(function(){
+
+        updateHomeHeader("home");
+
+    }, 500);
+
+});
 
 </script>
 </body>
