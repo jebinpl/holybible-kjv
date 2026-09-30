@@ -12306,6 +12306,7 @@ const BibleSpeech = {
 
 let speechPaused = false;
 let allLanguageIndex = 0;
+let bibleWakeLock = null;
 
 async function updateBibleReader(book, chapter) {
 
@@ -16114,6 +16115,7 @@ function highlightCurrentVerse(verseNumber){
 async function startSpeech() {
 
      console.log("2 - startSpeech started");
+     keepBibleScreenAwake();
 
     if (!BibleSpeech.verses.length) {
 
@@ -16205,14 +16207,15 @@ console.log("Current text:", text);
 if (selectedBibleLanguage === "tamil") {
 
 
-    const tamilVoice = voices.find(
-    voice => voice.lang === "ta-IN"
+    const tamilVoice = findBestVoice(
+    voices,
+    ["ta-IN", "ta"]
 );
 
 if (tamilVoice) {
 
     speech.voice = tamilVoice;
-    speech.lang = "ta-IN";
+    speech.lang = tamilVoice.lang;
 
 }
 
@@ -16221,7 +16224,9 @@ else {
     resetSpeechButton();
 
     showDialog(
-        "Tamil voice is not available on this device"
+        
+
+"Tamil voice! Please install Tamil voice from your device Text-to-Speech settings and try again."
     );
 
     return;
@@ -16234,14 +16239,15 @@ else {
 
 else if (selectedBibleLanguage === "hindi") {
 
-    const hindiVoice = voices.find(
-    voice => voice.lang === "hi-IN"
+    const hindiVoice = findBestVoice(
+    voices,
+    ["hi-IN", "hi"]
 );
 
 if (hindiVoice) {
 
     speech.voice = hindiVoice;
-    speech.lang = "hi-IN";
+    speech.lang = hindiVoice.lang;
 
 }
 
@@ -16250,7 +16256,7 @@ else {
     resetSpeechButton();
 
     showDialog(
-    "Hindi voice is not available on this device"
+    "Hindi voice! Please install Hindi voice from your device Text-to-Speech settings and try again."
 );
 
     return;
@@ -16260,13 +16266,14 @@ else {
 }
 
 else if (selectedBibleLanguage === "malayalam") {
-    const malayalamVoice = voices.find(
-        voice => voice.lang.startsWith("ml")
-    );
+    const malayalamVoice = findBestVoice(
+    voices,
+    ["ml-IN", "ml"]
+);
     if (malayalamVoice) {
 
         speech.voice = malayalamVoice;
-        speech.lang = "ml-IN";
+        speech.lang = malayalamVoice.lang;
 
     }
 
@@ -16275,7 +16282,7 @@ else if (selectedBibleLanguage === "malayalam") {
         resetSpeechButton();
 
         showDialog(
-    "Malayalam voice is not available on this device"
+    "Malayalam voice! Please install Malayalam voice from your device Text-to-Speech settings and try again."
 );
 
         return;
@@ -16289,14 +16296,15 @@ else if (selectedBibleLanguage === "all") {
 
     if (allLanguageIndex === 0) {
 
-        const englishVoice = voices.find(
-    voice => voice.lang === "en-US"
+        const englishVoice = findBestVoice(
+    voices,
+    ["en-IN", "en-US", "en-GB", "en"]
 );
 
 if (englishVoice) {
 
     speech.voice = englishVoice;
-    speech.lang = "en-US";
+    speech.lang = englishVoice.lang;
 
 }
 
@@ -16305,7 +16313,7 @@ else {
     resetSpeechButton();
 
     showDialog(
-        "English voice is not available on this device"
+        "English voice! Please install English voice from your device Text-to-Speech settings and try again."
     );
 
     return;
@@ -16319,14 +16327,15 @@ else {
 
     else if (allLanguageIndex === 1) {
 
-        const tamilVoice = voices.find(
-    voice => voice.lang === "ta-IN"
+        const tamilVoice = findBestVoice(
+    voices,
+    ["ta-IN", "ta"]
 );
 
 if (tamilVoice) {
 
     speech.voice = tamilVoice;
-    speech.lang = "ta-IN";
+    speech.lang = tamilVoice.lang;
 
 }
 else {
@@ -16334,7 +16343,7 @@ else {
     resetSpeechButton();
 
     showDialog(
-        "Tamil voice is not available on this device"
+        "Tamil voice! Please install Tamil voice from your device Text-to-Speech settings and try again."
     );
 
     return;
@@ -16348,14 +16357,15 @@ else {
 
     else if (allLanguageIndex === 2) {
 
-        const hindiVoice = voices.find(
-    voice => voice.lang === "hi-IN"
+        const hindiVoice = findBestVoice(
+    voices,
+    ["hi-IN", "hi"]
 );
 
 if (hindiVoice) {
 
     speech.voice = hindiVoice;
-    speech.lang = "hi-IN";
+    speech.lang = hindiVoice.lang;
 
 }
 
@@ -16364,7 +16374,7 @@ else {
     resetSpeechButton();
 
     showDialog(
-        "Hindi voice is not available on this device"
+        "Hindi voice! Please install Hindi voice from your device Text-to-Speech settings and try again."
     );
 
     return;
@@ -16380,14 +16390,15 @@ else {
 else {
 
 
-    const englishVoice = voices.find(
-    voice => voice.lang === "en-US"
+    const englishVoice = findBestVoice(
+    voices,
+    ["en-IN", "en-US", "en-GB", "en"]
 );
 
 if (englishVoice) {
 
     speech.voice = englishVoice;
-    speech.lang = "en-US";
+    speech.lang = englishVoice.lang;
 
 }
 
@@ -16396,7 +16407,7 @@ else {
     resetSpeechButton();
 
     showDialog(
-        "English voice is not available on this device"
+        "English voice! Please install English voice from your device Text-to-Speech settings and try again."
     );
 
     return;
@@ -16468,6 +16479,8 @@ speech.onend = function(){
 
         playButton.textContent = "▶";
 
+        releaseBibleScreenAwake();
+
         console.log("Chapter completed");
 
     }
@@ -16519,6 +16532,8 @@ if (playButton) {
             speechPaused = true;
 
             playButton.textContent = "▶";
+
+            releaseBibleScreenAwake();
 
             console.log("Speech paused");
 
@@ -16665,6 +16680,68 @@ function getSpeechVoices() {
         }
 
     });
+
+}
+
+function findBestVoice(voices, languages) {
+
+    // Exact match first
+    let voice = voices.find(v =>
+        languages.includes(v.lang)
+    );
+
+    if (voice) return voice;
+
+
+    // Language prefix match
+    voice = voices.find(v =>
+        languages.some(lang =>
+            v.lang.toLowerCase()
+            .startsWith(lang.split("-")[0])
+        )
+    );
+
+    return voice;
+}
+
+async function keepBibleScreenAwake() {
+
+    try {
+
+        if ("wakeLock" in navigator) {
+
+            bibleWakeLock =
+                await navigator.wakeLock.request("screen");
+
+            console.log("Bible screen awake");
+
+        }
+
+    }
+
+    catch (err) {
+
+        console.log(
+            "Wake Lock error:",
+            err
+        );
+
+    }
+
+}
+
+
+function releaseBibleScreenAwake() {
+
+    if (bibleWakeLock) {
+
+        bibleWakeLock.release();
+
+        bibleWakeLock = null;
+
+        console.log("Bible screen sleep allowed");
+
+    }
 
 }
 
