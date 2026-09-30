@@ -5545,6 +5545,231 @@ body.dark-mode .treasure-menu-button:hover {
 
 }
 
+#chapterLanguageCancel {
+
+    background:#777;
+
+    color:white;
+
+}
+-----------------------------------------------
+.speech-player {
+
+    position: fixed;
+
+    bottom: 15px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: calc(100% - 30px);
+
+    max-width: 500px;
+
+    padding: 10px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #fffdf5,
+        #f3e3bd
+    );
+
+    border:2px solid #c7a85b;
+
+    border-radius:18px;
+
+    box-shadow:
+    0 -5px 20px rgba(0,0,0,0.25);
+
+    z-index:9999;
+
+}
+
+@media(max-width:450px){
+
+    .speech-player {
+
+        bottom:10px;
+
+        width:calc(100% - 20px);
+
+    }
+
+}
+
+/* =====================================
+   DARK MODE - BIBLE AUDIO PLAYER
+===================================== */
+
+body.dark-mode .speech-player {
+
+    background:
+    linear-gradient(
+        135deg,
+        #2c2c2c,
+        #1f1f1f
+    );
+
+    border-color:#c7a85b;
+
+    box-shadow:
+    0 -5px 20px rgba(0,0,0,0.6);
+
+}
+
+
+body.dark-mode .speech-player-controls button {
+
+    background:#333333;
+
+    color:#f4d982;
+
+    border-color:#c7a85b;
+
+}
+
+/* =====================================
+   BIBLE AUDIO PLAYER
+===================================== */
+
+.speech-player {
+
+    position: fixed;
+
+    bottom: 12px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: calc(100% - 30px);
+
+    max-width: 500px;
+
+
+    background:
+    linear-gradient(
+        135deg,
+        #fffdf5,
+        #f3e3bd
+    );
+
+
+    border: 2px solid #c7a85b;
+
+    border-radius: 18px;
+
+
+    padding: 12px;
+
+
+    box-shadow:
+    0 -5px 20px rgba(0,0,0,0.25);
+
+
+    z-index: 9999;
+
+
+    font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+}
+
+
+
+
+
+/* BUTTON AREA */
+
+.speech-player-controls {
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:8px;
+
+    margin:10px 0;
+
+}
+
+
+
+.speech-player-controls button {
+
+
+    width:38px;
+
+    height:38px;
+
+
+    border-radius:50%;
+
+
+    border:1px solid #b8943d;
+
+
+    background:#fffdf5;
+
+
+    color:#5b3a00;
+
+
+    font-size:18px;
+
+
+    cursor:pointer;
+
+
+}
+
+.speech-player {
+    pointer-events: auto;
+}
+
+.speech-player button {
+    pointer-events: auto;
+    position: relative;
+    z-index: 10000;
+}
+
+/* =====================================
+   CURRENT SPEAKING VERSE HIGHLIGHT
+===================================== */
+
+.bible-verse.speaking-verse {
+
+    background:
+    linear-gradient(
+        135deg,
+        #fff3b0,
+        #ffe082
+    );
+
+    border-left: 5px solid #c7a85b;
+
+    transition: all 0.3s ease;
+
+}
+
+
+body.dark-mode .bible-verse.speaking-verse {
+
+    background:
+    linear-gradient(
+        135deg,
+        #3a3320,
+        #292300
+    );
+
+    border-left-color:#f4d982;
+
+}
+
 </style>
 </head>
 
@@ -5790,6 +6015,49 @@ body.dark-mode .treasure-menu-button:hover {
         </div>
 
     </div>
+
+    <!-- BIBLE SPEECH PLAYER -->
+    <!-- =====================================
+     BIBLE AUDIO PLAYER
+===================================== -->
+
+<div id="speechPlayer" class="speech-player">
+
+
+    <div class="speech-player-controls">
+
+
+        <button
+            id="speechPreviousButton"
+            title="Previous Verse">
+
+            ◀◀
+
+        </button>
+
+
+        <button
+            id="speechPlayButton"
+            title="Play">
+
+            ▶
+        </button>
+
+
+
+        <button
+            id="speechNextButton"
+            title="Next Verse">
+
+            ▶▶
+
+        </button>
+
+
+    </div>
+
+
+</div>
 
 </div>
 
@@ -12002,16 +12270,43 @@ let selectedBibleLanguage = "english";
 
 async function changeBibleLanguage(language) {
 
+
+    // Stop current audio when language changes
+    window.speechSynthesis.cancel();
+
+    speechPaused = false;
+
+
     selectedBibleLanguage = language;
+
 
     const book = sessionStorage.getItem("book");
     const chapter = sessionStorage.getItem("chapter");
 
+
     if (!book || !chapter) return;
 
+
     await updateBibleReader(book, chapter);
+
 }
- 
+
+// =====================================
+// BIBLE TEXT TO SPEECH
+// =====================================
+
+const BibleSpeech = {
+
+    verses: [],
+    currentIndex: 0,
+    book: "",
+    chapter: ""
+
+};
+
+let speechPaused = false;
+let allLanguageIndex = 0;
+
 async function updateBibleReader(book, chapter) {
 
     const textContainer =
@@ -12120,6 +12415,43 @@ async function updateBibleReader(book, chapter) {
                 .filter(key => /^\d+$/.test(key))
                 .map(Number)
                 .sort((a, b) => a - b);
+
+                // =====================================
+// PREPARE SPEECH VERSES
+// =====================================
+
+BibleSpeech.verses = [];
+
+verseNumbers.forEach(function(verseNumber){
+
+    BibleSpeech.verses.push({
+
+    number: verseNumber,
+
+    english:
+        englishVerses[String(verseNumber)],
+
+    tamil:
+        tamilVerses[String(verseNumber)],
+
+    malayalam:
+        malayalamVerses[String(verseNumber)],
+
+    hindi:
+        hindiVerses[String(verseNumber)]
+
+    });
+
+});
+
+
+BibleSpeech.book = book;
+
+BibleSpeech.chapter = chapter;
+
+BibleSpeech.currentIndex = 0;
+
+            
 
         // =====================================
         // RENDER ALL FOUR LANGUAGES
@@ -13397,7 +13729,7 @@ document.addEventListener("touchmove", function (event) {
 // OFFLINE BIBLE APP
 // =========================================================
 
-if ("serviceWorker" in navigator) {
+/*if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function () {
 
@@ -13421,7 +13753,7 @@ if ("serviceWorker" in navigator) {
 
     });
 
-}
+}*/
 
 function headerBack() {
 
@@ -15153,21 +15485,32 @@ function showDialog(message) {
     dialog.showModal();
 }
 
-shareButton.onclick = function() {
+const shareButton = document.getElementById("shareButton");
 
-    if (selectedLanguages.length === 0) {
-        showDialog("Please select at least one language.");
-        return;
-    }
+if (shareButton) {
 
-    shareVerseTreasureSelected(
-        book,
-        chapter,
-        verse.verse,
-        texts,
-        [...selectedLanguages]
-    );
-};
+    shareButton.onclick = function() {
+
+        if (selectedLanguages.length === 0) {
+
+            showDialog("Please select at least one language.");
+
+            return;
+
+        }
+
+
+        shareVerseTreasureSelected(
+            book,
+            chapter,
+            verse.verse,
+            texts,
+            [...selectedLanguages]
+        );
+
+    };
+
+}
 
 // =====================================
 // EXPORT VERSE TREASURE AS PDF
@@ -15714,6 +16057,614 @@ function addPDFBorder(pdf) {
         pageWidth - 20,
         pageHeight - 20
     );
+
+}
+
+// =====================================
+// HIGHLIGHT CURRENT SPEAKING VERSE
+// =====================================
+
+function highlightCurrentVerse(verseNumber){
+
+
+    // Remove previous highlight
+
+    document
+    .querySelectorAll(".speaking-verse")
+    .forEach(function(element){
+
+        element.classList.remove(
+            "speaking-verse"
+        );
+
+    });
+
+
+
+    const verseElement =
+        document.getElementById(
+            "verse-" + verseNumber
+        );
+
+
+    if(verseElement){
+
+
+        verseElement.classList.add(
+            "speaking-verse"
+        );
+
+
+        verseElement.scrollIntoView({
+
+            behavior:"smooth",
+
+            block:"center"
+
+        });
+
+    }
+
+}
+
+// =====================================
+// START BIBLE SPEECH
+// =====================================
+
+async function startSpeech() {
+
+     console.log("2 - startSpeech started");
+
+    if (!BibleSpeech.verses.length) {
+
+        console.log("3 - No verses");
+
+        alert("No Bible verses loaded");
+
+        return;
+    }
+
+
+    const verse =
+        BibleSpeech.verses[BibleSpeech.currentIndex];
+
+        highlightCurrentVerse(
+    verse.number
+    );
+
+
+    let text = verse.english;
+    if (selectedBibleLanguage === "all") {
+
+    if (allLanguageIndex === 0) {
+
+        text = verse.english;
+
+    }
+
+    else if (allLanguageIndex === 1) {
+
+        text = verse.tamil;
+
+    }
+
+    else if (allLanguageIndex === 2) {
+
+        text = verse.hindi;
+
+    }
+
+}
+
+    
+
+    if (selectedBibleLanguage === "tamil") {
+
+    text = verse.tamil;
+
+    console.log("Using Tamil speech");
+
+}
+
+if (selectedBibleLanguage === "hindi") {
+
+    text = verse.hindi;
+
+    console.log("Using Hindi speech");
+
+}
+
+if (selectedBibleLanguage === "malayalam") {
+
+    text = verse.malayalam;
+
+    console.log("Using Malayalam speech");
+
+}
+
+
+    if (BibleSpeech.currentIndex === 0) {
+
+    text =
+        BibleSpeech.book +
+        " chapter " +
+        BibleSpeech.chapter +
+        ". " +
+        text;
+
+}
+console.log("Selected language:", selectedBibleLanguage);
+console.log("Current text:", text);
+
+    const speech =
+        new SpeechSynthesisUtterance(text);
+
+        const voices = await getSpeechVoices();
+
+
+if (selectedBibleLanguage === "tamil") {
+
+
+    const tamilVoice = voices.find(
+    voice => voice.lang === "ta-IN"
+);
+
+if (tamilVoice) {
+
+    speech.voice = tamilVoice;
+    speech.lang = "ta-IN";
+
+}
+
+else {
+
+    resetSpeechButton();
+
+    showDialog(
+        "Tamil voice is not available on this device"
+    );
+
+    return;
+
+}
+
+
+}
+
+
+else if (selectedBibleLanguage === "hindi") {
+
+    const hindiVoice = voices.find(
+    voice => voice.lang === "hi-IN"
+);
+
+if (hindiVoice) {
+
+    speech.voice = hindiVoice;
+    speech.lang = "hi-IN";
+
+}
+
+else {
+
+    resetSpeechButton();
+
+    showDialog(
+    "Hindi voice is not available on this device"
+);
+
+    return;
+
+}
+    
+}
+
+else if (selectedBibleLanguage === "malayalam") {
+    const malayalamVoice = voices.find(
+        voice => voice.lang.startsWith("ml")
+    );
+    if (malayalamVoice) {
+
+        speech.voice = malayalamVoice;
+        speech.lang = "ml-IN";
+
+    }
+
+    else {
+
+        resetSpeechButton();
+
+        showDialog(
+    "Malayalam voice is not available on this device"
+);
+
+        return;
+
+    }
+
+}
+
+else if (selectedBibleLanguage === "all") {
+
+
+    if (allLanguageIndex === 0) {
+
+        const englishVoice = voices.find(
+    voice => voice.lang === "en-US"
+);
+
+if (englishVoice) {
+
+    speech.voice = englishVoice;
+    speech.lang = "en-US";
+
+}
+
+else {
+
+    resetSpeechButton();
+
+    showDialog(
+        "English voice is not available on this device"
+    );
+
+    return;
+
+}
+
+        
+
+    }
+
+
+    else if (allLanguageIndex === 1) {
+
+        const tamilVoice = voices.find(
+    voice => voice.lang === "ta-IN"
+);
+
+if (tamilVoice) {
+
+    speech.voice = tamilVoice;
+    speech.lang = "ta-IN";
+
+}
+else {
+
+    resetSpeechButton();
+
+    showDialog(
+        "Tamil voice is not available on this device"
+    );
+
+    return;
+
+}
+
+        
+
+    }
+
+
+    else if (allLanguageIndex === 2) {
+
+        const hindiVoice = voices.find(
+    voice => voice.lang === "hi-IN"
+);
+
+if (hindiVoice) {
+
+    speech.voice = hindiVoice;
+    speech.lang = "hi-IN";
+
+}
+
+else {
+
+    resetSpeechButton();
+
+    showDialog(
+        "Hindi voice is not available on this device"
+    );
+
+    return;
+
+}
+
+    
+
+    }
+
+}
+
+else {
+
+
+    const englishVoice = voices.find(
+    voice => voice.lang === "en-US"
+);
+
+if (englishVoice) {
+
+    speech.voice = englishVoice;
+    speech.lang = "en-US";
+
+}
+
+else {
+
+    resetSpeechButton();
+
+    showDialog(
+        "English voice is not available on this device"
+    );
+
+    return;
+
+}
+
+
+}
+
+    speech.rate = 0.9;
+
+console.log("4 - Speaking:", text);
+
+speech.onstart = function(){
+
+    playButton.textContent = "❚❚";
+
+    speechPaused = false;
+
+    console.log("Speech started");
+
+};
+
+
+// =====================================
+// CONTINUE TO NEXT VERSE
+// =====================================
+
+speech.onend = function(){
+
+
+    if (selectedBibleLanguage === "all") {
+
+
+        allLanguageIndex++;
+
+
+        // Same verse: move to next language
+        if (allLanguageIndex < 3) {
+
+            startSpeech();
+
+            return;
+
+        }
+
+
+        // All languages finished for this verse
+        allLanguageIndex = 0;
+
+    }
+
+
+    // Move to next verse
+    BibleSpeech.currentIndex++;
+
+
+    if (BibleSpeech.currentIndex < BibleSpeech.verses.length) {
+
+        startSpeech();
+
+    }
+
+    else {
+
+        BibleSpeech.currentIndex = 0;
+
+        allLanguageIndex = 0;
+
+        playButton.textContent = "▶";
+
+        console.log("Chapter completed");
+
+    }
+
+
+};
+
+console.log(
+"Voice:",
+speech.voice ? speech.voice.name : "No voice selected",
+"Language:",
+speech.lang
+);
+window.speechSynthesis.speak(speech);
+
+}
+
+// =====================================
+// PLAY / PAUSE TOGGLE BUTTON
+// =====================================
+
+const playButton =
+    document.getElementById("speechPlayButton");
+
+
+if (playButton) {
+
+    playButton.onclick = function(){
+
+
+        if (speechPaused) {
+
+            window.speechSynthesis.resume();
+
+            speechPaused = false;
+
+            playButton.textContent = "❚❚";
+
+            console.log("Speech resumed");
+
+        }
+
+
+        else if (window.speechSynthesis.speaking) {
+
+
+            window.speechSynthesis.pause();
+
+            speechPaused = true;
+
+            playButton.textContent = "▶";
+
+            console.log("Speech paused");
+
+        }
+
+
+        else {
+
+    startSpeech();
+
+}
+
+
+    };
+
+}
+
+// =====================================
+// NEXT VERSE BUTTON
+// =====================================
+
+const nextButton =
+    document.getElementById("speechNextButton");
+
+
+if (nextButton) {
+
+    nextButton.onclick = function(){
+
+        console.log("Next verse clicked");
+
+
+        // Stop current speech
+        window.speechSynthesis.cancel();
+
+        allLanguageIndex = 0;
+
+
+        // Move to next verse
+        BibleSpeech.currentIndex++;
+
+
+        if (
+            BibleSpeech.currentIndex <
+            BibleSpeech.verses.length
+        ) {
+
+            startSpeech();
+
+        }
+        else {
+
+            BibleSpeech.currentIndex =
+                BibleSpeech.verses.length - 1;
+
+            console.log("Last verse reached");
+
+        }
+
+    };
+
+}
+
+// =====================================
+// PREVIOUS VERSE BUTTON
+// =====================================
+
+const previousButton =
+    document.getElementById("speechPreviousButton");
+
+
+if (previousButton) {
+
+    previousButton.onclick = function(){
+
+        console.log("Previous verse clicked");
+
+
+        // Stop current speech
+        window.speechSynthesis.cancel();
+
+    
+        allLanguageIndex = 0;
+
+        // Move to previous verse
+        BibleSpeech.currentIndex--;
+
+
+        if (BibleSpeech.currentIndex >= 0) {
+
+            startSpeech();
+
+        }
+        else {
+
+            // Stay at first verse
+            BibleSpeech.currentIndex = 0;
+
+            startSpeech();
+
+            console.log("First verse reached");
+
+        }
+
+    };
+
+}
+
+function resetSpeechButton() {
+
+    window.speechSynthesis.cancel();
+
+    speechPaused = false;
+
+    allLanguageIndex = 0;
+
+    if (playButton) {
+        playButton.textContent = "▶";
+    }
+
+}
+
+function getSpeechVoices() {
+
+    return new Promise(resolve => {
+
+        let voices = speechSynthesis.getVoices();
+
+        if (voices.length) {
+
+            resolve(voices);
+
+        } 
+        else {
+
+            speechSynthesis.onvoiceschanged = () => {
+
+                voices = speechSynthesis.getVoices();
+
+                resolve(voices);
+
+            };
+
+        }
+
+    });
 
 }
 
