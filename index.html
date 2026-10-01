@@ -12054,7 +12054,7 @@ function goHome() {
         sessionStorage.getItem("holyBibleSplashShown");
 
     // Clear navigation state
-    sessionStorage.removeItem("page");
+    sessionStorage.setItem("page", "home");
     sessionStorage.removeItem("testament");
     sessionStorage.removeItem("book");
     sessionStorage.removeItem("chapter");
@@ -12224,6 +12224,8 @@ if (!book || !chapter) {
     ===================================================== */
 
     bibleReaderOpen = true;
+
+    updateHomeHeader("other");
 
 
     /*
@@ -13929,6 +13931,7 @@ window.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+
     /*
        Check whether splash has already
        been shown during this session.
@@ -13941,6 +13944,29 @@ window.addEventListener("DOMContentLoaded", function () {
 
 
     /*
+       Function to update header according
+       to the current page.
+    */
+
+    function updateHeaderAccordingToPage() {
+
+        const currentPage =
+            sessionStorage.getItem("page");
+
+        if (currentPage === "home") {
+
+            updateHomeHeader("home");
+
+        }
+        else {
+
+            updateHomeHeader("other");
+
+        }
+    }
+
+
+    /*
        Splash already shown:
        hide it and show today's reading.
     */
@@ -13948,22 +13974,12 @@ window.addEventListener("DOMContentLoaded", function () {
     if (splashAlreadyShown) {
 
         splash.style.display = "none";
-        const currentPage =
-    sessionStorage.getItem("page");
 
+sessionStorage.setItem("page", "home");
 
-if (!currentPage || currentPage === "home") {
+updateHomeHeader("home");
 
-    updateHomeHeader("home");
-
-}
-else {
-
-    updateHomeHeader("other");
-
-}
-
-        setTimeout(function () {
+setTimeout(function () {
 
             showDailyReadingPopup();
 
@@ -13998,29 +14014,17 @@ else {
 
     /*
        Remove splash after animation.
-
-       Then show today's reading popup.
     */
 
     setTimeout(function () {
 
         splash.style.display = "none";
-        const currentPage =
-    sessionStorage.getItem("page");
 
+sessionStorage.setItem("page", "home");
 
-if (!currentPage || currentPage === "home") {
+updateHomeHeader("home");
 
-    updateHomeHeader("home");
-
-}
-else {
-
-    updateHomeHeader("other");
-
-}
-
-        showDailyReadingPopup();
+showDailyReadingPopup();
 
     }, 5000);
 
