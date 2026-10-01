@@ -10163,6 +10163,8 @@ function updateFavoriteButton() {
 ========================================================= */ 
  
 function showBooks(testament) {
+
+    closeBibleReader();
     
     hideGroupedPages();
     sessionStorage.setItem("testament", testament);
@@ -11950,6 +11952,8 @@ function closeBibleVideo() {
 ========================================================= */ 
  
 function backToChapters() { 
+
+    closeBibleReader();
  
     const savedBook = 
         sessionStorage.getItem("book"); 
@@ -12010,6 +12014,8 @@ function backToChapters() {
 ========================================================= */ 
  
 function backToBooks() { 
+
+    closeBibleReader();
  
     const savedTestament = 
         sessionStorage.getItem("testament"); 
@@ -12047,6 +12053,10 @@ function backToBooks() {
 ========================================================= */ 
  
 function goHome() {
+
+        if (bibleReaderOpen) {
+        closeBibleReader();
+    }
     
     updateHomeHeader("home");
     // Keep the splash-screen status
@@ -12078,25 +12088,7 @@ function goHome() {
     document.getElementById("bibleTextSearchPage").style.display = "none";
     hideGroupedPages();
     document.getElementById("homePage").style.display = "block";
-    /* RESTORE LAST BIBLE READER ON HOME */
-if (bibleReaderOpen) {
-
-    const wrapper =
-        document.querySelector(".bible-reader-wrapper");
-
-    const bottomClose =
-        document.querySelector(
-            ".bible-reader-bottom-close"
-        );
-
-    if (wrapper) {
-        wrapper.style.display = "block";
-    }
-
-    if (bottomClose) {
-        bottomClose.style.display = "flex";
-    }
-}
+    
     updateTestamentNavigation();
 }
  
@@ -13096,7 +13088,14 @@ function toggleVerseTreasure(
 
 function closeBibleReader() {
 
-    
+     // Tell speech that reading mode has already closed
+    bibleReaderOpen = false;
+
+    // Stop speech and reset player
+    resetSpeechButton();
+
+    // Allow screen to sleep
+    releaseBibleScreenAwake();
 
     const wrapper =
         document.querySelector(".bible-reader-wrapper");
@@ -16145,6 +16144,21 @@ function highlightCurrentVerse(verseNumber){
 
 async function startSpeech() {
 
+    const speechPlayer =
+        document.getElementById("speechPlayer");
+
+    if (
+        !speechPlayer ||
+        speechPlayer.style.display === "none"
+    ) {
+        return;
+    }
+
+    console.log("2 - startSpeech started");
+
+    keepBibleScreenAwake();
+    
+
      console.log("2 - startSpeech started");
      keepBibleScreenAwake();
 
@@ -16233,6 +16247,10 @@ console.log("Current text:", text);
         new SpeechSynthesisUtterance(text);
 
         const voices = await getSpeechVoices();
+
+if (!bibleReaderOpen) {
+    return;
+}
 
 
 if (selectedBibleLanguage === "tamil") {
@@ -16468,6 +16486,12 @@ speech.onstart = function(){
 // =====================================
 
 speech.onend = function(){
+
+    // Do not continue to the next verse
+    // after leaving reading mode
+    if (!bibleReaderOpen) {
+        return;
+    }
 
 
     if (selectedBibleLanguage === "all") {
@@ -16774,6 +16798,29 @@ function releaseBibleScreenAwake() {
 
     }
 
+}
+
+function stopSpeechIfPlayerHidden() {
+
+    const speechPlayer =
+        document.getElementById("speechPlayer");
+
+    if (
+        speechPlayer &&
+        speechPlayer.style.display === "none"
+    ) {
+
+        window.speechSynthesis.cancel();
+
+        speechPaused = false;
+        allLanguageIndex = 0;
+
+        if (playButton) {
+            playButton.textContent = "▶";
+        }
+
+        releaseBibleScreenAwake();
+    }
 }
 
 </script>
