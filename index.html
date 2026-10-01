@@ -13767,7 +13767,7 @@ document.addEventListener("touchmove", function (event) {
 // OFFLINE BIBLE APP
 // =========================================================
 
-if ("serviceWorker" in navigator) {
+/*if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function () {
 
@@ -13791,7 +13791,7 @@ if ("serviceWorker" in navigator) {
 
     });
 
-}
+}*/
 
 function headerBack() {
 
@@ -16770,8 +16770,23 @@ async function keepBibleScreenAwake() {
 
         if ("wakeLock" in navigator) {
 
-            bibleWakeLock =
+            const wakeLock =
                 await navigator.wakeLock.request("screen");
+
+            // If user already left Chapter Read,
+            // immediately release the newly-created lock.
+            if (!bibleReaderOpen) {
+
+                await wakeLock.release();
+
+                console.log(
+                    "Wake Lock released because Bible Reader is closed"
+                );
+
+                return;
+            }
+
+            bibleWakeLock = wakeLock;
 
             console.log("Bible screen awake");
 
