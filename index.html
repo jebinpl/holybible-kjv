@@ -13767,7 +13767,7 @@ document.addEventListener("touchmove", function (event) {
 // OFFLINE BIBLE APP
 // =========================================================
 
-/*if ("serviceWorker" in navigator) {
+if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function () {
 
@@ -13791,7 +13791,7 @@ document.addEventListener("touchmove", function (event) {
 
     });
 
-}*/
+}
 
 function headerBack() {
 
@@ -16166,10 +16166,6 @@ async function startSpeech() {
     console.log("2 - startSpeech started");
 
     keepBibleScreenAwake();
-    
-
-     console.log("2 - startSpeech started");
-     keepBibleScreenAwake();
 
     if (!BibleSpeech.verses.length) {
 
