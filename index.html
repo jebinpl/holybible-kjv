@@ -11955,9 +11955,9 @@ function closeBibleVideo() {
  
 function backToChapters() { 
 
-    releaseBibleScreenAwake();
-
     closeBibleReader();
+
+    releaseBibleScreenAwake();
  
     const savedBook = 
         sessionStorage.getItem("book"); 
@@ -12019,9 +12019,10 @@ function backToChapters() {
  
 function backToBooks() { 
 
+    closeBibleReader();
+
     releaseBibleScreenAwake();
 
-    closeBibleReader();
  
     const savedTestament = 
         sessionStorage.getItem("testament"); 
@@ -12060,10 +12061,12 @@ function backToBooks() {
  
 function goHome() {
 
-        if (bibleReaderOpen) {
+    if (bibleReaderOpen) {
         closeBibleReader();
     }
-    
+
+    releaseBibleScreenAwake();
+
     updateHomeHeader("home");
     // Keep the splash-screen status
     const splashShown =
@@ -13764,7 +13767,7 @@ document.addEventListener("touchmove", function (event) {
 // OFFLINE BIBLE APP
 // =========================================================
 
-if ("serviceWorker" in navigator) {
+/*if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function () {
 
@@ -13788,7 +13791,7 @@ if ("serviceWorker" in navigator) {
 
     });
 
-}
+}*/
 
 function headerBack() {
 
