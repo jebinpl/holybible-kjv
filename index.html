@@ -16508,6 +16508,8 @@ speech.onstart = function(){
 
     speechPaused = false;
 
+    setBibleLanguageSelectionEnabled(false);
+
     console.log("Speech started");
 
 };
@@ -16605,6 +16607,7 @@ if (playButton) {
             speechPaused = false;
 
             playButton.textContent = "❚❚";
+            setBibleLanguageSelectionEnabled(false);
 
             console.log("Speech resumed");
 
@@ -16619,6 +16622,7 @@ if (playButton) {
             speechPaused = true;
 
             playButton.textContent = "▶";
+            setBibleLanguageSelectionEnabled(true);
 
             releaseBibleScreenAwake();
 
@@ -16871,6 +16875,16 @@ function stopSpeechIfPlayerHidden() {
         }
 
         releaseBibleScreenAwake();
+    }
+}
+
+function setBibleLanguageSelectionEnabled(enabled) {
+
+    const languageSelect =
+        document.getElementById("bibleLanguageSelect");
+
+    if (languageSelect) {
+        languageSelect.disabled = !enabled;
     }
 }
 
