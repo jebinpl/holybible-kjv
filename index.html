@@ -16562,15 +16562,21 @@ speech.onend = function(){
 
     else {
 
-        BibleSpeech.currentIndex = 0;
+    BibleSpeech.currentIndex = 0;
 
-        allLanguageIndex = 0;
+    allLanguageIndex = 0;
 
-        playButton.textContent = "▶";
+    speechPaused = false;
 
-        releaseBibleScreenAwake();
+    playButton.textContent = "▶";
 
-        console.log("Chapter completed");
+    // Chapter finished = language selector enabled
+    setBibleLanguageSelectionEnabled(true);
+
+    // Allow screen to sleep
+    releaseBibleScreenAwake();
+
+    console.log("Chapter completed");
 
     }
 
@@ -16599,6 +16605,9 @@ if (playButton) {
 
     playButton.onclick = function(){
 
+        // =====================================
+        // RESUME AFTER PAUSE
+        // =====================================
 
         if (speechPaused) {
 
@@ -16607,36 +16616,49 @@ if (playButton) {
             speechPaused = false;
 
             playButton.textContent = "❚❚";
+
+            // Playing = language selector disabled
             setBibleLanguageSelectionEnabled(false);
+
+            // Screen awake again while reading
+            keepBibleScreenAwake();
 
             console.log("Speech resumed");
 
         }
 
+        // =====================================
+        // PAUSE WHILE PLAYING
+        // =====================================
 
         else if (window.speechSynthesis.speaking) {
-
 
             window.speechSynthesis.pause();
 
             speechPaused = true;
 
             playButton.textContent = "▶";
+
+            // Paused = language selector enabled
             setBibleLanguageSelectionEnabled(true);
 
+            // Allow screen to sleep while paused
             releaseBibleScreenAwake();
 
             console.log("Speech paused");
 
         }
 
+        // =====================================
+        // START READING
+        // =====================================
 
         else {
 
-    startSpeech();
+            // This starts reading from currentIndex
+            startSpeech();
 
-}
-
+        }
 
     };
 
