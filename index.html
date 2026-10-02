@@ -7760,7 +7760,7 @@ async function createChapterCanvasImage(
 
     try {
 
-        let folder = "bible/";
+        let folder = "bible/bible-en/";
 
         if (language === "tamil") {
             folder = "bible/bible-ta/";
@@ -8052,7 +8052,7 @@ async function shareTreasure(book, chapter) {
     try {
 
         const response = await fetch(
-            "bible/" + encodeURIComponent(book) + ".json"
+            "bible/bible-en/" + encodeURIComponent(book) + ".json"
         );
 
         if (!response.ok) {
@@ -8194,7 +8194,7 @@ async function shareTreasureLanguage(
 
     try {
 
-        let folder = "bible/";
+        let folder = "bible/bible-en/";
 
         if(language === "tamil"){
             folder = "bible/bible-ta/";
@@ -9050,7 +9050,7 @@ pdf.text(
 
             try {
 
-                let folder = "bible/";
+                let folder = "bible/bible-en/";
 
 if(language === "tamil"){
     folder = "bible/bible-ta/";
@@ -12159,7 +12159,7 @@ async function loadBibleBook(book) {
     try { 
  
         const response = await fetch( 
-            "bible/" + encodeURIComponent(book) + ".json" 
+            "bible/bible-en/" + encodeURIComponent(book) + ".json" 
         ); 
  
         if (!response.ok) { 
@@ -14072,7 +14072,7 @@ async function buildBibleTextSearchDatabase() {
         try {
 
             const response = await fetch(
-                "bible/" +
+                "bible/bible-en/" +
                 encodeURIComponent(bookName) +
                 ".json"
             );
