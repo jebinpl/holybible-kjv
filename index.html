@@ -16521,6 +16521,12 @@ speech.onstart = function(){
 
 speech.onend = function(){
 
+    // If speech was paused, DO NOT move to next verse
+    if (speechPaused) {
+        console.log("Speech ended while paused - staying on current verse");
+        return;
+    }
+
     // Do not continue to the next verse
     // after leaving reading mode
     if (!bibleReaderOpen) {
@@ -16530,9 +16536,7 @@ speech.onend = function(){
 
     if (selectedBibleLanguage === "all") {
 
-
         allLanguageIndex++;
-
 
         // Same verse: move to next language
         if (allLanguageIndex < 4) {
@@ -16540,13 +16544,10 @@ speech.onend = function(){
             startSpeech();
 
             return;
-
         }
-
 
         // All languages finished for this verse
         allLanguageIndex = 0;
-
     }
 
 
@@ -16562,24 +16563,22 @@ speech.onend = function(){
 
     else {
 
-    BibleSpeech.currentIndex = 0;
+        BibleSpeech.currentIndex = 0;
 
-    allLanguageIndex = 0;
+        allLanguageIndex = 0;
 
-    speechPaused = false;
+        speechPaused = false;
 
-    playButton.textContent = "▶";
+        playButton.textContent = "▶";
 
-    // Chapter finished = language selector enabled
-    setBibleLanguageSelectionEnabled(true);
+        // Chapter finished = language selector enabled
+        setBibleLanguageSelectionEnabled(true);
 
-    // Allow screen to sleep
-    releaseBibleScreenAwake();
+        // Allow screen to sleep
+        releaseBibleScreenAwake();
 
-    console.log("Chapter completed");
-
+        console.log("Chapter completed");
     }
-
 
 };
 
@@ -16611,7 +16610,17 @@ if (playButton) {
 
         if (speechPaused) {
 
-            window.speechSynthesis.resume();
+    console.log("Resuming speech...");
+
+    // Resume the existing paused utterance
+    window.speechSynthesis.resume();
+
+    // Keep our paused state until the browser
+    // actually starts speaking again
+    setTimeout(function(){
+
+        if (window.speechSynthesis.speaking &&
+            !window.speechSynthesis.paused) {
 
             speechPaused = false;
 
@@ -16623,9 +16632,20 @@ if (playButton) {
             // Screen awake again while reading
             keepBibleScreenAwake();
 
-            console.log("Speech resumed");
+            console.log("Speech resumed successfully");
 
         }
+        else {
+
+            console.log(
+                "Resume did not start the speech"
+            );
+
+        }
+
+    }, 100);
+
+}
 
         // =====================================
         // PAUSE WHILE PLAYING
@@ -16633,9 +16653,11 @@ if (playButton) {
 
         else if (window.speechSynthesis.speaking) {
 
-            window.speechSynthesis.pause();
-
+            // Set this FIRST
             speechPaused = true;
+
+            // Then pause the existing utterance
+            window.speechSynthesis.pause();
 
             playButton.textContent = "▶";
 
@@ -16655,7 +16677,6 @@ if (playButton) {
 
         else {
 
-            // This starts reading from currentIndex
             startSpeech();
 
         }
@@ -16663,6 +16684,8 @@ if (playButton) {
     };
 
 }
+
+    
 
 // =====================================
 // NEXT VERSE BUTTON
