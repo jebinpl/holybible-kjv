@@ -13767,7 +13767,7 @@ document.addEventListener("touchmove", function (event) {
 // OFFLINE BIBLE APP
 // =========================================================
 
-if ("serviceWorker" in navigator) {
+/*if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function () {
 
@@ -13791,7 +13791,7 @@ if ("serviceWorker" in navigator) {
 
     });
 
-}
+}*/
 
 function headerBack() {
 
@@ -16178,15 +16178,15 @@ async function startSpeech() {
 
 
     const verse =
-        BibleSpeech.verses[BibleSpeech.currentIndex];
+    BibleSpeech.verses[BibleSpeech.currentIndex];
 
-        highlightCurrentVerse(
+highlightCurrentVerse(
     verse.number
-    );
+);
 
+let text = verse.english;
 
-    let text = verse.english;
-    if (selectedBibleLanguage === "all") {
+if (selectedBibleLanguage === "all") {
 
     if (allLanguageIndex === 0) {
 
@@ -16202,10 +16202,15 @@ async function startSpeech() {
 
     else if (allLanguageIndex === 2) {
 
-        text = verse.hindi;
+        text = verse.malayalam;
 
     }
 
+    else if (allLanguageIndex === 3) {
+
+        text = verse.hindi;
+
+    }
 }
 
     
@@ -16411,33 +16416,55 @@ else {
 
     else if (allLanguageIndex === 2) {
 
-        const hindiVoice = findBestVoice(
-    voices,
-    ["hi-IN", "hi"]
-);
-
-if (hindiVoice) {
-
-    speech.voice = hindiVoice;
-    speech.lang = hindiVoice.lang;
-
-}
-
-else {
-
-    resetSpeechButton();
-
-    showDialog(
-        "Hindi voice! Please install Hindi voice from your device Text-to-Speech settings and try again."
+    const malayalamVoice = findBestVoice(
+        voices,
+        ["ml-IN", "ml"]
     );
 
-    return;
+    if (malayalamVoice) {
 
-}
-
-    
+        speech.voice = malayalamVoice;
+        speech.lang = malayalamVoice.lang;
 
     }
+
+    else {
+
+        resetSpeechButton();
+
+        showDialog(
+            "Malayalam voice! Please install Malayalam voice from your device Text-to-Speech settings and try again."
+        );
+
+        return;
+    }
+}
+
+else if (allLanguageIndex === 3) {
+
+    const hindiVoice = findBestVoice(
+        voices,
+        ["hi-IN", "hi"]
+    );
+
+    if (hindiVoice) {
+
+        speech.voice = hindiVoice;
+        speech.lang = hindiVoice.lang;
+
+    }
+
+    else {
+
+        resetSpeechButton();
+
+        showDialog(
+            "Hindi voice! Please install Hindi voice from your device Text-to-Speech settings and try again."
+        );
+
+        return;
+    }
+}
 
 }
 
@@ -16506,7 +16533,7 @@ speech.onend = function(){
 
 
         // Same verse: move to next language
-        if (allLanguageIndex < 3) {
+        if (allLanguageIndex < 4) {
 
             startSpeech();
 
