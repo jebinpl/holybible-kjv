@@ -8160,10 +8160,8 @@ async function shareTreasure(book, chapter) {
 
         const data = await response.json();
 
-        const bookName = Object.keys(data)[0];
-
-const verses =
-    data[bookName][String(chapter)];
+        const verses =
+        data.chapters[String(chapter)];
 
         if (!verses) {
             alert(
@@ -13921,7 +13919,7 @@ document.addEventListener("touchmove", function (event) {
 // OFFLINE BIBLE APP
 // =========================================================
 
-if ("serviceWorker" in navigator) {
+/*if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function () {
 
@@ -13945,7 +13943,7 @@ if ("serviceWorker" in navigator) {
 
     });
 
-}
+}*/
 
 function headerBack() {
 
