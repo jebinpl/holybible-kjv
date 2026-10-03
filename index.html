@@ -7195,25 +7195,32 @@ let message =
 "Verse Treasure\n\n";
 
 
-selectedVerseTreasures.forEach(v => {
+selectedVerseTreasures.forEach(v=>{
 
-    message +=
-        v.book + " " +
-        v.chapter + ":" +
-        v.verse +
-        "\n\n";
 
-    v.languages.forEach(lang => {
+message +=
+v.book+" "+
+v.chapter+":"+
+v.verse+
+"\n\n";
 
-        if (v.texts[lang]) {
 
-            message +=
-                v.texts[lang].trim() +
-                "\n\n";
+v.languages.forEach(lang=>{
 
-        }
 
-    });
+if(v.texts[lang]){
+
+
+message +=
+v.texts[lang]+  
+"\n\n";
+
+
+}
+
+
+});
+
 
 });
 
