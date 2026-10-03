@@ -16254,10 +16254,10 @@ if (selectedBibleLanguage === "malayalam") {
 console.log("Selected language:", selectedBibleLanguage);
 console.log("Current text:", text);
 
+speechResumePosition = 0;
+
     const speech =
         new SpeechSynthesisUtterance(text);
-
-        speechResumeText = text;
 
         // Remember the complete text for mobile pause/resume
         speechResumeText = text;
