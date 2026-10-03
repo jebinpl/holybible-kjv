@@ -16154,6 +16154,46 @@ let speechResumePosition = 0;
 let speechResumeText = "";
 let speechResumeVoice = null;
 let speechResumeLang = "";
+let mobileSpeechChunks = [];
+let mobileSpeechChunkIndex = 0;
+
+function splitMobileSpeechText(text) {
+
+    const words = text.split(/\s+/);
+
+    const chunks = [];
+
+    let chunk = "";
+
+    words.forEach(function(word) {
+
+        if (
+            chunk &&
+            (chunk.length + word.length + 1) > 100
+        ) {
+
+            chunks.push(chunk);
+
+            chunk = word;
+
+        }
+
+        else {
+
+            chunk +=
+                (chunk ? " " : "") + word;
+
+        }
+
+    });
+
+    if (chunk) {
+        chunks.push(chunk);
+    }
+
+    return chunks;
+}
+
 async function startSpeech() {
 
     const speechPlayer =
@@ -16258,8 +16298,22 @@ console.log("Current text:", text);
 
 speechResumePosition = 0;
 
-    const speech =
-        new SpeechSynthesisUtterance(text);
+if (isMobileDevice()) {
+
+    mobileSpeechChunks =
+        splitMobileSpeechText(text);
+
+    mobileSpeechChunkIndex = 0;
+
+    text =
+        mobileSpeechChunks[
+            mobileSpeechChunkIndex
+        ];
+
+}
+
+const speech =
+    new SpeechSynthesisUtterance(text);
 
         // Remember the complete text for mobile pause/resume
         speechResumeText = text;
@@ -16546,24 +16600,117 @@ speech.onstart = function(){
 
 speech.onend = function(){
 
-    // If speech was paused, DO NOT move to next verse
+    // =====================================
+    // PAUSED
+    // =====================================
+
     if (speechPaused) {
-        console.log("Speech ended while paused - staying on current verse");
+
+        console.log(
+            "Speech ended while paused - staying here"
+        );
+
         return;
     }
 
-    // Do not continue to the next verse
-    // after leaving reading mode
+
+    // =====================================
+    // READING MODE CLOSED
+    // =====================================
+
     if (!bibleReaderOpen) {
         return;
     }
 
 
+    // =====================================
+    // MOBILE CHUNK CONTINUATION
+    // =====================================
+
+    if (isMobileDevice()) {
+
+        if (
+            mobileSpeechChunkIndex <
+            mobileSpeechChunks.length - 1
+        ) {
+
+            mobileSpeechChunkIndex++;
+
+            const nextText =
+                mobileSpeechChunks[
+                    mobileSpeechChunkIndex
+                ];
+
+            const nextSpeech =
+                new SpeechSynthesisUtterance(
+                    nextText
+                );
+
+
+            // Same voice
+            if (speechResumeVoice) {
+
+                nextSpeech.voice =
+                    speechResumeVoice;
+
+            }
+
+
+            // Same language
+            if (speechResumeLang) {
+
+                nextSpeech.lang =
+                    speechResumeLang;
+
+            }
+
+
+            nextSpeech.rate = 0.9;
+
+
+            nextSpeech.onstart = function(){
+
+                playButton.textContent = "❚❚";
+
+                speechPaused = false;
+
+                setBibleLanguageSelectionEnabled(
+                    false
+                );
+
+                keepBibleScreenAwake();
+
+                console.log(
+                    "Mobile chunk:",
+                    mobileSpeechChunkIndex + 1,
+                    "/",
+                    mobileSpeechChunks.length
+                );
+
+            };
+
+
+            nextSpeech.onend =
+                speech.onend;
+
+            window.speechSynthesis.speak(
+                nextSpeech
+            );
+
+            return;
+        }
+
+    }
+
+
+    // =====================================
+    // CURRENT VERSE FINISHED
+    // =====================================
+
     if (selectedBibleLanguage === "all") {
 
         allLanguageIndex++;
 
-        // Same verse: move to next language
         if (allLanguageIndex < 4) {
 
             startSpeech();
@@ -16571,16 +16718,21 @@ speech.onend = function(){
             return;
         }
 
-        // All languages finished for this verse
         allLanguageIndex = 0;
     }
 
 
-    // Move to next verse
+    // =====================================
+    // MOVE TO NEXT VERSE
+    // =====================================
+
     BibleSpeech.currentIndex++;
 
 
-    if (BibleSpeech.currentIndex < BibleSpeech.verses.length) {
+    if (
+        BibleSpeech.currentIndex <
+        BibleSpeech.verses.length
+    ) {
 
         startSpeech();
 
@@ -16596,13 +16748,16 @@ speech.onend = function(){
 
         playButton.textContent = "▶";
 
-        // Chapter finished = language selector enabled
-        setBibleLanguageSelectionEnabled(true);
+        setBibleLanguageSelectionEnabled(
+            true
+        );
 
-        // Allow screen to sleep
         releaseBibleScreenAwake();
 
-        console.log("Chapter completed");
+        console.log(
+            "Chapter completed"
+        );
+
     }
 
 };
@@ -16644,164 +16799,232 @@ if (playButton) {
 
     console.log("Resuming speech...");
 
-    // -----------------------------------------
-    // Mobile-safe resume
-    // -----------------------------------------
 
-    if (
-        speechResumeText &&
-        speechResumePosition > 0 &&
-        speechResumePosition < speechResumeText.length
-    ) {
+    // =====================================
+    // MOBILE RESUME
+    // =====================================
 
-        const resumeStartPosition =
-    speechResumePosition;
-
-        const remainingText =
-            speechResumeText.substring(
-                speechResumePosition
-            );
+    if (isMobileDevice()) {
 
         console.log(
-            "Resuming from character:",
-            speechResumePosition
+            "Mobile resume - chunk:",
+            mobileSpeechChunkIndex + 1,
+            "/",
+            mobileSpeechChunks.length
         );
 
-        // Stop the paused utterance
+
         window.speechSynthesis.cancel();
 
-        // Clear paused state
         speechPaused = false;
 
-        // Create continuation speech
+
+        const resumeText =
+            mobileSpeechChunks[
+                mobileSpeechChunkIndex
+            ];
+
+
         const resumeSpeech =
             new SpeechSynthesisUtterance(
-                remainingText
+                resumeText
             );
 
-        // Use the same voice
+
+        // Same voice
         if (speechResumeVoice) {
-            resumeSpeech.voice = speechResumeVoice;
+
+            resumeSpeech.voice =
+                speechResumeVoice;
+
         }
 
-        // Use the same language
+
+        // Same language
         if (speechResumeLang) {
-            resumeSpeech.lang = speechResumeLang;
+
+            resumeSpeech.lang =
+                speechResumeLang;
+
         }
+
 
         resumeSpeech.rate = 0.9;
 
-        resumeSpeech.onstart = function() {
+
+        resumeSpeech.onstart = function(){
 
             playButton.textContent = "❚❚";
 
-            setBibleLanguageSelectionEnabled(false);
+            speechPaused = false;
+
+            setBibleLanguageSelectionEnabled(
+                false
+            );
 
             keepBibleScreenAwake();
 
             console.log(
-                "Speech resumed from saved position"
+                "Mobile resumed current chunk"
             );
 
         };
 
-        resumeSpeech.onboundary = function(event) {
 
-    if (typeof event.charIndex === "number") {
+        resumeSpeech.onend =
+            function(){
 
-        speechResumePosition =
-            resumeStartPosition +
-            event.charIndex;
+                // If paused again, do nothing
+                if (speechPaused) {
+                    return;
+                }
 
-        console.log(
-            "Resume speech position:",
-            speechResumePosition
-        );
 
-    }
+                // More chunks remain
+                if (
+                    mobileSpeechChunkIndex <
+                    mobileSpeechChunks.length - 1
+                ) {
 
-};
+                    mobileSpeechChunkIndex++;
 
-        resumeSpeech.onend = function() {
+                    const nextText =
+                        mobileSpeechChunks[
+                            mobileSpeechChunkIndex
+                        ];
 
-            if (!bibleReaderOpen) {
-                return;
-            }
+                    const nextSpeech =
+                        new SpeechSynthesisUtterance(
+                            nextText
+                        );
 
-            // Clear saved position
-            speechResumePosition = 0;
 
-            // Continue normal verse/language progression
-            if (selectedBibleLanguage === "all") {
+                    if (speechResumeVoice) {
 
-                allLanguageIndex++;
+                        nextSpeech.voice =
+                            speechResumeVoice;
 
-                if (allLanguageIndex < 4) {
+                    }
 
-                    startSpeech();
+
+                    if (speechResumeLang) {
+
+                        nextSpeech.lang =
+                            speechResumeLang;
+
+                    }
+
+
+                    nextSpeech.rate = 0.9;
+
+
+                    nextSpeech.onstart =
+                        resumeSpeech.onstart;
+
+
+                    nextSpeech.onend =
+                        resumeSpeech.onend;
+
+
+                    window.speechSynthesis.speak(
+                        nextSpeech
+                    );
 
                     return;
                 }
 
-                allLanguageIndex = 0;
-            }
 
-            BibleSpeech.currentIndex++;
+                // All chunks finished.
+                // Continue normal Bible reading.
 
-            if (
-                BibleSpeech.currentIndex <
-                BibleSpeech.verses.length
-            ) {
+                speechResumePosition = 0;
 
-                startSpeech();
 
-            }
+                if (
+                    selectedBibleLanguage ===
+                    "all"
+                ) {
 
-            else {
+                    allLanguageIndex++;
 
-                BibleSpeech.currentIndex = 0;
+                    if (allLanguageIndex < 4) {
 
-                allLanguageIndex = 0;
+                        startSpeech();
 
-                speechPaused = false;
+                        return;
+                    }
 
-                playButton.textContent = "▶";
+                    allLanguageIndex = 0;
+                }
 
-                setBibleLanguageSelectionEnabled(true);
 
-                releaseBibleScreenAwake();
+                BibleSpeech.currentIndex++;
 
-                console.log(
-                    "Chapter completed"
-                );
 
-            }
+                if (
+                    BibleSpeech.currentIndex <
+                    BibleSpeech.verses.length
+                ) {
 
-        };
+                    startSpeech();
 
-        setTimeout(function() {
+                }
+
+                else {
+
+                    BibleSpeech.currentIndex = 0;
+
+                    allLanguageIndex = 0;
+
+                    speechPaused = false;
+
+                    playButton.textContent = "▶";
+
+                    setBibleLanguageSelectionEnabled(
+                        true
+                    );
+
+                    releaseBibleScreenAwake();
+
+                    console.log(
+                        "Chapter completed"
+                    );
+
+                }
+
+            };
+
 
         window.speechSynthesis.speak(
-        resumeSpeech
+            resumeSpeech
         );
 
-        }, 100);
-
+        return;
     }
 
-    else {
 
-        console.log(
-            "No saved speech position available"
-        );
+    // =====================================
+    // DESKTOP RESUME
+    // =====================================
 
-        speechPaused = false;
+    window.speechSynthesis.resume();
 
-        startSpeech();
+    speechPaused = false;
 
-    }
+    playButton.textContent = "❚❚";
+
+    setBibleLanguageSelectionEnabled(
+        false
+    );
+
+    keepBibleScreenAwake();
+
+    console.log(
+        "Desktop speech resumed"
+    );
 
     return;
+
 }
 
         // =====================================
