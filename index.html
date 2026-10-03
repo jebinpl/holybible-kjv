@@ -11741,7 +11741,7 @@ function openSearchVideo(videoId) {
 
         }
 
-    }, 300);
+    }, 100);
 
 }
  
@@ -16152,6 +16152,8 @@ function highlightCurrentVerse(verseNumber){
 // =====================================
 let speechResumePosition = 0;
 let speechResumeText = "";
+let speechResumeVoice = null;
+let speechResumeLang = "";
 async function startSpeech() {
 
     const speechPlayer =
@@ -16504,6 +16506,9 @@ else {
 
 }
 
+speechResumeVoice = speech.voice;
+speechResumeLang = speech.lang;
+
     speech.rate = 0.9;
 
     // Remember the last spoken character position.
@@ -16632,17 +16637,51 @@ if (playButton) {
 
     console.log("Resuming speech...");
 
-    // First try the browser's native resume.
-    window.speechSynthesis.resume();
+    // -----------------------------------------
+    // Mobile-safe resume
+    // -----------------------------------------
 
-    // Give mobile speech engine a little time to resume.
-    setTimeout(function(){
+    if (
+        speechResumeText &&
+        speechResumePosition > 0 &&
+        speechResumePosition < speechResumeText.length
+    ) {
 
-        if (window.speechSynthesis.speaking &&
-            !window.speechSynthesis.paused) {
+        const remainingText =
+            speechResumeText.substring(
+                speechResumePosition
+            );
 
-            // Native resume worked.
-            speechPaused = false;
+        console.log(
+            "Resuming from character:",
+            speechResumePosition
+        );
+
+        // Stop the paused utterance
+        window.speechSynthesis.cancel();
+
+        // Clear paused state
+        speechPaused = false;
+
+        // Create continuation speech
+        const resumeSpeech =
+            new SpeechSynthesisUtterance(
+                remainingText
+            );
+
+        // Use the same voice
+        if (speechResumeVoice) {
+            resumeSpeech.voice = speechResumeVoice;
+        }
+
+        // Use the same language
+        if (speechResumeLang) {
+            resumeSpeech.lang = speechResumeLang;
+        }
+
+        resumeSpeech.rate = 0.9;
+
+        resumeSpeech.onstart = function() {
 
             playButton.textContent = "❚❚";
 
@@ -16650,211 +16689,88 @@ if (playButton) {
 
             keepBibleScreenAwake();
 
-            console.log("Speech resumed normally");
-
-        }
-        else {
-
             console.log(
-                "Mobile resume failed - using saved position"
+                "Speech resumed from saved position"
             );
 
-            // -----------------------------------------
-            // MOBILE FALLBACK
-            // Continue from the last known character
-            // -----------------------------------------
+        };
+
+        resumeSpeech.onend = function() {
+
+            if (!bibleReaderOpen) {
+                return;
+            }
+
+            // Clear saved position
+            speechResumePosition = 0;
+
+            // Continue normal verse/language progression
+            if (selectedBibleLanguage === "all") {
+
+                allLanguageIndex++;
+
+                if (allLanguageIndex < 4) {
+
+                    startSpeech();
+
+                    return;
+                }
+
+                allLanguageIndex = 0;
+            }
+
+            BibleSpeech.currentIndex++;
 
             if (
-                speechResumeText &&
-                speechResumePosition > 0 &&
-                speechResumePosition < speechResumeText.length
+                BibleSpeech.currentIndex <
+                BibleSpeech.verses.length
             ) {
 
-                // Get the remaining text
-                const remainingText =
-                    speechResumeText.substring(
-                        speechResumePosition
-                    );
-
-                console.log(
-                    "Resuming from character:",
-                    speechResumePosition
-                );
-
-                // Cancel the stuck paused utterance
-                window.speechSynthesis.cancel();
-
-                // We are creating a continuation utterance,
-                // so do not let the old paused state stop it.
-                speechPaused = false;
-
-                // Create continuation utterance
-                const resumeSpeech =
-                    new SpeechSynthesisUtterance(
-                        remainingText
-                    );
-
-                resumeSpeech.rate = 0.9;
-
-                // Get the same voices
-                getSpeechVoices().then(function(voices) {
-
-                    // Select the same language voice
-                    if (selectedBibleLanguage === "tamil") {
-
-                        const tamilVoice =
-                            findBestVoice(
-                                voices,
-                                ["ta-IN", "ta"]
-                            );
-
-                        if (tamilVoice) {
-                            resumeSpeech.voice = tamilVoice;
-                            resumeSpeech.lang = tamilVoice.lang;
-                        }
-
-                    }
-
-                    else if (selectedBibleLanguage === "hindi") {
-
-                        const hindiVoice =
-                            findBestVoice(
-                                voices,
-                                ["hi-IN", "hi"]
-                            );
-
-                        if (hindiVoice) {
-                            resumeSpeech.voice = hindiVoice;
-                            resumeSpeech.lang = hindiVoice.lang;
-                        }
-
-                    }
-
-                    else if (selectedBibleLanguage === "malayalam") {
-
-                        const malayalamVoice =
-                            findBestVoice(
-                                voices,
-                                ["ml-IN", "ml"]
-                            );
-
-                        if (malayalamVoice) {
-                            resumeSpeech.voice = malayalamVoice;
-                            resumeSpeech.lang =
-                                malayalamVoice.lang;
-                        }
-
-                    }
-
-                    else {
-
-                        const englishVoice =
-                            findBestVoice(
-                                voices,
-                                [
-                                    "en-IN",
-                                    "en-US",
-                                    "en-GB",
-                                    "en"
-                                ]
-                            );
-
-                        if (englishVoice) {
-                            resumeSpeech.voice = englishVoice;
-                            resumeSpeech.lang =
-                                englishVoice.lang;
-                        }
-
-                    }
-
-                    resumeSpeech.onstart = function() {
-
-                        speechPaused = false;
-
-                        playButton.textContent = "❚❚";
-
-                        setBibleLanguageSelectionEnabled(false);
-
-                        keepBibleScreenAwake();
-
-                        console.log(
-                            "Speech continued from saved position"
-                        );
-
-                    };
-
-                    resumeSpeech.onend = function() {
-
-                        if (!bibleReaderOpen) {
-                            return;
-                        }
-
-                        // Reset saved position
-                        speechResumePosition = 0;
-
-                        // Continue exactly like normal speech
-                        if (selectedBibleLanguage === "all") {
-
-                            allLanguageIndex++;
-
-                            if (allLanguageIndex < 4) {
-                                startSpeech();
-                                return;
-                            }
-
-                            allLanguageIndex = 0;
-                        }
-
-                        BibleSpeech.currentIndex++;
-
-                        if (
-                            BibleSpeech.currentIndex <
-                            BibleSpeech.verses.length
-                        ) {
-
-                            startSpeech();
-
-                        }
-                        else {
-
-                            BibleSpeech.currentIndex = 0;
-                            allLanguageIndex = 0;
-                            speechPaused = false;
-
-                            playButton.textContent = "▶";
-
-                            setBibleLanguageSelectionEnabled(true);
-
-                            releaseBibleScreenAwake();
-
-                            console.log(
-                                "Chapter completed"
-                            );
-
-                        }
-
-                    };
-
-                    window.speechSynthesis.speak(
-                        resumeSpeech
-                    );
-
-                });
+                startSpeech();
 
             }
 
             else {
 
+                BibleSpeech.currentIndex = 0;
+
+                allLanguageIndex = 0;
+
+                speechPaused = false;
+
+                playButton.textContent = "▶";
+
+                setBibleLanguageSelectionEnabled(true);
+
+                releaseBibleScreenAwake();
+
                 console.log(
-                    "No saved speech position available"
+                    "Chapter completed"
                 );
 
             }
 
-        }
+        };
 
-    }, 300);
+        window.speechSynthesis.speak(
+            resumeSpeech
+        );
 
+    }
+
+    else {
+
+        console.log(
+            "No saved speech position available"
+        );
+
+        speechPaused = false;
+
+        startSpeech();
+
+    }
+
+    return;
 }
 
         // =====================================
