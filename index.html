@@ -16298,10 +16298,12 @@ console.log("Current text:", text);
 
 speechResumePosition = 0;
 
+const fullSpeechText = text;
+
 if (isMobileDevice()) {
 
     mobileSpeechChunks =
-        splitMobileSpeechText(text);
+        splitMobileSpeechText(fullSpeechText);
 
     mobileSpeechChunkIndex = 0;
 
@@ -16309,14 +16311,13 @@ if (isMobileDevice()) {
         mobileSpeechChunks[
             mobileSpeechChunkIndex
         ];
-
 }
 
 const speech =
     new SpeechSynthesisUtterance(text);
 
-        // Remember the complete text for mobile pause/resume
-        speechResumeText = text;
+// Remember the complete text
+speechResumeText = fullSpeechText;
 
         const voices = await getSpeechVoices();
 
