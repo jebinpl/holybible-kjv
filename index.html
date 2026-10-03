@@ -16695,6 +16695,21 @@ if (playButton) {
 
         };
 
+        resumeSpeech.onboundary = function(event) {
+
+    if (typeof event.charIndex === "number") {
+
+        speechResumePosition = event.charIndex;
+
+        console.log(
+            "Resume speech position:",
+            speechResumePosition
+        );
+
+    }
+
+};
+
         resumeSpeech.onend = function() {
 
             if (!bibleReaderOpen) {
@@ -16752,9 +16767,13 @@ if (playButton) {
 
         };
 
+        setTimeout(function() {
+
         window.speechSynthesis.speak(
-            resumeSpeech
+        resumeSpeech
         );
+
+        }, 100);
 
     }
 
