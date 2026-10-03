@@ -5269,8 +5269,15 @@ body.dark-mode .treasure-menu-button:hover {
 /* BIBLE LANGUAGE DROPDOWN */
 
 .bible-language-select {
+    position: relative;
+    display: inline-block;
+    width: 145px;
+}
+
+.bible-language-button {
+    width: 100%;
     height: 32px;
-    max-width: 145px;
+
     padding: 4px 8px;
 
     border: 1px solid #b8943d;
@@ -5289,6 +5296,52 @@ body.dark-mode .treasure-menu-button:hover {
     font-weight: bold;
 
     cursor: pointer;
+}
+
+.bible-language-menu {
+    display: none;
+
+    position: absolute;
+    top: 36px;
+    left: 0;
+
+    width: 145px;
+
+    background: #fffdf5;
+
+    border: 1px solid #b8943d;
+    border-radius: 6px;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+
+    z-index: 9999;
+}
+
+.bible-language-menu.show {
+    display: block;
+}
+
+.bible-language-menu label {
+    display: flex;
+    align-items: center;
+
+    padding: 8px 10px;
+
+    color: #5b3a00;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.bible-language-menu label:hover {
+    background: #ead9ad;
+}
+
+.bible-language-menu input[type="checkbox"] {
+    margin-right: 8px;
 }
 
 .search-highlight {
@@ -5797,6 +5850,15 @@ body.dark-mode .bible-verse.speaking-verse {
     text-indent: 1mm;
 }
 
+.bible-language-select.language-selector-disabled {
+    opacity: 0.6;
+}
+
+.bible-language-select.language-selector-disabled
+.bible-language-button {
+    cursor: not-allowed;
+}
+
 </style>
 </head>
 
@@ -6011,18 +6073,55 @@ body.dark-mode .bible-verse.speaking-verse {
         </div>
 
                 <!-- LANGUAGE SELECTOR -->
-    <select
-        id="bibleLanguageSelect"
-        class="bible-language-select"
-        onchange="changeBibleLanguage(this.value)">
+<div id="bibleLanguageSelect" class="bible-language-select">
 
-        <option value="english">ENGLISH</option>
-        <option value="tamil">TAMIL</option>
-        <option value="malayalam">MALAYALAM</option>
-        <option value="hindi">HINDI</option>
-        <option value="all">ALL</option>
+    <button
+        type="button"
+        class="bible-language-button"
+        onclick="toggleBibleLanguageMenu()">
+        LANGUAGE ▼
+    </button>
 
-    </select>
+    <div
+        id="bibleLanguageMenu"
+        class="bible-language-menu">
+
+        <label>
+            <input
+                type="checkbox"
+                value="english"
+                checked
+                onchange="changeBibleLanguages()">
+            ENGLISH
+        </label>
+
+        <label>
+            <input
+                type="checkbox"
+                value="tamil"
+                onchange="changeBibleLanguages()">
+            TAMIL
+        </label>
+
+        <label>
+            <input
+                type="checkbox"
+                value="malayalam"
+                onchange="changeBibleLanguages()">
+            MALAYALAM
+        </label>
+
+        <label>
+            <input
+                type="checkbox"
+                value="hindi"
+                onchange="changeBibleLanguages()">
+            HINDI
+        </label>
+
+    </div>
+
+</div>
 
 
     </div>
@@ -12296,6 +12395,75 @@ if (videoList && videoList.parentNode) {
 // CHANGE BIBLE LANGUAGE
 // =====================================
 
+let selectedBibleLanguages = ["english"];
+
+function toggleBibleLanguageMenu() {
+
+    const menu =
+        document.getElementById("bibleLanguageMenu");
+
+    if (menu) {
+        menu.classList.toggle("show");
+    }
+}
+
+
+async function changeBibleLanguages() {
+
+    selectedBibleLanguages =
+        Array.from(
+            document.querySelectorAll(
+                '#bibleLanguageSelect input[type="checkbox"]:checked'
+            )
+        ).map(
+            checkbox => checkbox.value
+        );
+
+
+    // Do not allow zero languages
+    if (selectedBibleLanguages.length === 0) {
+
+        const englishCheckbox =
+            document.querySelector(
+                '#bibleLanguageSelect input[value="english"]'
+            );
+
+        if (englishCheckbox) {
+            englishCheckbox.checked = true;
+        }
+
+        selectedBibleLanguages = ["english"];
+    }
+
+    // Keep the old language variable compatible
+// with the existing TTS and other functions.
+
+if (selectedBibleLanguages.length === 1) {
+
+    selectedBibleLanguage =
+        selectedBibleLanguages[0];
+
+}
+else {
+
+    selectedBibleLanguage = "all";
+
+}
+
+
+    const book =
+        sessionStorage.getItem("book");
+
+    const chapter =
+        sessionStorage.getItem("chapter");
+
+
+    if (!book || !chapter) return;
+
+
+    await updateBibleReader(book, chapter);
+}
+
 let selectedBibleLanguage = "english";
 
 async function changeBibleLanguage(language) {
@@ -12336,6 +12504,7 @@ const BibleSpeech = {
 
 let speechPaused = false;
 let allLanguageIndex = 0;
+let currentSpeechLanguage = "english";
 let bibleWakeLock = null;
 
 async function updateBibleReader(book, chapter) {
@@ -12832,53 +13001,48 @@ verseBox.appendChild(verseHeader);
 // Give each verse a unique ID for search navigation
 verseBox.id = "verse-" + key;
 
-            // English
-// =====================================
-// RENDER SELECTED LANGUAGE
+            // =====================================
+// RENDER SELECTED LANGUAGES
 // =====================================
 
-if (
-    selectedBibleLanguage === "english" ||
-    selectedBibleLanguage === "all"
-) {
+if (selectedBibleLanguages.includes("english")) {
+
     addLanguageLine(
         verseBox,
         englishVerses[key],
         "verse-english"
     );
+
 }
 
-if (
-    selectedBibleLanguage === "tamil" ||
-    selectedBibleLanguage === "all"
-) {
+if (selectedBibleLanguages.includes("tamil")) {
+
     addLanguageLine(
         verseBox,
         tamilVerses[key],
         "verse-tamil"
     );
+
 }
 
-if (
-    selectedBibleLanguage === "malayalam" ||
-    selectedBibleLanguage === "all"
-) {
+if (selectedBibleLanguages.includes("malayalam")) {
+
     addLanguageLine(
         verseBox,
         malayalamVerses[key],
         "verse-malayalam"
     );
+
 }
 
-if (
-    selectedBibleLanguage === "hindi" ||
-    selectedBibleLanguage === "all"
-) {
+if (selectedBibleLanguages.includes("hindi")) {
+
     addLanguageLine(
         verseBox,
         hindiVerses[key],
         "verse-hindi"
     );
+
 }
 
             textContainer.appendChild(verseBox);
@@ -16189,36 +16353,42 @@ highlightCurrentVerse(
 
 let text = verse.english;
 
-if (selectedBibleLanguage === "all") {
 
-    if (allLanguageIndex === 0) {
+// =====================================
+// SELECT CURRENT SPEECH LANGUAGE
+// =====================================
 
-        text = verse.english;
+if (selectedBibleLanguages.length === 1) {
 
-    }
+    currentSpeechLanguage =
+        selectedBibleLanguages[0];
 
-    else if (allLanguageIndex === 1) {
+}
+else {
 
-        text = verse.tamil;
+    currentSpeechLanguage =
+        selectedBibleLanguages[allLanguageIndex];
 
-    }
-
-    else if (allLanguageIndex === 2) {
-
-        text = verse.malayalam;
-
-    }
-
-    else if (allLanguageIndex === 3) {
-
-        text = verse.hindi;
-
-    }
 }
 
-    
 
-    if (selectedBibleLanguage === "tamil") {
+// Keep the existing voice-selection code compatible
+
+selectedBibleLanguage =
+    currentSpeechLanguage;
+
+
+// =====================================
+// SELECT TEXT
+// =====================================
+
+if (currentSpeechLanguage === "english") {
+
+    text = verse.english;
+
+}
+
+else if (currentSpeechLanguage === "tamil") {
 
     text = verse.tamil;
 
@@ -16226,19 +16396,19 @@ if (selectedBibleLanguage === "all") {
 
 }
 
-if (selectedBibleLanguage === "hindi") {
-
-    text = verse.hindi;
-
-    console.log("Using Hindi speech");
-
-}
-
-if (selectedBibleLanguage === "malayalam") {
+else if (currentSpeechLanguage === "malayalam") {
 
     text = verse.malayalam;
 
     console.log("Using Malayalam speech");
+
+}
+
+else if (currentSpeechLanguage === "hindi") {
+
+    text = verse.hindi;
+
+    console.log("Using Hindi speech");
 
 }
 
@@ -16559,21 +16729,24 @@ speech.onend = function(){
     }
 
 
-    if (selectedBibleLanguage === "all") {
+    if (selectedBibleLanguages.length > 1) {
 
-        allLanguageIndex++;
+    allLanguageIndex++;
 
-        // Same verse: move to next language
-        if (allLanguageIndex < 4) {
+    // Same verse: move to next selected language
+    if (
+        allLanguageIndex <
+        selectedBibleLanguages.length
+    ) {
 
-            startSpeech();
+        startSpeech();
 
-            return;
-        }
-
-        // All languages finished for this verse
-        allLanguageIndex = 0;
+        return;
     }
+
+    // All selected languages finished for this verse
+    allLanguageIndex = 0;
+}
 
 
     // Move to next verse
@@ -16727,19 +16900,22 @@ if (playButton) {
             speechResumePosition = 0;
 
             // Continue normal verse/language progression
-            if (selectedBibleLanguage === "all") {
+            if (selectedBibleLanguages.length > 1) {
 
-                allLanguageIndex++;
+    allLanguageIndex++;
 
-                if (allLanguageIndex < 4) {
+    if (
+        allLanguageIndex <
+        selectedBibleLanguages.length
+    ) {
 
-                    startSpeech();
+        startSpeech();
 
-                    return;
-                }
+        return;
+    }
 
-                allLanguageIndex = 0;
-            }
+    allLanguageIndex = 0;
+}
 
             BibleSpeech.currentIndex++;
 
@@ -17103,9 +17279,54 @@ function setBibleLanguageSelectionEnabled(enabled) {
     const languageSelect =
         document.getElementById("bibleLanguageSelect");
 
+    const languageButton =
+        document.querySelector(
+            "#bibleLanguageSelect .bible-language-button"
+        );
+
+    const languageCheckboxes =
+        document.querySelectorAll(
+            "#bibleLanguageSelect input[type='checkbox']"
+        );
+
+
     if (languageSelect) {
-        languageSelect.disabled = !enabled;
+
+        languageSelect.classList.toggle(
+            "language-selector-disabled",
+            !enabled
+        );
+
     }
+
+
+    if (languageButton) {
+
+        languageButton.disabled = !enabled;
+
+    }
+
+
+    languageCheckboxes.forEach(function(checkbox) {
+
+        checkbox.disabled = !enabled;
+
+    });
+
+
+    // Close the language menu when playback starts
+
+    if (!enabled) {
+
+        const menu =
+            document.getElementById("bibleLanguageMenu");
+
+        if (menu) {
+            menu.classList.remove("show");
+        }
+
+    }
+
 }
 
 </script>
