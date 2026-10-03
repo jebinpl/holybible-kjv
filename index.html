@@ -16654,6 +16654,9 @@ if (playButton) {
         speechResumePosition < speechResumeText.length
     ) {
 
+        const resumeStartPosition =
+    speechResumePosition;
+
         const remainingText =
             speechResumeText.substring(
                 speechResumePosition
@@ -16706,7 +16709,9 @@ if (playButton) {
 
     if (typeof event.charIndex === "number") {
 
-        speechResumePosition = event.charIndex;
+        speechResumePosition =
+            resumeStartPosition +
+            event.charIndex;
 
         console.log(
             "Resume speech position:",
