@@ -16617,6 +16617,13 @@ window.speechSynthesis.speak(speech);
 
 }
 
+function isMobileDevice() {
+
+    return /Android|iPhone|iPad|iPod/i.test(
+        navigator.userAgent
+    );
+
+}
 // =====================================
 // PLAY / PAUSE TOGGLE BUTTON
 // =====================================
@@ -16798,23 +16805,46 @@ if (playButton) {
 
         else if (window.speechSynthesis.speaking) {
 
-            // Set this FIRST
-            speechPaused = true;
+    // Set paused state first
+    speechPaused = true;
 
-            // Then pause the existing utterance
-            window.speechSynthesis.pause();
+    // -----------------------------------------
+    // MOBILE
+    // Do NOT use speechSynthesis.pause()
+    // -----------------------------------------
+    if (isMobileDevice()) {
 
-            playButton.textContent = "▶";
+        console.log(
+            "Mobile pause - cancelling current speech"
+        );
 
-            // Paused = language selector enabled
-            setBibleLanguageSelectionEnabled(true);
+        // Save current speech position through onboundary
+        // and stop the current utterance
+        window.speechSynthesis.cancel();
 
-            // Allow screen to sleep while paused
-            releaseBibleScreenAwake();
+    }
 
-            console.log("Speech paused");
+    // -----------------------------------------
+    // DESKTOP
+    // Keep the existing native pause
+    // -----------------------------------------
+    else {
 
-        }
+        window.speechSynthesis.pause();
+
+    }
+
+    playButton.textContent = "▶";
+
+    // Paused = language selector enabled
+    setBibleLanguageSelectionEnabled(true);
+
+    // Allow screen to sleep while paused
+    releaseBibleScreenAwake();
+
+    console.log("Speech paused");
+
+}
 
         // =====================================
         // START READING
