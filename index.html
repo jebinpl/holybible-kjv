@@ -12816,41 +12816,37 @@ copyButton.onclick = function(event){
     "\n\n";
 
 
-if (selectedBibleLanguage === "english") {
-    copyText =
-        verseReference +
-        (englishVerses[key] || "");
-}
+copyText = verseReference;
 
-else if (selectedBibleLanguage === "tamil") {
-    copyText =
-        verseReference +
-        (tamilVerses[key] || "");
-}
+if (selectedBibleLanguages.includes("english")) {
 
-else if (selectedBibleLanguage === "malayalam") {
-    copyText =
-        verseReference +
-        (malayalamVerses[key] || "");
-}
-
-else if (selectedBibleLanguage === "hindi") {
-    copyText =
-        verseReference +
-        (hindiVerses[key] || "");
-}
-
-else if (selectedBibleLanguage === "all") {
-
-    copyText =
-        verseReference +
+    copyText +=
         (englishVerses[key] || "") +
-        "\n\n" +
+        "\n\n";
+
+}
+
+if (selectedBibleLanguages.includes("tamil")) {
+
+    copyText +=
         (tamilVerses[key] || "") +
-        "\n\n" +
+        "\n\n";
+
+}
+
+if (selectedBibleLanguages.includes("malayalam")) {
+
+    copyText +=
         (malayalamVerses[key] || "") +
-        "\n\n" +
+        "\n\n";
+
+}
+
+if (selectedBibleLanguages.includes("hindi")) {
+
+    copyText +=
         (hindiVerses[key] || "");
+
 }
 
 
@@ -12925,39 +12921,33 @@ shareButton.onclick = function(event){
 
     let shareText = "";
 
-if (selectedBibleLanguage === "english") {
+if (selectedBibleLanguages.includes("english")) {
 
-    shareText = englishVerses[key] || "";
-
-}
-
-else if (selectedBibleLanguage === "tamil") {
-
-    shareText = tamilVerses[key] || "";
-
-}
-
-else if (selectedBibleLanguage === "malayalam") {
-
-    shareText = malayalamVerses[key] || "";
-
-}
-
-else if (selectedBibleLanguage === "hindi") {
-
-    shareText = hindiVerses[key] || "";
-
-}
-
-else if (selectedBibleLanguage === "all") {
-
-    shareText =
+    shareText +=
         (englishVerses[key] || "") +
-        "\n\n" +
+        "\n\n";
+
+}
+
+if (selectedBibleLanguages.includes("tamil")) {
+
+    shareText +=
         (tamilVerses[key] || "") +
-        "\n\n" +
+        "\n\n";
+
+}
+
+if (selectedBibleLanguages.includes("malayalam")) {
+
+    shareText +=
         (malayalamVerses[key] || "") +
-        "\n\n" +
+        "\n\n";
+
+}
+
+if (selectedBibleLanguages.includes("hindi")) {
+
+    shareText +=
         (hindiVerses[key] || "");
 
 }
