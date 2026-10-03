@@ -7188,7 +7188,7 @@ function updateVerseHeaderButtons(){
 
 document
 .getElementById("shareSelectedVersesBtn")
-.onclick=function(){
+.onclick=async function(){
 
 
 let message =
@@ -7225,22 +7225,37 @@ v.texts[lang]+
 });
 
 
-if(navigator.share){
+if (navigator.share) {
 
-navigator.share({
+    try {
 
-title:"Verse Treasure",
+        await navigator.share({
 
-text:message
+            title: "Verse Treasure",
 
-});
+            text: message
+
+        });
+
+    } catch (error) {
+
+        if (error.name !== "AbortError") {
+
+            console.error(
+                "Share failed:",
+                error
+            );
+
+        }
+
+    }
 
 }
-else{
+else {
 
-navigator.clipboard.writeText(message);
+    await navigator.clipboard.writeText(message);
 
-alert("Verse copied");
+    alert("Verse copied");
 
 }
 
