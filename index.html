@@ -613,11 +613,14 @@ body {
 
 .book-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 15px;
 }
 
 .book-button {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
     background: rgba(255,255,255,0.78);
 
     border: 2px solid #c7a85b;
@@ -641,6 +644,16 @@ body {
         0 4px 10px rgba(0,0,0,0.08);
 
     transition: 0.2s;
+}
+
+.book-name-en,
+.book-name-ta,
+.book-name-ml,
+.book-name-hi {
+    display: block;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .book-button:hover {
@@ -2143,7 +2156,7 @@ body.dark-mode #favoritesPage .sticky-page-header {
     }
 
     .book-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .chapter-grid {
@@ -5216,7 +5229,8 @@ body.dark-mode #treasureListPage button:hover {
 ===================================== */
 
 .multilingual-line {
-    padding: 10px 0;
+    padding: 0;
+    margin: 0;
     border-bottom: 1px solid #d4af37;
     line-height: 1.8;
 }
@@ -9613,9 +9627,16 @@ response =
            SAVE PDF
         ================================================= */
 
-        pdf.save(
-            "My-Treasures-KJV.pdf"
-        );
+        const today = new Date();
+
+const date =
+    today.getFullYear() + "-" +
+    String(today.getMonth() + 1).padStart(2, "0") + "-" +
+    String(today.getDate()).padStart(2, "0");
+
+pdf.save(
+    "My-Treasures-KJV-" + date + ".pdf"
+);
 
 
     } catch (error) {
@@ -9658,197 +9679,206 @@ async function exportSelectedVerseTreasuresPDF(){
     } = window.jspdf;
 
 
+    /*
+       ================================================
+       REFRESH SELECTED LANGUAGES FROM THE VERSE CARDS
+       ================================================
+    */
+
+    const selectedBoxes =
+        document.querySelectorAll(
+            ".verse-select-checkbox:checked"
+        );
+
+
+    selectedVerseTreasures =
+        Array.from(selectedBoxes).map(function(selectBox){
+
+            const card =
+                selectBox.closest(".favorite-item");
+
+
+            if(!card){
+
+                return null;
+
+            }
+
+
+            /*
+               Get the language checkboxes that are
+               CURRENTLY checked on this verse card.
+            */
+
+            const currentLanguages =
+                Array.from(
+                    card.querySelectorAll(
+                        ".verse-treasure-language input[type='checkbox']:checked"
+                    )
+                ).map(function(checkbox){
+
+                    return checkbox.value;
+
+                });
+
+
+            /*
+               Find the existing selected verse.
+            */
+
+            const existing =
+                selectedVerseTreasures.find(function(item){
+
+                    return (
+                        item.book === card
+                            .querySelector(".verse-card-header strong")
+                            ?.textContent
+                            ?.split(" ")[0]
+                    );
+
+                });
+
+
+            /*
+               The verse data is already stored in
+               selectedVerseTreasures.
+
+               We only replace the languages with
+               the CURRENT selections from the card.
+            */
+
+            const reference =
+                card.querySelector(
+                    ".verse-card-header strong"
+                );
+
+
+            if(!reference){
+
+                return null;
+
+            }
+
+
+            const referenceText =
+                reference.textContent.trim();
+
+
+            /*
+               Find the stored verse using the
+               reference displayed on the card.
+            */
+
+            const storedVerse =
+                selectedVerseTreasures.find(function(item){
+
+                    return (
+                        referenceText ===
+                        item.book + " " +
+                        item.chapter + ":" +
+                        item.verse
+                    );
+
+                });
+
+
+            if(!storedVerse){
+
+                return null;
+
+            }
+
+
+            return {
+
+                book: storedVerse.book,
+
+                chapter: storedVerse.chapter,
+
+                verse: storedVerse.verse,
+
+                texts: storedVerse.texts,
+
+                languages: currentLanguages
+
+            };
+
+        }).filter(function(item){
+
+            return (
+                item &&
+                item.languages.length > 0
+            );
+
+        });
+
+
+    /*
+       ================================================
+       CHECK AGAIN AFTER REFRESH
+       ================================================
+    */
+
+    if(selectedVerseTreasures.length === 0){
+
+        showDialog(
+            "Please select at least one language for the selected verse."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       ================================================
+       CREATE PDF
+       ================================================
+    */
+
     const pdf = new jsPDF({
 
-        orientation:"portrait",
-        unit:"mm",
-        format:"a4"
+        orientation: "portrait",
+
+        unit: "mm",
+
+        format: "a4"
 
     });
 
-    // ================================
-// COVER PAGE
-// ================================
 
-const pageWidth =
-    pdf.internal.pageSize.getWidth();
-
-const pageHeight =
-    pdf.internal.pageSize.getHeight();
+    const pageWidth =
+        pdf.internal.pageSize.getWidth();
 
 
-// Gold border
-
-pdf.setDrawColor(
-    180,
-    148,
-    61
-);
-
-pdf.setLineWidth(1);
-
-pdf.rect(
-    10,
-    10,
-    pageWidth - 20,
-    pageHeight - 20
-);
+    const pageHeight =
+        pdf.internal.pageSize.getHeight();
 
 
-// Center position
+    /*
+       ================================================
+       COVER PAGE
+       ================================================
+    */
 
-const centerY =
-    pageHeight / 2;
+    pdf.setDrawColor(
+        180,
+        148,
+        61
+    );
 
+    pdf.setLineWidth(1);
 
-// Cross
-
-pdf.setFont(
-    "times",
-    "normal"
-);
-
-pdf.setFontSize(28);
-
-pdf.text(
-    "†",
-    pageWidth / 2,
-    centerY - 55,
-    {
-        align:"center"
-    }
-);
+    pdf.rect(
+        10,
+        10,
+        pageWidth - 20,
+        pageHeight - 20
+    );
 
 
-// Title
-
-pdf.setFont(
-    "times",
-    "bold"
-);
-
-pdf.setFontSize(24);
-
-pdf.text(
-    "VERSE TREASURE",
-    pageWidth / 2,
-    centerY - 30,
-    {
-        align:"center"
-    }
-);
-
-
-// Gold line
-
-pdf.setLineWidth(0.5);
-
-pdf.line(
-    35,
-    centerY - 22,
-    pageWidth - 35,
-    centerY - 22
-);
-
-
-// Subtitle
-
-pdf.setFont(
-    "times",
-    "normal"
-);
-
-pdf.setFontSize(13);
-
-pdf.text(
-    "KING JAMES VERSION",
-    pageWidth / 2,
-    centerY - 10,
-    {
-        align:"center"
-    }
-);
-
-
-// Description
-
-pdf.setFontSize(11);
-
-pdf.text(
-    "My Saved Bible Verses",
-    pageWidth / 2,
-    centerY + 5,
-    {
-        align:"center"
-    }
-);
-
-
-// Number of verses
-
-pdf.setFont(
-    "times",
-    "italic"
-);
-
-pdf.setFontSize(10);
-
-pdf.text(
-    selectedVerseTreasures.length +
-    (
-        selectedVerseTreasures.length === 1
-        ? " Verse"
-        : " Verses"
-    ),
-    pageWidth / 2,
-    centerY + 18,
-    {
-        align:"center"
-    }
-);
-
-
-// Date
-
-pdf.setFont(
-    "times",
-    "normal"
-);
-
-pdf.text(
-    new Date().toLocaleDateString(
-        "en-GB",
-        {
-            day:"2-digit",
-            month:"long",
-            year:"numeric"
-        }
-    ),
-    pageWidth / 2,
-    centerY + 32,
-    {
-        align:"center"
-    }
-);
-
-
-// Bottom cross
-
-pdf.setFontSize(18);
-
-pdf.text(
-    "†",
-    pageWidth / 2,
-    centerY + 50,
-    {
-        align:"center"
-    }
-);
-
-
-// New page for verses
-
-pdf.addPage();
+    const centerY =
+        pageHeight / 2;
 
 
     pdf.setFont(
@@ -9856,70 +9886,230 @@ pdf.addPage();
         "normal"
     );
 
+    pdf.setFontSize(28);
 
-    pdf.setFontSize(18);
+    pdf.text(
+        "†",
+        pageWidth / 2,
+        centerY - 55,
+        {
+            align: "center"
+        }
+    );
 
+
+    pdf.setFont(
+        "times",
+        "bold"
+    );
+
+    pdf.setFontSize(24);
 
     pdf.text(
         "VERSE TREASURE",
-        105,
+        pageWidth / 2,
+        centerY - 30,
+        {
+            align: "center"
+        }
+    );
+
+
+    pdf.setLineWidth(0.5);
+
+    pdf.line(
+        35,
+        centerY - 22,
+        pageWidth - 35,
+        centerY - 22
+    );
+
+
+    pdf.setFont(
+        "times",
+        "normal"
+    );
+
+    pdf.setFontSize(13);
+
+    pdf.text(
+        "King James Version",
+        pageWidth / 2,
+        centerY - 10,
+        {
+            align: "center"
+        }
+    );
+
+
+    pdf.setFontSize(11);
+
+    pdf.text(
+        "My Saved Bible Verses",
+        pageWidth / 2,
+        centerY + 5,
+        {
+            align: "center"
+        }
+    );
+
+
+    pdf.setFont(
+        "times",
+        "italic"
+    );
+
+    pdf.setFontSize(10);
+
+    pdf.text(
+        selectedVerseTreasures.length +
+        (
+            selectedVerseTreasures.length === 1
+                ? " Verse"
+                : " Verses"
+        ),
+        pageWidth / 2,
+        centerY + 18,
+        {
+            align: "center"
+        }
+    );
+
+
+    pdf.setFont(
+        "times",
+        "normal"
+    );
+
+    pdf.text(
+        new Date().toLocaleDateString(
+            "en-GB",
+            {
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            }
+        ),
+        pageWidth / 2,
+        centerY + 32,
+        {
+            align: "center"
+        }
+    );
+
+
+    pdf.setFontSize(18);
+
+    pdf.text(
+        "†",
+        pageWidth / 2,
+        centerY + 50,
+        {
+            align: "center"
+        }
+    );
+
+
+    /*
+       ================================================
+       VERSE PAGES
+       ================================================
+    */
+
+    pdf.addPage();
+
+
+    pdf.setFont(
+        "times",
+        "normal"
+    );
+
+    pdf.setFontSize(18);
+
+    pdf.text(
+        "VERSE TREASURE",
+        pageWidth / 2,
         30,
         {
-            align:"center"
+            align: "center"
         }
     );
 
 
     pdf.setFontSize(12);
 
-
     pdf.text(
         "King James Version",
-        105,
+        pageWidth / 2,
         40,
         {
-            align:"center"
+            align: "center"
         }
     );
 
 
-    let imageY = 20;
+    let imageY = 50;
 
 
-    for (const v of selectedVerseTreasures) {
+    /*
+       ================================================
+       ADD ONLY THE SELECTED VERSES
+       ================================================
+    */
+
+    for(
+        const v of selectedVerseTreasures
+    ){
+
+        const verseContainer =
+            document.createElement("div");
 
 
-    const verseContainer =
-        document.createElement("div");
+        verseContainer.style.width =
+            "700px";
+
+        verseContainer.style.padding =
+            "30px";
+
+        verseContainer.style.background =
+            "#fffdf7";
+
+        verseContainer.style.fontFamily =
+            "Noto Sans, Arial";
+
+        verseContainer.style.color =
+            "#000";
 
 
-    verseContainer.style.width = "700px";
-    verseContainer.style.padding = "30px";
-    verseContainer.style.background = "#fffdf7";
-    verseContainer.style.fontFamily = "Noto Sans, Arial";
-    verseContainer.style.color = "#000";
+        verseContainer.innerHTML = `
+
+            <h2 style="
+                text-align:center;
+                margin-bottom:20px;
+            ">
+                ${v.book} ${v.chapter}:${v.verse}
+            </h2>
+
+        `;
 
 
-    verseContainer.innerHTML = `
+        /*
+           Add ONLY the languages currently
+           selected on that verse card.
+        */
 
-        <h2 style="
-            text-align:center;
-            margin-bottom:20px;
-        ">
-            ${v.book} ${v.chapter}:${v.verse}
-        </h2>
+        v.languages.forEach(function(lang){
 
-    `;
+            if(!v.texts[lang]){
 
+                return;
 
-    v.languages.forEach(function(lang){
-
-
-        if(v.texts[lang]){
+            }
 
 
             const langTitle =
                 document.createElement("h3");
+
 
             langTitle.textContent =
                 lang.toUpperCase();
@@ -9954,71 +10144,89 @@ pdf.addPage();
                 text
             );
 
+        });
+
+
+        document.body.appendChild(
+            verseContainer
+        );
+
+
+        const canvas =
+            await html2canvas(
+                verseContainer,
+                {
+                    scale: 2
+                }
+            );
+
+
+        document.body.removeChild(
+            verseContainer
+        );
+
+
+        const imageData =
+            canvas.toDataURL(
+                "image/png"
+            );
+
+
+        const imageHeight =
+            (canvas.height * 180) /
+            canvas.width;
+
+
+        /*
+           Start a new page if necessary.
+        */
+
+        if(
+            imageY + imageHeight >
+            pageHeight - 20
+        ){
+
+            pdf.addPage();
+
+            imageY = 20;
+
         }
 
-    });
 
-
-    document.body.appendChild(
-        verseContainer
-    );
-
-
-    const canvas =
-        await html2canvas(
-            verseContainer,
-            {
-                scale:2
-            }
+        pdf.addImage(
+            imageData,
+            "PNG",
+            15,
+            imageY,
+            180,
+            imageHeight
         );
 
 
-    document.body.removeChild(
-        verseContainer
-    );
+        imageY +=
+            imageHeight + 10;
+
+    }
 
 
-    const imageData =
-        canvas.toDataURL(
-            "image/png"
-        );
+    /*
+       ================================================
+       SAVE PDF
+       ================================================
+    */
 
+    const today = new Date();
 
-    const imageHeight =
-    (canvas.height * 180) / canvas.width;
+const date =
+    today.getFullYear() + "-" +
+    String(today.getMonth() + 1).padStart(2, "0") + "-" +
+    String(today.getDate()).padStart(2, "0");
 
-
-if(imageY + imageHeight > pageHeight - 20){
-
-    pdf.addPage();
-
-    imageY = 20;
-
-}
-
-
-pdf.addImage(
-    imageData,
-    "PNG",
-    15,
-    imageY,
-    180,
-    imageHeight
+pdf.save(
+    `Verse-Treasure-${date}.pdf`
 );
 
-
-imageY += imageHeight + 10;
-
-
-}
-
-
-    pdf.save(
-        "Verse-Treasure.pdf"
-    );
-
-
-}
+}   
 
 /* =========================================================
    CONFIRM REMOVE TREASURE DIALOG
@@ -10269,6 +10477,415 @@ function updateFavoriteButton() {
 
 }
 
+const bookNames = {
+
+    /* =========================
+       OLD TESTAMENT
+    ========================= */
+
+    "Genesis": {
+        ta: "ஆதியாகமம்",
+        ml: "ഉല്പത്തി",
+        hi: "उत्पत्ति"
+    },
+
+    "Exodus": {
+        ta: "யாத்திராகமம்",
+        ml: "പുറപ്പാട്",
+        hi: "निर्गमन"
+    },
+
+    "Leviticus": {
+        ta: "லேவியராகமம்",
+        ml: "ലേവ്യപുസ്തകം",
+        hi: "लैव्यवस्था"
+    },
+
+    "Numbers": {
+        ta: "எண்ணாகமம்",
+        ml: "സംഖ്യാപുസ്തകം",
+        hi: "गिनती"
+    },
+
+    "Deuteronomy": {
+        ta: "உபாகமம்",
+        ml: "ആവർത്തനം",
+        hi: "व्यवस्थाविवरण"
+    },
+
+    "Joshua": {
+        ta: "யோசுவா",
+        ml: "യോശുവ",
+        hi: "यहोशू"
+    },
+
+    "Judges": {
+        ta: "நியாயாதிபதிகள்",
+        ml: "ന്യായാധിപന്മാർ",
+        hi: "न्यायियों"
+    },
+
+    "Ruth": {
+        ta: "ரூத்",
+        ml: "രൂത്ത്",
+        hi: "रूत"
+    },
+
+    "1 Samuel": {
+        ta: "1 சாமுவேல்",
+        ml: "1 ശമൂവേൽ",
+        hi: "1 शमूएल"
+    },
+
+    "2 Samuel": {
+        ta: "2 சாமுவேல்",
+        ml: "2 ശമൂവേൽ",
+        hi: "2 शमूएल"
+    },
+
+    "1 Kings": {
+        ta: "1 இராஜாக்கள்",
+        ml: "1 രാജാക്കന്മാർ",
+        hi: "1 राजा"
+    },
+
+    "2 Kings": {
+        ta: "2 இராஜாக்கள்",
+        ml: "2 രാജാക്കന്മാർ",
+        hi: "2 राजा"
+    },
+
+    "1 Chronicles": {
+        ta: "1 நாளாகமம்",
+        ml: "1 ദിനവൃത്താന്തം",
+        hi: "1 इतिहास"
+    },
+
+    "2 Chronicles": {
+        ta: "2 நாளாகமம்",
+        ml: "2 ദിനവൃത്താന്തം",
+        hi: "2 इतिहास"
+    },
+
+    "Ezra": {
+        ta: "எஸ்றா",
+        ml: "എസ്രാ",
+        hi: "एज्रा"
+    },
+
+    "Nehemiah": {
+        ta: "நெகேமியா",
+        ml: "നെഹെമ്യാവ്",
+        hi: "नहेमायाह"
+    },
+
+    "Esther": {
+        ta: "எஸ்தர்",
+        ml: "എസ്ഥേർ",
+        hi: "एस्तेर"
+    },
+
+    "Job": {
+        ta: "யோபு",
+        ml: "ഇയ്യോബ്",
+        hi: "अय्यूब"
+    },
+
+    "Psalms": {
+        ta: "சங்கீதம்",
+        ml: "സങ്കീർത്തനങ്ങൾ",
+        hi: "भजन संहिता"
+    },
+
+    "Proverbs": {
+        ta: "நீதிமொழிகள்",
+        ml: "സദൃശവാക്യങ്ങൾ",
+        hi: "नीतिवचन"
+    },
+
+    "Ecclesiastes": {
+        ta: "பிரசங்கி",
+        ml: "സഭാപ്രസംഗി",
+        hi: "सभोपदेशक"
+    },
+
+    "Song of Solomon": {
+        ta: "உன்னதப்பாட்டு",
+        ml: "ഉത്തമഗീതം",
+        hi: "श्रेष्ठगीत"
+    },
+
+    "Isaiah": {
+        ta: "ஏசாயா",
+        ml: "യെശയ്യാവ്",
+        hi: "यशायाह"
+    },
+
+    "Jeremiah": {
+        ta: "எரேமியா",
+        ml: "യിരെമ്യാവ്",
+        hi: "यिर्मयाह"
+    },
+
+    "Lamentations": {
+        ta: "புலம்பல்",
+        ml: "വിലാപങ്ങൾ",
+        hi: "विलापगीत"
+    },
+
+    "Ezekiel": {
+        ta: "எசேக்கியேல்",
+        ml: "യെഹെസ്കേൽ",
+        hi: "यहेजकेल"
+    },
+
+    "Daniel": {
+        ta: "தானியேல்",
+        ml: "ദാനീയേൽ",
+        hi: "दानिय्येल"
+    },
+
+    "Hosea": {
+        ta: "ஓசியா",
+        ml: "ഹോശേയ",
+        hi: "होशे"
+    },
+
+    "Joel": {
+        ta: "யோவேல்",
+        ml: "യോവേൽ",
+        hi: "योएल"
+    },
+
+    "Amos": {
+        ta: "ஆமோஸ்",
+        ml: "ആമോസ്",
+        hi: "आमोस"
+    },
+
+    "Obadiah": {
+        ta: "ஒபதியா",
+        ml: "ഒബദ്യാവ്",
+        hi: "ओबद्याह"
+    },
+
+    "Jonah": {
+        ta: "யோனா",
+        ml: "യോനാ",
+        hi: "योना"
+    },
+
+    "Micah": {
+        ta: "மீகா",
+        ml: "മീഖാ",
+        hi: "मीका"
+    },
+
+    "Nahum": {
+        ta: "நாகூம்",
+        ml: "നഹൂം",
+        hi: "नहूम"
+    },
+
+    "Habakkuk": {
+        ta: "ஆபகூக்",
+        ml: "ഹബക്കൂക്ക്",
+        hi: "हबक्कूक"
+    },
+
+    "Zephaniah": {
+        ta: "செப்பனியா",
+        ml: "സെഫന്യാവ്",
+        hi: "सपन्याह"
+    },
+
+    "Haggai": {
+        ta: "ஆகாய்",
+        ml: "ഹഗ്ഗായി",
+        hi: "हाग्गै"
+    },
+
+    "Zechariah": {
+        ta: "சகரியா",
+        ml: "സെഖര്യാവ്",
+        hi: "जकर्याह"
+    },
+
+    "Malachi": {
+        ta: "மல்கியா",
+        ml: "മലാഖി",
+        hi: "मलाकी"
+    },
+
+
+    /* =========================
+       NEW TESTAMENT
+    ========================= */
+
+    "Matthew": {
+        ta: "மத்தேயு",
+        ml: "മത്തായി",
+        hi: "मत्ती"
+    },
+
+    "Mark": {
+        ta: "மாற்கு",
+        ml: "മർക്കോസ്",
+        hi: "मरकुस"
+    },
+
+    "Luke": {
+        ta: "லூக்கா",
+        ml: "ലൂക്കോസ്",
+        hi: "लूका"
+    },
+
+    "John": {
+        ta: "யோவான்",
+        ml: "യോഹന്നാൻ",
+        hi: "यूहन्ना"
+    },
+
+    "Acts": {
+        ta: "அப்போஸ்தலருடையநடபடிகள்",
+        ml: "അപ്പൊസ്തലന്മാരുടെ പ്രവൃത്തികൾ",
+        hi: "प्रेरितों के काम"
+    },
+
+    "Romans": {
+        ta: "ரோமர்",
+        ml: "റോമർ",
+        hi: "रोमियों"
+    },
+
+    "1 Corinthians": {
+        ta: "1 கொரிந்தியர்",
+        ml: "1 കൊരിന്ത്യർ",
+        hi: "1 कुरिन्थियों"
+    },
+
+    "2 Corinthians": {
+        ta: "2 கொரிந்தியர்",
+        ml: "2 കൊരിന്ത്യർ",
+        hi: "2 कुरिन्थियों"
+    },
+
+    "Galatians": {
+        ta: "கலாத்தியர்",
+        ml: "ഗലാത്യർ",
+        hi: "गलातियों"
+    },
+
+    "Ephesians": {
+        ta: "எபேசியர்",
+        ml: "എഫെസ്യർ",
+        hi: "इफिसियों"
+    },
+
+    "Philippians": {
+        ta: "பிலிப்பியர்",
+        ml: "ഫിലിപ്പിയർ",
+        hi: "फिलिप्पियों"
+    },
+
+    "Colossians": {
+        ta: "கொலோசெயர்",
+        ml: "കൊലൊസ്സ്യർ",
+        hi: "कुलुस्सियों"
+    },
+
+    "1 Thessalonians": {
+        ta: "1 தெசலோனிக்கேயர்",
+        ml: "1 തെസ്സലൊനീക്യർ",
+        hi: "1 थिस्सलुनीकियों"
+    },
+
+    "2 Thessalonians": {
+        ta: "2 தெசலோனிக்கேயர்",
+        ml: "2 തെസ്സലൊനീക്യർ",
+        hi: "2 थिस्सलुनीकियों"
+    },
+
+    "1 Timothy": {
+        ta: "1 தீமோத்தேயு",
+        ml: "1 തിമൊഥെയൊസ്",
+        hi: "1 तीमुथियुस"
+    },
+
+    "2 Timothy": {
+        ta: "2 தீமோத்தேயு",
+        ml: "2 തിമൊഥെയൊസ്",
+        hi: "2 तीमुथियुस"
+    },
+
+    "Titus": {
+        ta: "தீத்து",
+        ml: "തീത്തൊസ്",
+        hi: "तीतुस"
+    },
+
+    "Philemon": {
+        ta: "பிலேமோன்",
+        ml: "ഫിലേമോൻ",
+        hi: "फिलेमोन"
+    },
+
+    "Hebrews": {
+        ta: "எபிரெயர்",
+        ml: "എബ്രായർ",
+        hi: "इब्रानियों"
+    },
+
+    "James": {
+        ta: "யாக்கோபு",
+        ml: "യാക്കോബ്",
+        hi: "याकूब"
+    },
+
+    "1 Peter": {
+        ta: "1 பேதுரு",
+        ml: "1 പത്രൊസ്",
+        hi: "1 पतरस"
+    },
+
+    "2 Peter": {
+        ta: "2 பேதுரு",
+        ml: "2 പത്രൊസ്",
+        hi: "2 पतरस"
+    },
+
+    "1 John": {
+        ta: "1 யோவான்",
+        ml: "1 യോഹന്നാൻ",
+        hi: "1 यूहन्ना"
+    },
+
+    "2 John": {
+        ta: "2 யோவான்",
+        ml: "2 യോഹന്നാൻ",
+        hi: "2 यूहन्ना"
+    },
+
+    "3 John": {
+        ta: "3 யோவான்",
+        ml: "3 യോഹന്നാൻ",
+        hi: "3 यूहन्ना"
+    },
+
+    "Jude": {
+        ta: "யூதா",
+        ml: "യൂദാ",
+        hi: "यहूदा"
+    },
+
+    "Revelation": {
+        ta: "வெளிப்படுத்தின விசேஷம்",
+        ml: "വെളിപ്പാട്",
+        hi: "प्रकाशितवाक्य"
+    }
+
+};
+
 /* ========================================================= 
    SHOW BOOKS 
 ========================================================= */ 
@@ -10356,20 +10973,23 @@ if (savedBook === book[0]) {
 }
  
  
-        button.innerHTML = ` 
- 
-            <span class="book-number"> 
-                BOOK ${index + 1} 
-            </span> 
- 
-            ${book[0]} 
- 
-            <span class="book-chapters"> 
-                ${book[1]} 
-                ${book[1] === 1 ? "Chapter" : "Chapters"} 
-            </span> 
- 
-        `; 
+        const names = bookNames[book[0]] || {};
+
+button.innerHTML = `
+    <span class="book-number">
+        BOOK ${index + 1}
+    </span>
+
+    <span class="book-name-en">${book[0]}</span>
+    <span class="book-name-ta">${names.ta || ""}</span>
+    <span class="book-name-ml">${names.ml || ""}</span>
+    <span class="book-name-hi">${names.hi || ""}</span>
+
+    <span class="book-chapters">
+        ${book[1]}
+        ${book[1] === 1 ? "Chapter" : "Chapters"}
+    </span>
+`;
  
  
 button.onclick = function() {
