@@ -5873,6 +5873,99 @@ body.dark-mode .bible-verse.speaking-verse {
     cursor: not-allowed;
 }
 
+/* =========================
+   OFFERINGS PAGE
+========================= */
+
+.offerings-container {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+
+.offerings-message {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
+    line-height: 1.8;
+    color: #4b3018;
+    margin-bottom: 35px;
+}
+
+
+.offerings-upi {
+    padding: 25px 20px;
+    border: 2px solid #c7a85b;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fffdf5,
+            #f5ecd5
+        );
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,0.12);
+}
+
+
+.upi-id {
+    margin: 10px 0 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #70451e;
+}
+
+
+.offerings-pay-button {
+    padding: 13px 25px;
+
+    border: 2px solid #b8943d;
+    border-radius: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #70451e,
+            #3b210d
+        );
+
+    color: #fff8dc;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+.offerings-pay-button:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #8a5a28,
+            #4a2b12
+        );
+}
+
+
+body.dark-mode .offerings-message {
+    color: #ffffff;
+}
+
+
+body.dark-mode .offerings-upi {
+    background: #2c2c2c;
+    color: #ffffff;
+}
+
 </style>
 </head>
 
@@ -6250,6 +6343,77 @@ body.dark-mode .bible-verse.speaking-verse {
             <div class="home-main-title">SETTING</div>
 
         </button>
+
+        <button
+            class="home-main-button"
+            onclick="openOfferings()">
+
+            <div class="home-main-icon">❤️</div>
+            <div class="home-main-title">OFFERINGS</div>
+
+        </button>
+
+    </div>
+
+</section>
+
+<!-- =========================
+     OFFERINGS PAGE
+========================= -->
+
+<section
+    id="offeringsPage"
+    class="page">
+
+    <div class="sticky-page-header">
+
+        <h2 class="page-title">
+            OFFERINGS
+        </h2>
+
+        <p class="page-subtitle">
+            Support the Bible App
+        </p>
+
+    </div>
+
+
+    <div class="offerings-container">
+
+        <p class="offerings-message">
+
+            If you are truly blessed by this,
+            you can send your offerings which will
+            benefit the App development and for
+            the church ministries.
+
+            <br><br>
+
+            God Bless you and your family.
+
+        </p>
+
+
+        <div class="offerings-upi">
+
+            <p>
+                <strong>UPI ID</strong>
+            </p>
+
+            <p class="upi-id">
+                jebinzmail-2@okicici
+            </p>
+
+
+            <button
+                class="offerings-pay-button"
+                onclick="openUPIPayment()">
+
+                ❤️ SEND OFFERING
+
+            </button>
+
+        </div>
 
     </div>
 
@@ -17949,6 +18113,32 @@ function setBibleLanguageSelectionEnabled(enabled) {
 
     }
 
+}
+
+function openOfferings() {
+
+    document.querySelectorAll(".page").forEach(function(page) {
+        page.style.display = "none";
+    });
+
+    document.getElementById("offeringsPage").style.display = "block";
+
+    sessionStorage.setItem("page", "offerings");
+
+    updateHomeHeader("other");
+
+    updateTestamentNavigation();
+
+    window.scrollTo(0, 0);
+}
+
+function openUPIPayment() {
+
+    const upiUrl =
+        "upi://pay?pa=jebinzmail-2@okicici" +
+        "&pn=Bible%20Offerings";
+
+    window.location.href = upiUrl;
 }
 
 </script>
