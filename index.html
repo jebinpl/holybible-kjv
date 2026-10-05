@@ -5992,6 +5992,14 @@ body.dark-mode .offerings-upi {
     color: #ffffff;
 }
 
+.bible-verse-select-checkbox {
+    width: 17px;
+    height: 17px;
+    margin-left: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+
 </style>
 </head>
 
@@ -13596,6 +13604,76 @@ verseActions.className = "verse-actions";
 
 verseActions.appendChild(heart);
 
+// =====================================
+// VERSE SELECT CHECKBOX
+// =====================================
+
+const verseSelectCheckbox =
+    document.createElement("input");
+
+verseSelectCheckbox.type = "checkbox";
+
+verseSelectCheckbox.className =
+    "bible-verse-select-checkbox";
+
+verseSelectCheckbox.title =
+    "Select verse for Copy / Share";
+
+verseSelectCheckbox.dataset.verse =
+    key;
+
+verseSelectCheckbox.addEventListener(
+    "click",
+    function(event) {
+        event.stopPropagation();
+
+        console.log(
+            "Verse selected:",
+            key,
+            this.checked
+        );
+    }
+);
+
+// =====================================
+// GET VERSES FOR COPY / SHARE
+// =====================================
+
+function getSelectedVerses(clickedVerse) {
+
+    const checkedBoxes =
+        textContainer.querySelectorAll(
+            ".bible-verse-select-checkbox:checked"
+        );
+
+    // If clicked verse is checked,
+    // use all checked verses
+    const clickedCheckbox =
+        textContainer.querySelector(
+            '.bible-verse-select-checkbox[data-verse="' +
+            clickedVerse +
+            '"]'
+        );
+
+    if (
+        clickedCheckbox &&
+        clickedCheckbox.checked
+    ) {
+
+        return Array.from(checkedBoxes)
+            .map(box => box.dataset.verse)
+            .sort(
+                (a, b) =>
+                    Number(a) - Number(b)
+            );
+
+    }
+
+    // If clicked verse is NOT checked,
+    // use only the clicked verse
+    return [clickedVerse];
+}
+
 // COPY BUTTON
 const copyButton = document.createElement("span");
 
@@ -13629,48 +13707,46 @@ copyButton.onclick = function(event){
 
     event.stopPropagation();
 
-    let copyText = "";
-    let verseReference =
-    book +
-    " " +
-    chapter +
-    ":" +
-    key +
-    "\n\n";
+let copyText = "";
 
+const versesToCopy =
+    getSelectedVerses(key);
 
-copyText = verseReference;
-
-if (selectedBibleLanguages.includes("english")) {
+versesToCopy.forEach(function(verseKey) {
 
     copyText +=
-        (englishVerses[key] || "") +
+        book +
+        " " +
+        chapter +
+        ":" +
+        verseKey +
         "\n\n";
 
-}
+    if (selectedBibleLanguages.includes("english")) {
+        copyText +=
+            (englishVerses[verseKey] || "") +
+            "\n\n";
+    }
 
-if (selectedBibleLanguages.includes("tamil")) {
+    if (selectedBibleLanguages.includes("tamil")) {
+        copyText +=
+            (tamilVerses[verseKey] || "") +
+            "\n\n";
+    }
 
-    copyText +=
-        (tamilVerses[key] || "") +
-        "\n\n";
+    if (selectedBibleLanguages.includes("malayalam")) {
+        copyText +=
+            (malayalamVerses[verseKey] || "") +
+            "\n\n";
+    }
 
-}
+    if (selectedBibleLanguages.includes("hindi")) {
+        copyText +=
+            (hindiVerses[verseKey] || "") +
+            "\n\n";
+    }
 
-if (selectedBibleLanguages.includes("malayalam")) {
-
-    copyText +=
-        (malayalamVerses[key] || "") +
-        "\n\n";
-
-}
-
-if (selectedBibleLanguages.includes("hindi")) {
-
-    copyText +=
-        (hindiVerses[key] || "");
-
-}
+});
 
 
 navigator.clipboard.writeText(copyText);
@@ -13742,48 +13818,49 @@ shareButton.onclick = function(event){
 
     event.stopPropagation();
 
-    let shareText = "";
+let shareText = "";
 
-if (selectedBibleLanguages.includes("english")) {
+const versesToShare =
+    getSelectedVerses(key);
+
+versesToShare.forEach(function(verseKey) {
 
     shareText +=
-        (englishVerses[key] || "") +
+        book +
+        " " +
+        chapter +
+        ":" +
+        verseKey +
         "\n\n";
 
-}
+    if (selectedBibleLanguages.includes("english")) {
+        shareText +=
+            (englishVerses[verseKey] || "") +
+            "\n\n";
+    }
 
-if (selectedBibleLanguages.includes("tamil")) {
+    if (selectedBibleLanguages.includes("tamil")) {
+        shareText +=
+            (tamilVerses[verseKey] || "") +
+            "\n\n";
+    }
 
-    shareText +=
-        (tamilVerses[key] || "") +
-        "\n\n";
+    if (selectedBibleLanguages.includes("malayalam")) {
+        shareText +=
+            (malayalamVerses[verseKey] || "") +
+            "\n\n";
+    }
 
-}
+    if (selectedBibleLanguages.includes("hindi")) {
+        shareText +=
+            (hindiVerses[verseKey] || "") +
+            "\n\n";
+    }
 
-if (selectedBibleLanguages.includes("malayalam")) {
-
-    shareText +=
-        (malayalamVerses[key] || "") +
-        "\n\n";
-
-}
-
-if (selectedBibleLanguages.includes("hindi")) {
-
-    shareText +=
-        (hindiVerses[key] || "");
-
-}
+});
 
 
-const text =
-    book +
-    " " +
-    chapter +
-    ":" +
-    key +
-    "\n\n" +
-    shareText;
+const text = shareText;
 
 
     if(navigator.share){
@@ -13805,8 +13882,8 @@ const text =
 
 // Add buttons
 verseActions.appendChild(copyButton);
-
 verseActions.appendChild(shareButton);
+verseActions.appendChild(verseSelectCheckbox);
 
 verseHeader.appendChild(verseActions);
 
