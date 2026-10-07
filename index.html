@@ -6000,6 +6000,101 @@ body.dark-mode .offerings-upi {
     display: inline-block;
 }
 
+
+/* =========================================
+   BIBLE READING MODE
+   Hide main header and move navigation to top
+========================================= */
+
+body.bible-reading-mode .header {
+    display: none !important;
+}
+
+body.bible-reading-mode .testament-navigation {
+    position: fixed !important;
+    top: env(safe-area-inset-top, 0px) !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 10001 !important;
+}
+
+/* Move page content below the navigation bar */
+body.bible-reading-mode .main {
+    padding-top: calc(60px + env(safe-area-inset-top, 0px)) !important;
+}
+
+/* Remove unnecessary space above the Bible reader */
+body.bible-reading-mode .bible-reader-wrapper {
+    padding-top: 0 !important;
+    margin-top: 8px !important;
+}
+
+/* Keep video controls below the navigation if needed */
+body.bible-reading-mode .video-player-container {
+    top: 50px !important;
+}
+
+
+/* =========================================
+   BIBLE READING MODE
+   FIX CHAPTER HEADER BELOW NAVIGATION
+========================================= */
+
+body.bible-reading-mode #videoPage .chapter-heading-row {
+    position: fixed !important;
+
+    /* Navigation starts at the safe-area top and is 50px tall */
+    top: calc(50px + env(safe-area-inset-top, 0px)) !important;
+
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    box-sizing: border-box !important;
+
+    z-index: 10000 !important;
+    background: linear-gradient(
+        180deg,
+        #fffdf5,
+        #f5ecd5
+    ) !important;
+
+    border-bottom: 1px solid #b8943d !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+}
+
+/* Dark mode */
+body.dark-mode.bible-reading-mode
+#videoPage .chapter-heading-row {
+    background: linear-gradient(
+        180deg,
+        #292929,
+        #202020
+    ) !important;
+    border-bottom-color: #8e7440 !important;
+}
+
+/* Keep the chapter title and both buttons aligned */
+body.bible-reading-mode
+#videoPage .chapter-heading-row .page-title {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+}
+
+body.bible-reading-mode
+#videoPage .chapter-heading-actions {
+    flex-shrink: 0 !important;
+}
+
+/* Start the chapter content below both fixed bars */
+body.bible-reading-mode #videoPage {
+    padding-top: 55px !important;
+}
+
+
+
 </style>
 </head>
 
@@ -13156,6 +13251,9 @@ if (!book || !chapter) {
 
     bibleReaderOpen = true;
 
+    /* Enable Bible reading mode */
+    document.body.classList.add("bible-reading-mode");
+
     updateHomeHeader("other");
 
 
@@ -14150,6 +14248,9 @@ function toggleVerseTreasure(
 }
 
 function closeBibleReader() {
+
+    /* Restore the normal header and navigation layout */
+    document.body.classList.remove("bible-reading-mode");
 
      // Tell speech that reading mode has already closed
     bibleReaderOpen = false;
