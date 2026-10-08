@@ -1420,6 +1420,27 @@ body.dark-mode .bible-verse {
     color: #f1f1f1;
 }
 
+/* =========================================
+   CHAPTER SCROLL PERFORMANCE
+   Render verse cards only as they approach the viewport.
+   This keeps long/multilingual chapters smoother to scroll.
+========================================= */
+#bibleText .bible-verse {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 120px;
+}
+
+/* Section headings can also be skipped until they approach the viewport. */
+#bibleText .bible-section-heading {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 64px;
+}
+
+/* Avoid costly smooth-scroll interpolation during frequent verse navigation. */
+#bibleText {
+    scroll-behavior: auto;
+}
+
 .verse-number {
     font-weight: bold;
 
@@ -6108,8 +6129,9 @@ body.bible-reading-mode #videoPage {
 }
 
 @keyframes bibleGoldEdgeTravel {
-    from { --bible-gold-angle: 0deg; }
-    to   { --bible-gold-angle: 360deg; }
+    0%   { --bible-gold-angle: 0deg; opacity: 1; }
+    99%  { opacity: 1; }
+    100% { --bible-gold-angle: 360deg; opacity: 0; }
 }
 
 /* Keep the effect on buttons only, outside chapter-reading mode. */
@@ -6164,7 +6186,7 @@ body:not(.bible-reading-mode) [role="button"]::after {
     filter:
         drop-shadow(0 0 1px rgba(218, 165, 32, 0.32))
         drop-shadow(0 0 3px rgba(255, 210, 100, 0.16));
-    animation: bibleGoldEdgeTravel 4s linear infinite;
+    animation: bibleGoldEdgeTravel 4s linear 1 forwards;
 }
 
 /* Preserve absolute positioning for app controls that intentionally overlay content. */
