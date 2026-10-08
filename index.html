@@ -6095,6 +6095,98 @@ body.bible-reading-mode #videoPage {
 
 
 
+
+/* =========================================================
+   GOLD TRAVELING GLOW — OUTSIDE BUTTON EDGES ONLY
+   Original button fills, text, borders and click handlers stay intact.
+   Disabled while body.bible-reading-mode is active.
+========================================================= */
+@property --bible-gold-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@keyframes bibleGoldEdgeTravel {
+    from { --bible-gold-angle: 0deg; }
+    to   { --bible-gold-angle: 360deg; }
+}
+
+/* Keep the effect on buttons only, outside chapter-reading mode. */
+body:not(.bible-reading-mode) button,
+body:not(.bible-reading-mode) input[type="button"],
+body:not(.bible-reading-mode) input[type="submit"],
+body:not(.bible-reading-mode) input[type="reset"],
+body:not(.bible-reading-mode) [role="button"] {
+    position: relative;
+}
+
+/* The ring is offset far enough that its inner edge remains outside
+   the button's original border. The transparent center does not cover
+   the button face. */
+body:not(.bible-reading-mode) button::after,
+body:not(.bible-reading-mode) input[type="button"]::after,
+body:not(.bible-reading-mode) input[type="submit"]::after,
+body:not(.bible-reading-mode) input[type="reset"]::after,
+body:not(.bible-reading-mode) [role="button"]::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    box-sizing: border-box;
+    padding: 2px;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 3;
+
+    background: conic-gradient(
+        from var(--bible-gold-angle),
+        transparent 0deg,
+        transparent 278deg,
+        rgba(184, 134, 11, 0.04) 292deg,
+        rgba(218, 165, 32, 0.18) 308deg,
+        rgba(240, 190, 72, 0.48) 324deg,
+        rgba(255, 225, 145, 0.92) 338deg,
+        rgba(255, 248, 220, 0.98) 345deg,
+        rgba(218, 165, 32, 0.54) 352deg,
+        rgba(184, 134, 11, 0.12) 358deg,
+        transparent 360deg
+    );
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+
+    filter:
+        drop-shadow(0 0 1px rgba(218, 165, 32, 0.32))
+        drop-shadow(0 0 3px rgba(255, 210, 100, 0.16));
+    animation: bibleGoldEdgeTravel 4s linear infinite;
+}
+
+/* Preserve absolute positioning for app controls that intentionally overlay content. */
+body:not(.bible-reading-mode) .read-bible-button,
+body:not(.bible-reading-mode) .daily-reading-close,
+body:not(.bible-reading-mode) #favoritesPage .export-treasure-button,
+body:not(.bible-reading-mode) #verseFavoritesList .favorite-heart {
+    position: absolute;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body:not(.bible-reading-mode) button::after,
+    body:not(.bible-reading-mode) input[type="button"]::after,
+    body:not(.bible-reading-mode) input[type="submit"]::after,
+    body:not(.bible-reading-mode) input[type="reset"]::after,
+    body:not(.bible-reading-mode) [role="button"]::after {
+        animation: none;
+        background: none;
+        filter: none;
+    }
+}
+
 </style>
 </head>
 
@@ -14331,6 +14423,10 @@ window.addEventListener("DOMContentLoaded", function () {
     const savedPage =
         sessionStorage.getItem("page");
 
+    /* Keep the header control correct after F5 / page refresh:
+       show the cross logo only on Home; show HOME on every other page. */
+    updateHomeHeader(savedPage || "home");
+
     const savedTestament =
         sessionStorage.getItem("testament");
 
@@ -15139,9 +15235,8 @@ window.addEventListener("DOMContentLoaded", function () {
 
         splash.style.display = "none";
 
-sessionStorage.setItem("page", "home");
-
-updateHomeHeader("home");
+/* Preserve the page being restored after refresh and match its header. */
+updateHomeHeader(sessionStorage.getItem("page") || "home");
 
 setTimeout(function () {
 
@@ -15184,9 +15279,8 @@ setTimeout(function () {
 
         splash.style.display = "none";
 
-sessionStorage.setItem("page", "home");
-
-updateHomeHeader("home");
+/* Do not reset the saved page to Home after a refresh. */
+updateHomeHeader(sessionStorage.getItem("page") || "home");
 
 showDailyReadingPopup();
 
