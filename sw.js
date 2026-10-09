@@ -1,4 +1,4 @@
-const CACHE_NAME = "holy-bible-v69";
+const CACHE_NAME = "holy-bible-v70";
 
 const APP_FILES = [
     "./",
