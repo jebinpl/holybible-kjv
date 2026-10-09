@@ -6305,6 +6305,81 @@ body.dark-mode .daily-promise-language {
     }
 }
 
+
+
+
+
+/* =========================================
+   HOME PAGE — FULL-SCREEN GALILEE BACKGROUND
+========================================= */
+
+body:has(#homePage[style*="display: block"]) .main {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 90px 0 0 !important;
+    box-sizing: border-box;
+}
+
+/* Home page container */
+body:has(#homePage[style*="display: block"]) #homePage {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    min-height: calc(100vh - 90px);
+    overflow: hidden;
+    background: transparent !important;
+    box-sizing: border-box;
+}
+
+/* Background layers */
+#homePage::before,
+#homePage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-position: center top;
+    background-size: cover;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    transition: opacity 1.5s ease-in-out;
+}
+
+/* Current image */
+#homePage::before {
+    background-image: var(--bg-current, none);
+    opacity: 1;
+}
+
+/* Next image */
+#homePage::after {
+    background-image: var(--bg-next, none);
+    opacity: 0;
+}
+
+/* Cross-dissolve */
+#homePage.dissolve-next::before {
+    opacity: 0;
+}
+
+#homePage.dissolve-next::after {
+    opacity: 1;
+}
+
+@supports (height: 100dvh) {
+    body:has(#homePage[style*="display: block"]) #homePage {
+        min-height: calc(100dvh - 90px);
+    }
+}
+
+
+/* Left-align Daily Promise verse in all languages */
+.daily-promise-card .daily-promise-verse {
+    text-align: left !important;
+}
+
+
 </style>
 </head>
 
@@ -13343,6 +13418,7 @@ function goHome() {
     hideGroupedPages();
     document.getElementById("offeringsPage").style.display = "none";
     document.getElementById("homePage").style.display = "block";
+    rotateGalileeBackground();
     
     updateTestamentNavigation();
 }
@@ -14606,6 +14682,8 @@ window.addEventListener("DOMContentLoaded", function () {
         document.getElementById(
             "homePage"
         ).style.display = "block";
+
+        rotateGalileeBackground();
 
         updateTestamentNavigation();
 
@@ -18772,6 +18850,129 @@ dailyPromiseItems = data.filter(function (item) {
         loadDailyPromises();
     }
 })();
+
+
+
+/* =========================================
+   GALILEE HOME BACKGROUND COLLECTION
+   Random image + cross-dissolve every 30 sec
+========================================= */
+
+const galileeBackgrounds = [
+    "./images/galilee-background.png",
+    "./images/galilee-background-2.png",
+    "./images/galilee-background-3.png"
+];
+
+let currentGalileeImage = null;
+let galileeTransitioning = false;
+
+function rotateGalileeBackground() {
+    const homePage = document.getElementById("homePage");
+
+    if (!homePage) return;
+    if (galileeTransitioning) return;
+
+    // Avoid repeating the current image
+    const choices = galileeBackgrounds.filter(
+        image => image !== currentGalileeImage
+    );
+
+    const availableImages = choices.length
+        ? choices
+        : galileeBackgrounds;
+
+    const selectedImage =
+        availableImages[
+            Math.floor(Math.random() * availableImages.length)
+        ];
+
+    const img = new Image();
+
+    img.onload = () => {
+        // First image: show immediately
+        if (!currentGalileeImage) {
+            currentGalileeImage = selectedImage;
+
+            homePage.style.setProperty(
+                "--bg-current",
+                `url("${selectedImage}")`
+            );
+
+            homePage.style.setProperty("--bg-next", "none");
+
+            localStorage.setItem(
+                "lastGalileeBackground",
+                selectedImage
+            );
+
+            return;
+        }
+
+        // Cross-dissolve to the next image
+        galileeTransitioning = true;
+
+        homePage.style.setProperty(
+            "--bg-next",
+            `url("${selectedImage}")`
+        );
+
+        // Allow the browser to apply the new layer
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                homePage.classList.add("dissolve-next");
+            });
+        });
+
+        setTimeout(() => {
+            currentGalileeImage = selectedImage;
+
+            homePage.style.setProperty(
+                "--bg-current",
+                `url("${selectedImage}")`
+            );
+
+            homePage.classList.remove("dissolve-next");
+            homePage.style.setProperty("--bg-next", "none");
+
+            localStorage.setItem(
+                "lastGalileeBackground",
+                selectedImage
+            );
+
+            galileeTransitioning = false;
+        }, 1600);
+    };
+
+    img.onerror = () => {
+        // Missing or unavailable image: use cream
+        homePage.style.setProperty("--bg-current", "none");
+        homePage.style.setProperty("--bg-next", "none");
+        homePage.classList.remove("dissolve-next");
+        homePage.style.setProperty(
+            "background-color",
+            "#f5f0e1",
+            "important"
+        );
+
+        currentGalileeImage = null;
+        galileeTransitioning = false;
+    };
+
+    img.src = selectedImage;
+}
+
+/* Change every 30 seconds while Home is visible */
+setInterval(() => {
+    const homePage = document.getElementById("homePage");
+
+    if (homePage && homePage.style.display === "block") {
+        rotateGalileeBackground();
+    }
+}, 30000);
+
+
+
 
 </script>
 </body>
