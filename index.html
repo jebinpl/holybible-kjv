@@ -6146,7 +6146,8 @@ body:not(.bible-reading-mode) button,
 body:not(.bible-reading-mode) input[type="button"],
 body:not(.bible-reading-mode) input[type="submit"],
 body:not(.bible-reading-mode) input[type="reset"],
-body:not(.bible-reading-mode) [role="button"] {
+body:not(.bible-reading-mode) [role="button"],
+body:not(.bible-reading-mode) .daily-promise-card {
     position: relative;
 }
 
@@ -6157,7 +6158,8 @@ body:not(.bible-reading-mode) button::after,
 body:not(.bible-reading-mode) input[type="button"]::after,
 body:not(.bible-reading-mode) input[type="submit"]::after,
 body:not(.bible-reading-mode) input[type="reset"]::after,
-body:not(.bible-reading-mode) [role="button"]::after {
+body:not(.bible-reading-mode) [role="button"]::after,
+body:not(.bible-reading-mode) .daily-promise-card::after {
     content: "";
     position: absolute;
     inset: -2px;
@@ -6209,10 +6211,97 @@ body:not(.bible-reading-mode) #verseFavoritesList .favorite-heart {
     body:not(.bible-reading-mode) input[type="button"]::after,
     body:not(.bible-reading-mode) input[type="submit"]::after,
     body:not(.bible-reading-mode) input[type="reset"]::after,
-    body:not(.bible-reading-mode) [role="button"]::after {
+    body:not(.bible-reading-mode) [role="button"]::after,
+    body:not(.bible-reading-mode) .daily-promise-card::after {
         animation: none;
         background: none;
         filter: none;
+    }
+}
+
+
+
+/* =========================================================
+   DAILY PROMISE CARD
+========================================================= */
+.daily-promise-card {
+    width: calc(100% - 40px);
+    max-width: 860px;
+    margin: 8px auto 28px;
+    padding: 20px 22px;
+    text-align: center;
+    border: 2px solid #b8943d;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #fffdf5, #f2e2b9, #fffaf0);
+    color: #3b2817;
+    box-shadow: 0 5px 16px rgba(59, 33, 13, 0.16);
+    overflow: visible;
+}
+.daily-promise-heading {
+    margin: 0 0 14px;
+    color: #70451e;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+}
+.daily-promise-content {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 650ms ease, transform 650ms ease;
+}
+.daily-promise-content.promise-glide-out {
+    opacity: 0;
+    transform: translateX(-28px);
+}
+.daily-promise-verse {
+    font-size: clamp(18px, 3.5vw, 25px);
+    line-height: 1.65;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+.daily-promise-reference {
+    margin-top: 10px;
+    color: #805b16;
+    font-size: 15px;
+    font-weight: bold;
+}
+.daily-promise-language {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 5px 12px;
+    border: 1px solid #b8943d;
+    border-radius: 20px;
+    color: #70451e;
+    background: rgba(255,255,255,0.55);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+body.dark-mode .daily-promise-card {
+    background: linear-gradient(135deg, #292929, #202020);
+    color: #f7efd8;
+    border-color: #b8943d;
+    box-shadow: 0 5px 16px rgba(0,0,0,0.35);
+}
+body.dark-mode .daily-promise-heading,
+body.dark-mode .daily-promise-reference,
+body.dark-mode .daily-promise-language {
+    color: #f4d982;
+}
+body.dark-mode .daily-promise-language {
+    background: #333;
+}
+@media (max-width: 700px) {
+    .daily-promise-card {
+        width: calc(100% - 24px);
+        margin: 8px auto 22px;
+        padding: 17px 14px;
+        border-radius: 14px;
+    }
+    .daily-promise-heading {
+        font-size: 16px;
+    }
+    .daily-promise-reference {
+        font-size: 14px;
     }
 }
 
@@ -6552,6 +6641,17 @@ body:not(.bible-reading-mode) #verseFavoritesList .favorite-heart {
     id="homePage"
     class="page"
     style="display:block;">
+
+    <!-- DAILY PROMISE CARD -->
+    <article class="daily-promise-card" aria-live="polite" aria-atomic="true">
+        <h2 class="daily-promise-heading">✦ DAILY PROMISE ✦</h2>
+        <div id="dailyPromiseContent" class="daily-promise-content">
+            <div id="dailyPromiseVerse" class="daily-promise-verse">Loading today's promise...</div>
+            <div id="dailyPromiseReference" class="daily-promise-reference"></div>
+            <div id="dailyPromiseLanguage" class="daily-promise-language">ENGLISH</div>
+        </div>
+    </article>
+
 
     <div class="home-main-buttons">
 
@@ -18469,6 +18569,193 @@ function openUPIPayment() {
 
     window.location.href = upiUrl;
 }
+
+
+
+/* =========================================================
+   DAILY PROMISE
+   Loads ./daily-promises.json.
+   Picks one promise per local calendar date and rotates
+   English, Tamil, Malayalam, Hindi every 30 seconds.
+========================================================= */
+(function () {
+    const PROMISES_JSON_PATH = "./daily-promises.json";
+    const STORAGE_DATE_KEY = "dailyPromiseDate";
+    const STORAGE_INDEX_KEY = "dailyPromiseIndex";
+    const LANGUAGE_CYCLE = [
+        { key: "en", label: "ENGLISH" },
+        { key: "ta", label: "தமிழ்" },
+        { key: "ml", label: "മലയാളം" },
+        { key: "hi", label: "हिन्दी" }
+    ];
+    const LANGUAGE_INTERVAL_MS = 10000;
+    const DATE_CHECK_INTERVAL_MS = 10000;
+
+    let dailyPromiseItems = [];
+    let currentPromise = null;
+    let currentLanguageIndex = 0;
+    let languageTimer = null;
+    let lastKnownDate = "";
+
+    function getLocalDateKey() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+
+    function choosePromiseForToday() {
+        if (!Array.isArray(dailyPromiseItems) || dailyPromiseItems.length === 0) {
+            return;
+        }
+
+        const today = getLocalDateKey();
+        let savedDate = "";
+        let savedIndex = -1;
+
+        try {
+            savedDate = localStorage.getItem(STORAGE_DATE_KEY) || "";
+            savedIndex = Number(localStorage.getItem(STORAGE_INDEX_KEY));
+        } catch (error) {
+            console.warn("Daily Promise storage is unavailable:", error);
+        }
+
+        
+if (
+    savedDate === today &&
+    Number.isInteger(savedIndex) &&
+    savedIndex >= 0 &&
+    savedIndex < dailyPromiseItems.length
+) {
+    // Keep the same promise for today's date.
+    currentPromise = dailyPromiseItems[savedIndex];
+
+} else {
+    // Select the next promise sequentially: 1, 2, 3...
+    let newIndex = 0;
+
+    if (
+        Number.isInteger(savedIndex) &&
+        savedIndex >= 0 &&
+        savedIndex < dailyPromiseItems.length - 1
+    ) {
+        newIndex = savedIndex + 1;
+    }
+
+    // After the last promise, restart from the first.
+    currentPromise = dailyPromiseItems[newIndex];
+
+    try {
+        localStorage.setItem(STORAGE_DATE_KEY, today);
+        localStorage.setItem(STORAGE_INDEX_KEY, String(newIndex));
+    } catch (error) {
+        console.warn("Could not save today's Daily Promise:", error);
+    }
+}
+
+
+        lastKnownDate = today;
+        currentLanguageIndex = 0;
+        renderDailyPromise(false);
+        restartLanguageRotation();
+    }
+
+    function renderDailyPromise(animate) {
+        const content = document.getElementById("dailyPromiseContent");
+        const verseElement = document.getElementById("dailyPromiseVerse");
+        const referenceElement = document.getElementById("dailyPromiseReference");
+        const languageElement = document.getElementById("dailyPromiseLanguage");
+
+        if (!content || !verseElement || !referenceElement || !languageElement || !currentPromise) {
+            return;
+        }
+
+        const language = LANGUAGE_CYCLE[currentLanguageIndex];
+        const verseText = currentPromise[language.key];
+
+        if (animate) {
+            content.classList.add("promise-glide-out");
+            window.setTimeout(function () {
+                verseElement.textContent = verseText || currentPromise.en || "Promise verse unavailable.";
+                referenceElement.textContent = currentPromise.reference || "";
+                languageElement.textContent = language.label;
+                content.classList.remove("promise-glide-out");
+            }, 650);
+        } else {
+            verseElement.textContent = verseText || currentPromise.en || "Promise verse unavailable.";
+            referenceElement.textContent = currentPromise.reference || "";
+            languageElement.textContent = language.label;
+            content.classList.remove("promise-glide-out");
+        }
+    }
+
+    function rotateLanguage() {
+        if (!currentPromise) return;
+        currentLanguageIndex = (currentLanguageIndex + 1) % LANGUAGE_CYCLE.length;
+        renderDailyPromise(true);
+    }
+
+    function restartLanguageRotation() {
+        if (languageTimer !== null) {
+            window.clearInterval(languageTimer);
+        }
+        languageTimer = window.setInterval(rotateLanguage, LANGUAGE_INTERVAL_MS);
+    }
+
+    async function loadDailyPromises() {
+        try {
+            const response = await fetch(PROMISES_JSON_PATH, { cache: "no-cache" });
+            if (!response.ok) {
+                throw new Error("Could not load " + PROMISES_JSON_PATH + " (HTTP " + response.status + ")");
+            }
+
+            const data = await response.json();
+            if (!Array.isArray(data) || data.length === 0) {
+                throw new Error("daily-promises.json must contain a non-empty JSON array.");
+            }
+
+            dailyPromiseItems = data.filter(function (item) {
+                return item &&
+                    typeof item.en === "string" &&
+                    typeof item.reference === "string";
+            });
+
+            if (dailyPromiseItems.length === 0) {
+                throw new Error("No valid promises found. Each promise needs at least en and reference fields.");
+            }
+
+            choosePromiseForToday();
+        } catch (error) {
+            console.error("Daily Promise error:", error);
+            const verseElement = document.getElementById("dailyPromiseVerse");
+            const referenceElement = document.getElementById("dailyPromiseReference");
+            if (verseElement) verseElement.textContent = "Today's promise could not be loaded.";
+            if (referenceElement) referenceElement.textContent = "Please check daily-promises.json";
+        }
+    }
+
+    // Check the date periodically so an already-open app changes at local midnight.
+    window.setInterval(function () {
+        const today = getLocalDateKey();
+        if (dailyPromiseItems.length && today !== lastKnownDate) {
+            choosePromiseForToday();
+        }
+    }, DATE_CHECK_INTERVAL_MS);
+
+    // Refresh the language timer when the app returns from the background.
+    document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible" && currentPromise) {
+            renderDailyPromise(false);
+        }
+    });
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", loadDailyPromises, { once: true });
+    } else {
+        loadDailyPromises();
+    }
+})();
 
 </script>
 </body>
