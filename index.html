@@ -18588,7 +18588,7 @@ function openUPIPayment() {
         { key: "ml", label: "മലയാളം" },
         { key: "hi", label: "हिन्दी" }
     ];
-    const LANGUAGE_INTERVAL_MS = 30000;
+    const LANGUAGE_INTERVAL_MS = 10000;
     const DATE_CHECK_INTERVAL_MS = 10000;
 
     let dailyPromiseItems = [];
@@ -18672,19 +18672,27 @@ if (
         }
 
         const language = LANGUAGE_CYCLE[currentLanguageIndex];
-        const verseText = currentPromise[language.key];
+const verseText = currentPromise[language.key];
+const referenceKey = "reference_" + language.key;
+const referenceText =
+    currentPromise[referenceKey] || currentPromise.reference_en || "";
 
         if (animate) {
             content.classList.add("promise-glide-out");
             window.setTimeout(function () {
                 verseElement.textContent = verseText || currentPromise.en || "Promise verse unavailable.";
-                referenceElement.textContent = currentPromise.reference || "";
+                const referenceKey = "reference_" + language.key;
+
+                referenceElement.textContent =
+                currentPromise[referenceKey] || currentPromise.reference_en || "";
                 languageElement.textContent = language.label;
                 content.classList.remove("promise-glide-out");
             }, 650);
         } else {
             verseElement.textContent = verseText || currentPromise.en || "Promise verse unavailable.";
-            referenceElement.textContent = currentPromise.reference || "";
+            const referenceKey = "reference_" + language.key;
+referenceElement.textContent =
+    currentPromise[referenceKey] || currentPromise.reference_en || "";
             languageElement.textContent = language.label;
             content.classList.remove("promise-glide-out");
         }
@@ -18715,11 +18723,19 @@ if (
                 throw new Error("daily-promises.json must contain a non-empty JSON array.");
             }
 
-            dailyPromiseItems = data.filter(function (item) {
-                return item &&
-                    typeof item.en === "string" &&
-                    typeof item.reference === "string";
-            });
+            
+dailyPromiseItems = data.filter(function (item) {
+    return item &&
+        typeof item.en === "string" &&
+        typeof item.ta === "string" &&
+        typeof item.ml === "string" &&
+        typeof item.hi === "string" &&
+        typeof item.reference_en === "string" &&
+        typeof item.reference_ta === "string" &&
+        typeof item.reference_ml === "string" &&
+        typeof item.reference_hi === "string";
+});
+
 
             if (dailyPromiseItems.length === 0) {
                 throw new Error("No valid promises found. Each promise needs at least en and reference fields.");
