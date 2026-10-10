@@ -6221,92 +6221,178 @@ body:not(.bible-reading-mode) #verseFavoritesList .favorite-heart {
 
 
 
-/* =========================================================
-   DAILY PROMISE CARD
-========================================================= */
+
+/* =========================================
+   DAILY PROMISE CARD — FIXED 320px
+========================================= */
+
 .daily-promise-card {
     width: calc(100% - 40px);
     max-width: 860px;
+
+    height: 320px;
+    min-height: 320px;
+    max-height: 320px;
+
     margin: 8px auto 28px;
-    padding: 20px 22px;
+    padding: 16px 22px;
+
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
     text-align: center;
+
     border: 2px solid #b8943d;
     border-radius: 18px;
-    background: linear-gradient(135deg, #fffdf5, #f2e2b9, #fffaf0);
+
+    background: linear-gradient(
+        135deg,
+        #fffdf5,
+        #f2e2b9,
+        #fffaf0
+    );
+
     color: #3b2817;
     box-shadow: 0 5px 16px rgba(59, 33, 13, 0.16);
-    overflow: visible;
+
+    overflow: hidden;
+    position: relative;
 }
+
+/* CARD HEADING */
+
 .daily-promise-heading {
-    margin: 0 0 14px;
+    flex: 0 0 auto;
+    margin: 0 0 8px;
+
     color: #70451e;
     font-size: 18px;
     letter-spacing: 1.5px;
 }
+
+/* CONTENT AREA */
+
 .daily-promise-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
     opacity: 1;
     transform: translateX(0);
-    transition: opacity 650ms ease, transform 650ms ease;
+
+    transition: opacity 650ms ease,
+                transform 650ms ease;
 }
+
 .daily-promise-content.promise-glide-out {
     opacity: 0;
     transform: translateX(-28px);
 }
+
+/* VERSE — FONT ADJUSTED BY JAVASCRIPT */
+
 .daily-promise-verse {
-    font-size: clamp(18px, 3.5vw, 25px);
-    line-height: 1.65;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+
+    font-size: 18px;
+    line-height: 1.4;
     font-weight: bold;
+
+    text-align: left;
+
     overflow-wrap: anywhere;
+    word-break: normal;
+    overflow: hidden;
 }
+
+/* BIBLE REFERENCE */
+
 .daily-promise-reference {
-    margin-top: 10px;
+    flex: 0 0 auto;
+
+    margin-top: 6px;
     color: #805b16;
+
     font-size: 15px;
+    line-height: 1.3;
     font-weight: bold;
 }
+
+/* LANGUAGE LABEL */
+
 .daily-promise-language {
+    align-self: center;
+    flex: 0 0 auto;
+
     display: inline-block;
-    margin-top: 14px;
-    padding: 5px 12px;
+    margin-top: 8px;
+    padding: 4px 12px;
+
     border: 1px solid #b8943d;
     border-radius: 20px;
+
     color: #70451e;
     background: rgba(255,255,255,0.55);
+
     font-size: 11px;
     font-weight: bold;
     letter-spacing: 1px;
 }
+
+/* DARK MODE */
+
 body.dark-mode .daily-promise-card {
     background: linear-gradient(135deg, #292929, #202020);
     color: #f7efd8;
     border-color: #b8943d;
     box-shadow: 0 5px 16px rgba(0,0,0,0.35);
 }
+
 body.dark-mode .daily-promise-heading,
 body.dark-mode .daily-promise-reference,
 body.dark-mode .daily-promise-language {
     color: #f4d982;
 }
+
 body.dark-mode .daily-promise-language {
     background: #333;
 }
+
+/* MOBILE — SAME FIXED HEIGHT */
+
 @media (max-width: 700px) {
     .daily-promise-card {
         width: calc(100% - 24px);
+        height: 200px;
+        min-height: 200px;
+        max-height: 200px;
+
         margin: 8px auto 22px;
-        padding: 17px 14px;
+        padding: 14px 14px;
         border-radius: 14px;
     }
+
     .daily-promise-heading {
         font-size: 16px;
+        margin-bottom: 8px;
     }
+
     .daily-promise-reference {
         font-size: 14px;
     }
 }
 
+/* KEEP VERSE LEFT ALIGNED */
 
-
+.daily-promise-card .daily-promise-verse {
+    text-align: left !important;
+}
 
 
 /* =========================================
@@ -6359,8 +6445,9 @@ body:has(#homePage[style*="display: block"]) #homePage {
 }
 
 /* Cross-dissolve */
+/* Keep the old image visible underneath */
 #homePage.dissolve-next::before {
-    opacity: 0;
+    opacity: 1;
 }
 
 #homePage.dissolve-next::after {
@@ -6377,6 +6464,61 @@ body:has(#homePage[style*="display: block"]) #homePage {
 /* Left-align Daily Promise verse in all languages */
 .daily-promise-card .daily-promise-verse {
     text-align: left !important;
+}
+
+
+/* Daily Promise Share Button */
+#dailyPromiseShareBtn {
+    position: absolute;
+    right: 16px;
+    bottom: 12px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #b8943d;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    color: #8a6b20;
+    cursor: pointer;
+    z-index: 5;
+}
+
+#dailyPromiseShareBtn:hover {
+    background: #f2e2b9;
+    transform: scale(1.05);
+}
+
+#dailyPromiseReadBtn {
+    position: absolute;
+    right: 58px;
+    bottom: 12px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #b8943d;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    color: #8a6b20;
+    cursor: pointer;
+    z-index: 5;
+}
+
+#dailyPromiseReadBtn:hover {
+    background: #f2e2b9;
+    transform: scale(1.05);
+}
+
+
+/* Dark mode effect for Home background images */
+body.dark-mode #homePage::before,
+body.dark-mode #homePage::after {
+    filter: brightness(0.55) saturate(0.85);
 }
 
 
@@ -6725,6 +6867,63 @@ body:has(#homePage[style*="display: block"]) #homePage {
             <div id="dailyPromiseReference" class="daily-promise-reference"></div>
             <div id="dailyPromiseLanguage" class="daily-promise-language">ENGLISH</div>
         </div>
+
+  
+<button
+    type="button"
+    id="dailyPromiseReadBtn"
+    title="Read this verse in the Bible"
+    aria-label="Read this verse in the Bible"
+    onclick="readDailyPromiseVerse()">
+
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <path d="M12 7v14"/>
+        <path d="M3 18V5a2 2 0 0 1 2-2h4a3 3 0 0 1 3 3 3 3 0 0 1 3-3h4a2 2 0 0 1 2 2v13"/>
+        <path d="M3 18h6a3 3 0 0 1 3 3"/>
+        <path d="M21 18h-6a3 3 0 0 0-3 3"/>
+    </svg>
+</button>
+
+        
+<button
+    type="button"
+    id="dailyPromiseShareBtn"
+    class="video-share-icon"
+    title="Share Daily Promise"
+    aria-label="Share Daily Promise"
+    onclick="shareDailyPromise()">
+
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <circle cx="18" cy="5" r="3"/>
+        <circle cx="6" cy="12" r="3"/>
+        <circle cx="18" cy="19" r="3"/>
+
+        <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/>
+        <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
+    </svg>
+</button>
+
+
     </article>
 
 
@@ -16928,20 +17127,23 @@ async function openVerseFromTreasure(
     // Open Bible reader
     await toggleBibleReader();
 
-    // Scroll to the exact verse after loading
-    setTimeout(function () {
+    
+// Scroll to the exact verse and highlight for 2 seconds
+setTimeout(function () {
 
-    const verseElement =
-        document.getElementById(
-            "verse-" + verseNumber
-        );
+    const verseElement = document.getElementById(
+        "verse-" + verseNumber
+    );
 
     if (verseElement) {
 
-        verseElement.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
+        // Reuse the existing verse highlight function
+        highlightCurrentVerse(verseNumber);
+
+        // Remove highlight after 2 seconds
+        setTimeout(function () {
+            verseElement.classList.remove("speaking-verse");
+        }, 2000);
 
     } else {
 
@@ -16954,8 +17156,11 @@ async function openVerseFromTreasure(
 
 }, 1000);
 
+
     updateTestamentNavigation();
 }
+
+window.openVerseFromTreasure = openVerseFromTreasure;
 
 function showDialog(message) {
 
@@ -18739,6 +18944,43 @@ if (
         restartLanguageRotation();
     }
 
+    
+function fitDailyPromiseVerse() {
+    const verse = document.getElementById("dailyPromiseVerse");
+
+    if (!verse || !verse.isConnected) return;
+
+    const MIN_FONT_SIZE = 13;
+    const MAX_FONT_SIZE = 18;
+
+    let fontSize = MAX_FONT_SIZE;
+
+    verse.style.fontSize = fontSize + "px";
+
+    // Reduce the font until the entire verse fits.
+    while (
+        fontSize > MIN_FONT_SIZE &&
+        verse.scrollHeight > verse.clientHeight
+    ) {
+        fontSize--;
+        verse.style.fontSize = fontSize + "px";
+    }
+
+    // If an unusually long verse still does not fit,
+    // allow scrolling inside the verse area rather than
+    // permanently hiding any of its text.
+    verse.style.overflowY =
+        verse.scrollHeight > verse.clientHeight
+            ? "auto"
+            : "hidden";
+}
+
+// Recalculate when the screen size changes.
+window.addEventListener("resize", function () {
+    requestAnimationFrame(fitDailyPromiseVerse);
+});
+
+
     function renderDailyPromise(animate) {
         const content = document.getElementById("dailyPromiseContent");
         const verseElement = document.getElementById("dailyPromiseVerse");
@@ -18765,6 +19007,7 @@ const referenceText =
                 currentPromise[referenceKey] || currentPromise.reference_en || "";
                 languageElement.textContent = language.label;
                 content.classList.remove("promise-glide-out");
+                requestAnimationFrame(fitDailyPromiseVerse);
             }, 650);
         } else {
             verseElement.textContent = verseText || currentPromise.en || "Promise verse unavailable.";
@@ -18773,6 +19016,7 @@ referenceElement.textContent =
     currentPromise[referenceKey] || currentPromise.reference_en || "";
             languageElement.textContent = language.label;
             content.classList.remove("promise-glide-out");
+            requestAnimationFrame(fitDailyPromiseVerse);
         }
     }
 
@@ -18828,6 +19072,85 @@ dailyPromiseItems = data.filter(function (item) {
             if (referenceElement) referenceElement.textContent = "Please check daily-promises.json";
         }
     }
+
+    
+window.shareDailyPromise = async function () {
+    if (!currentPromise) {
+        alert("Daily Promise is not available yet.");
+        return;
+    }
+
+    const promiseText = [
+        "🌟 DAILY BIBLE PROMISE 🌟",
+        "",
+        "🇬🇧 ENGLISH",
+        currentPromise.en || "",
+        currentPromise.reference_en || "",
+        "",
+        "🇮🇳 தமிழ் (TAMIL)",
+        currentPromise.ta || "",
+        currentPromise.reference_ta || "",
+        "",
+        "🇮🇳 മലയാളം (MALAYALAM)",
+        currentPromise.ml || "",
+        currentPromise.reference_ml || "",
+        "",
+        "🇮🇳 हिन्दी (HINDI)",
+        currentPromise.hi || "",
+        currentPromise.reference_hi || "",
+        "",
+        "📖 Bible Promise"
+    ].join("\n");
+
+    try {
+        if (navigator.share) {
+            await navigator.share({
+                title: "Daily Bible Promise",
+                text: promiseText
+            });
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(promiseText);
+            alert("Daily Promise copied. You can now share it.");
+        } else {
+            window.prompt("Copy your Daily Promise:", promiseText);
+        }
+    } catch (error) {
+        if (error.name !== "AbortError") {
+            console.error("Daily Promise sharing failed:", error);
+            alert("Unable to share the Daily Promise.");
+        }
+    }
+};
+
+
+window.readDailyPromiseVerse = async function () {
+    if (!currentPromise || !currentPromise.reference_en) {
+        alert("Daily Promise reference is unavailable.");
+        return;
+    }
+
+    const reference = currentPromise.reference_en.trim();
+
+    // Example: "John 3:16"
+    const match = reference.match(/^(.+?)\s+(\d+):(\d+)$/);
+
+    if (!match) {
+        alert("Could not identify the Bible reference: " + reference);
+        return;
+    }
+
+    const book = match[1].trim();
+    const chapter = Number(match[2]);
+    const verseNumber = Number(match[3]);
+
+    if (typeof window.openVerseFromTreasure !== "function") {
+        alert("The Bible reader function is unavailable.");
+        return;
+    }
+
+    await window.openVerseFromTreasure(book, chapter, verseNumber);
+};
+
 
     // Check the date periodically so an already-open app changes at local midnight.
     window.setInterval(function () {
