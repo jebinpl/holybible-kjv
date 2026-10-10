@@ -16466,9 +16466,41 @@ if (cameFromFavorite === "true") {
     }
 
 
-    /* =====================================================
-       NORMAL CHAPTER BACK
-    ===================================================== */
+
+/* =========================================
+   RETURN TO HOME FROM DAILY PROMISE
+========================================= */
+
+if (
+    sessionStorage.getItem("cameFromDailyPromise") === "true"
+) {
+    // Hide chapter and video pages
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("videoPage").style.display = "none";
+
+    // Close the Bible reader
+    closeBibleReader();
+
+    // Hide other pages
+    document.getElementById("bookPage").style.display = "none";
+    document.getElementById("favoritesPage").style.display = "none";
+    document.getElementById("treasureListPage").style.display = "none";
+    document.getElementById("searchPage").style.display = "none";
+    document.getElementById("bibleTextSearchPage").style.display = "none";
+    document.getElementById("verseTreasurePage").style.display = "none";
+
+    // Show Home page
+    document.getElementById("homePage").style.display = "block";
+
+    // Update page state
+    sessionStorage.setItem("page", "home");
+    sessionStorage.removeItem("cameFromDailyPromise");
+
+    updateTestamentNavigation();
+
+    return;
+}
+
 
     /* =========================================
    RETURN TO VERSE TREASURE
@@ -17070,14 +17102,22 @@ function positionSearchBelowVideo() {
 async function openVerseFromTreasure(
     book,
     chapter,
-    verseNumber
+    verseNumber,
+    source = "verseTreasure"
 ) {
 
     // Save chapter information
     sessionStorage.setItem("book", book);
     sessionStorage.setItem("chapter", chapter);
     sessionStorage.setItem("page", "videos");
+
+    if (source === "dailyPromise") {
+    sessionStorage.setItem("cameFromDailyPromise", "true");
+    sessionStorage.removeItem("cameFromVerseTreasure");
+    } else {
     sessionStorage.setItem("cameFromVerseTreasure", "true");
+    sessionStorage.removeItem("cameFromDailyPromise");
+    }
     
     
 
@@ -19148,7 +19188,12 @@ window.readDailyPromiseVerse = async function () {
         return;
     }
 
-    await window.openVerseFromTreasure(book, chapter, verseNumber);
+    await window.openVerseFromTreasure(
+    book,
+    chapter,
+    verseNumber,
+    "dailyPromise"
+    );
 };
 
 
