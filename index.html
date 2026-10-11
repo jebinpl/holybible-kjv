@@ -1432,16 +1432,14 @@ body.dark-mode .bible-verse {
    Render verse cards only as they approach the viewport.
    This keeps long/multilingual chapters smoother to scroll.
 ========================================= */
-#bibleText .bible-verse {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 120px;
+
+/* Keep Bible verse positions accurate for scrolling */
+#bibleText .bible-verse,
+#bibleText .bible-section-heading {
+    content-visibility: visible;
+    contain-intrinsic-size: none;
 }
 
-/* Section headings can also be skipped until they approach the viewport. */
-#bibleText .bible-section-heading {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 64px;
-}
 
 /* Avoid costly smooth-scroll interpolation during frequent verse navigation. */
 #bibleText {
@@ -2654,8 +2652,13 @@ body.dark-mode .group-page-button {
     line-height: 1.6;
 }
 
+/* =========================
+   BIBLE SEARCH TEXT HIGHLIGHT
+========================= */
+
 .bible-search-highlight {
-    background: #f4d35e;
+    background: #ffe58a;
+    color: #332600;
     font-weight: bold;
     padding: 1px 3px;
     border-radius: 3px;
@@ -3530,10 +3533,19 @@ body.dark-mode .bible-search-text {
     color: #e8e4dd;
 }
 
+/* =========================
+   DARK MODE TEXT HIGHLIGHT
+========================= */
+
+
+/* Pink text highlight in dark mode */
 body.dark-mode .bible-search-highlight {
-    background: #b08a24;
-    color: #ffffff;
+    background: #ff69b4;
+    color: #2b1020;
+    font-weight: bold;
+    border-radius: 3px;
 }
+
 
 body.dark-mode .bible-search-count,
 body.dark-mode .bible-search-no-results {
@@ -5412,11 +5424,16 @@ body.dark-mode .treasure-menu-button:hover {
     margin-right: 8px;
 }
 
+
+/* Chapter Read: Search-result verse highlight */
 .search-highlight {
-    background: #ffe58a !important;
-    border: 2px solid #d4af37 !important;
+    background: #fd9bcc !important;
+    border: 2px solid #ff1493 !important;
+    color: #2b1020 !important;
+    border-radius: 6px;
     transition: 0.3s;
 }
+
 
 .verse-share-icon {
     display:flex;
@@ -7299,11 +7316,12 @@ body.dark-mode #homePage::after {
 
         <div class="search-box-container">
 
-            <input
-                type="text"
-                id="bibleTextSearchInput"
-                placeholder="Type a word or phrase..."
-                oninput="searchBibleText()">
+            
+    <input
+    type="text"
+    id="bibleTextSearchInput"
+    placeholder="Type a word or phrase..."
+    oninput="clearTimeout(window.bibleSearchTimer); window.bibleSearchTimer = setTimeout(searchBibleText, 500)">
 
         </div>
 
@@ -15846,10 +15864,20 @@ async function openBibleTextSearchPage() {
         "<div class='bible-search-count'>" +
         "Loading Bible text..." +
         "</div>";
-    await buildBibleTextSearchDatabase();
-    results.innerHTML = "";
-    updateTestamentNavigation();
-    input.focus();
+    
+await buildBibleTextSearchDatabase();
+
+results.innerHTML = "";
+
+updateTestamentNavigation();
+
+input.focus();
+
+/* Run any search entered while Bible text was loading */
+if (input.value.trim() !== "") {
+    searchBibleText();
+}
+
 }
 
 /* =========================
@@ -15902,27 +15930,63 @@ function searchBibleText() {
             .filter(Boolean);
 
 
-    const matchedVerses =
+    
+/* =========================================
+   STAGE 1: SEARCH COMPLETE WORDS
+========================================= */
+
+let matchedVerses =
+    bibleTextSearchDatabase.filter(
+        function(item) {
+
+            const text = item.text.toLowerCase();
+
+            return words.every(function(word) {
+
+                const escapedWord =
+                    word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+                const exactWordRegex =
+                    new RegExp("\\b" + escapedWord + "\\b", "i");
+
+                return exactWordRegex.test(text);
+
+            });
+
+        }
+    );
+
+
+/* =========================================
+   STAGE 2: IF NO EXACT MATCH, SEARCH
+   WORDS STARTING WITH THE SEARCH TEXT
+========================================= */
+
+if (matchedVerses.length === 0) {
+
+    matchedVerses =
         bibleTextSearchDatabase.filter(
             function(item) {
 
-                const text =
-                    item.text.toLowerCase();
+                const text = item.text.toLowerCase();
 
+                return words.every(function(word) {
 
-                /*
-                 * ALL searched words must exist
-                 * in the verse.
-                 */
+                    const escapedWord =
+                        word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-                return words.every(
-                    function(word) {
-                        return text.includes(word);
-                    }
-                );
+                    const startsWithWordRegex =
+                        new RegExp("\\b" + escapedWord, "i");
+
+                    return startsWithWordRegex.test(text);
+
+                });
 
             }
         );
+
+}
+
 
 
     if (matchedVerses.length === 0) {
@@ -16259,36 +16323,42 @@ const cameFromFavorite =
         "cameFromFavorite"
     );
 
+
 if (cameFromFavorite === "true") {
 
-    /* Hide chapter/video page */
-    document.getElementById(
-        "videoPage"
-    ).style.display = "none";
+    // Exit Bible reading mode and restore the main header
+    closeBibleReader();
 
-    /* Show Favorites page */
-    document.getElementById(
-        "favoritesPage"
-    ).style.display = "block";
+    document.body.classList.remove("bible-reading-mode");
 
-    /* Restore page state */
-    sessionStorage.setItem(
-        "page",
-        "favorites"
-    );
+    // Hide the chapter reading page
+    document.getElementById("videoPage").style.display = "none";
 
-    /* Refresh Favorites list */
+    // Show Chapter Treasures
+    document.getElementById("favoritesPage").style.display = "block";
+
+    // Restore the normal page state
+    sessionStorage.setItem("page", "favorites");
+    sessionStorage.removeItem("cameFromFavorite");
+
+    // Restore the header
+    const header = document.querySelector(".header");
+
+    if (header) {
+        header.style.removeProperty("display");
+    }
+
+    // Refresh saved chapters
     renderFavorites();
-
-    /* Clear temporary return state */
-    sessionStorage.removeItem(
-        "cameFromFavorite"
-    );
 
     updateTestamentNavigation();
 
+    // Return to the top so the header is visible
+    window.scrollTo(0, 0);
+
     return;
 }
+
     
     /* =====================================================
        RETURN TO VIDEO SEARCH
@@ -17111,13 +17181,19 @@ async function openVerseFromTreasure(
     sessionStorage.setItem("chapter", chapter);
     sessionStorage.setItem("page", "videos");
 
-    if (source === "dailyPromise") {
+    
+if (source === "dailyPromise") {
     sessionStorage.setItem("cameFromDailyPromise", "true");
     sessionStorage.removeItem("cameFromVerseTreasure");
-    } else {
+
+    // Clear any old treasure/search scroll target
+    // so it cannot override the Daily Promise verse.
+    sessionStorage.removeItem("treasureVerse");
+    sessionStorage.removeItem("searchVerse");
+} else {
     sessionStorage.setItem("cameFromVerseTreasure", "true");
     sessionStorage.removeItem("cameFromDailyPromise");
-    }
+}
     
     
 
@@ -17167,38 +17243,109 @@ async function openVerseFromTreasure(
     // Open Bible reader
     await toggleBibleReader();
 
-    
-// Scroll to the exact verse and highlight for 2 seconds
-setTimeout(function () {
+// Daily Promise: scroll to the exact requested verse
+const targetVerseNumber = Number(verseNumber);
 
-    const verseElement = document.getElementById(
-        "verse-" + verseNumber
+let attempts = 0;
+
+
+
+function scrollToPromiseVerse() {
+    const target = document.getElementById(
+        "verse-" + targetVerseNumber
     );
 
-    if (verseElement) {
+    if (!target || !target.isConnected) {
+        attempts++;
 
-        // Reuse the existing verse highlight function
-        highlightCurrentVerse(verseNumber);
-
-        // Remove highlight after 2 seconds
-        setTimeout(function () {
-            verseElement.classList.remove("speaking-verse");
-        }, 2000);
-
-    } else {
-
-        console.log(
-            "Verse not found:",
-            "verse-" + verseNumber
-        );
-
+        if (attempts < 50) {
+            setTimeout(scrollToPromiseVerse, 200);
+        } else {
+            console.error(
+                "Promise verse not found:",
+                book,
+                chapter,
+                targetVerseNumber
+            );
+        }
+        return;
     }
 
-}, 1000);
+    // Highlight the exact verse
+    target.classList.add("speaking-verse");
 
+   
+    // Find the element that actually scrolls the Bible reader
+    let scroller = target.parentElement;
 
-    updateTestamentNavigation();
+    while (
+        scroller &&
+        scroller !== document.body &&
+        scroller.scrollHeight <= scroller.clientHeight
+    ) {
+        scroller = scroller.parentElement;
+    }
+
+    const isWindowScroller =
+        !scroller ||
+        scroller === document.body ||
+        scroller === document.documentElement;
+
+    // Calculate the exact target position
+    const targetRect = target.getBoundingClientRect();
+
+    const start = isWindowScroller
+        ? window.scrollY
+        : scroller.scrollTop;
+
+    const destination = isWindowScroller
+        ? start + targetRect.top - (window.innerHeight / 2)
+          + (targetRect.height / 2)
+        : start + targetRect.top
+          - scroller.getBoundingClientRect().top
+          - (scroller.clientHeight / 2)
+          + (targetRect.height / 2);
+
+    const maxScroll = isWindowScroller
+        ? document.documentElement.scrollHeight - window.innerHeight
+        : scroller.scrollHeight - scroller.clientHeight;
+
+    const end = Math.max(0, Math.min(destination, maxScroll));
+
+    // Fast scroll, then smooth deceleration
+    const duration = 1200;
+    const startTime = performance.now();
+
+    function animateScroll(now) {
+        const progress = Math.min(
+            (now - startTime) / duration,
+            1
+        );
+
+        const eased = 1 - Math.pow(1 - progress, 4);
+        const position = start + (end - start) * eased;
+
+        if (isWindowScroller) {
+            window.scrollTo(0, position);
+        } else {
+            scroller.scrollTop = position;
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(animateScroll);
+        }
+    }
+
+    requestAnimationFrame(animateScroll);
 }
+
+
+scrollToPromiseVerse();
+
+updateTestamentNavigation();
+}
+
+
 
 window.openVerseFromTreasure = openVerseFromTreasure;
 
