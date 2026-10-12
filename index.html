@@ -7098,6 +7098,43 @@ body.dark-mode .gregorian-month-controls select {
     50% { opacity: 1; }
 }
 
+
+.custom-calendar-icon {
+    width: 42px;
+    height: 42px;
+    border: 2px solid currentColor;
+    border-radius: 7px;
+    overflow: hidden;
+    text-align: center;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+#calendarMonth {
+    background: #c62828;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px 0 3px;
+}
+
+#calendarDay {
+    font-size: 19px;
+    font-weight: bold;
+    padding-top: 4px;
+    transform: translateY(-3px);
+}
+
+.gregorian-calendar-toolbar select {
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.gregorian-calendar-toolbar select,
+.gregorian-month-controls select {
+    max-height: 180px;
+    overflow-y: auto;
+}
 </style>
 </head>
 
@@ -7579,14 +7616,20 @@ body.dark-mode .gregorian-month-controls select {
         </button>
 
         
-        <button
-            class="home-main-button"
-            onclick="openGregorianCalendar()">
+                <button
+    class="home-main-button"
+    onclick="openGregorianCalendar()">
 
-            <div class="home-main-icon">📅</div>
-            <div class="home-main-title">CALENDAR</div>
+    <div class="home-main-icon">
+        <div class="custom-calendar-icon">
+            <div id="calendarMonth"></div>
+            <div id="calendarDay"></div>
+        </div>
+    </div>
 
-        </button>
+    <div class="home-main-title">CALENDAR</div>
+
+</button>
 
 
     </div>
@@ -20692,11 +20735,13 @@ function openGregorianCalendar() {
     yearSelect.innerHTML = "";
 
     for (let year = 0; year <= 3000; year++) {
-        const option = document.createElement("option");
-        option.value = year;
-        option.textContent = year;
-        yearSelect.appendChild(option);
-    }
+    const option = document.createElement("option");
+    option.value = year;
+    option.textContent = year;
+    yearSelect.appendChild(option);
+}
+
+yearSelect.size = 1;
 
     const monthSelect = document.getElementById("gregorianMonthSelect");
     monthSelect.innerHTML = "";
@@ -20713,6 +20758,18 @@ function openGregorianCalendar() {
     updateTestamentNavigation();
     renderGregorianCalendar();
 }
+
+function updateGregorianTodayDate() {
+    const dateElement = document.getElementById("gregorianTodayDate");
+    if (!dateElement) return;
+
+    dateElement.textContent = new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric"
+    });
+}
+
+updateGregorianTodayDate();
 
 function closeGregorianCalendar() {
     document.getElementById("gregorianCalendarPage").style.display = "none";
@@ -20871,6 +20928,22 @@ function openGregorianSelectedDate(year, month, day) {
 }
 
 
+
+function updateCalendarIcon() {
+    const today = new Date();
+
+    const monthElement = document.getElementById("calendarMonth");
+    const dayElement = document.getElementById("calendarDay");
+
+    if (!monthElement || !dayElement) return;
+
+    monthElement.textContent =
+        today.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
+
+    dayElement.textContent = today.getDate();
+}
+
+updateCalendarIcon();
 </script>
 </body>
 </html>
