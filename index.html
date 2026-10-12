@@ -6429,6 +6429,53 @@ body:has(#homePage[style*="display: block"]) #homePage {
     opacity: 1;
 }
 
+
+/* =========================================
+   JESUS TIME INTRO — BACKGROUND RISE
+========================================= */
+
+#homePage.jesus-time-intro {
+    touch-action: pan-y;
+}
+
+/* Block clicks on Home content during the intro */
+#homePage.jesus-time-intro > * {
+    pointer-events: none !important;
+}
+
+/* Image follows the user's finger */
+#homePage.jesus-time-intro::before,
+#homePage.jesus-time-intro::after {
+    z-index: 20;
+    transform: translateY(var(--jesus-swipe-y, 0px));
+    transition: none;
+    will-change: transform;
+}
+
+/* Smooth finish after the finger is released */
+
+#homePage.jesus-time-intro.jesus-swipe-finish::before,
+#homePage.jesus-time-intro.jesus-swipe-finish::after {
+    transition: transform 1s ease-out !important;
+}
+
+
+/* Initial image entrance: rise from bottom to top */
+#homePage.jesus-time-intro.jesus-intro-enter::before,
+#homePage.jesus-time-intro.jesus-intro-enter::after {
+    animation: jesusTimeRise 1s ease-out forwards;
+}
+
+@keyframes jesusTimeRise {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+
 @supports (height: 100dvh) {
     body:has(#homePage[style*="display: block"]) #homePage {
         min-height: calc(100dvh - 90px);
@@ -6681,6 +6728,376 @@ body.dark-mode #homePage::after {
     }
 }
 
+/* =====================================
+   GREGORIAN CALENDAR HOME BUTTON
+===================================== */
+
+.gregorian-calendar-home {
+    width: calc(100% - 32px);
+    max-width: 860px;
+    margin: 18px auto 28px;
+}
+
+.gregorian-calendar-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+
+    border: 2px solid #b8943d;
+    border-radius: 18px;
+
+    background: linear-gradient(
+        135deg,
+        #fffdf5,
+        #f2e2b9,
+        #fffaf0
+    );
+
+    color: #4b3810;
+    cursor: pointer;
+    text-align: left;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.gregorian-calendar-button:active {
+    transform: scale(0.98);
+}
+
+.gregorian-calendar-icon {
+    font-size: 30px;
+    flex-shrink: 0;
+}
+
+.gregorian-calendar-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.gregorian-calendar-text strong {
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+
+.gregorian-calendar-text small {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.gregorian-calendar-arrow {
+    font-size: 30px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+/* Dark mode */
+body.dark-mode .gregorian-calendar-button {
+    background: linear-gradient(
+        135deg,
+        #25251f,
+        #353124,
+        #24231e
+    );
+    color: #f2d88b;
+    border-color: #b8943d;
+}
+
+/* =====================================
+   GREGORIAN CALENDAR PAGE
+===================================== */
+
+.gregorian-calendar-page {
+    width: calc(100% - 24px);
+    max-width: 1100px;
+    margin: 12px auto 30px;
+    padding: 18px;
+    box-sizing: border-box;
+    border: 1px solid #b8943d;
+    border-radius: 18px;
+    background: #fffdf7;
+    color: #302b20;
+}
+
+.gregorian-calendar-heading {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.gregorian-calendar-heading h2 {
+    margin: 0 0 6px;
+    font-size: 23px;
+}
+
+.gregorian-calendar-heading p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+.gregorian-calendar-toolbar,
+.gregorian-month-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.gregorian-calendar-toolbar button,
+.gregorian-month-controls button {
+    min-width: 40px;
+    min-height: 40px;
+    border: 1px solid #b8943d;
+    border-radius: 10px;
+    background: #f5e7bd;
+    color: #4b3810;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.gregorian-calendar-toolbar select,
+.gregorian-month-controls select {
+    min-height: 40px;
+    max-width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #b8943d;
+    border-radius: 10px;
+    background: white;
+    color: #302b20;
+    font-size: 15px;
+}
+
+.gregorian-calendar-view-switch {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 18px 0;
+}
+
+.gregorian-calendar-view-switch button {
+    padding: 10px 16px;
+    border: 1px solid #b8943d;
+    border-radius: 20px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.gregorian-calendar-view-switch button.active {
+    background: #b8943d;
+    color: white;
+}
+
+.gregorian-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 5px;
+}
+
+.gregorian-weekday {
+    padding: 8px 0;
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.gregorian-day,
+.gregorian-empty-day {
+    min-width: 0;
+    min-height: 48px;
+}
+
+.gregorian-day {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: 1px solid #e3dccb;
+    border-radius: 9px;
+    background: #fff;
+    color: #302b20;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.gregorian-day:hover {
+    border-color: #b8943d;
+}
+
+.gregorian-day.is-today {
+    border: 2px solid #b8943d;
+    background: #fff2c9;
+    font-weight: bold;
+}
+
+.gregorian-day.has-event {
+    color: #c62828;
+    font-weight: bold;
+}
+
+.gregorian-event-dot {
+    color: #c62828;
+    font-size: 10px;
+    line-height: 1;
+}
+
+.gregorian-calendar-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 18px 0;
+    font-size: 12px;
+}
+
+.gregorian-today-legend {
+    border: 2px solid #b8943d;
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+
+.gregorian-event-legend {
+    color: #c62828;
+}
+
+.gregorian-calendar-back {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #b8943d;
+    border-radius: 12px;
+    background: transparent;
+    color: inherit;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+/* Twelve-month layout */
+.gregorian-calendar-grid.year-view {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.gregorian-mini-month {
+    min-width: 0;
+}
+
+.gregorian-mini-month h3 {
+    margin: 0 0 8px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.gregorian-mini-month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 2px;
+}
+
+.gregorian-mini-month-grid .gregorian-weekday {
+    padding: 3px 0;
+    font-size: 9px;
+}
+
+.gregorian-mini-month-grid .gregorian-day,
+.gregorian-mini-month-grid .gregorian-empty-day {
+    min-height: 25px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.gregorian-mini-month-grid .gregorian-event-dot {
+    font-size: 7px;
+}
+
+body.dark-mode .gregorian-calendar-page {
+    background: #202019;
+    color: #f3e8ca;
+}
+
+body.dark-mode .gregorian-day {
+    background: #2d2c25;
+    color: #f3e8ca;
+    border-color: #555044;
+}
+
+body.dark-mode .gregorian-day.is-today {
+    background: #494027;
+    border-color: #d6b65e;
+}
+
+body.dark-mode .gregorian-calendar-toolbar select,
+body.dark-mode .gregorian-month-controls select {
+    background: #2d2c25;
+    color: #f3e8ca;
+}
+
+@media (max-width: 600px) {
+    .gregorian-calendar-page {
+        padding: 12px 8px;
+    }
+
+    .gregorian-calendar-heading h2 {
+        font-size: 20px;
+    }
+
+    .gregorian-calendar-grid {
+        gap: 3px;
+    }
+
+    .gregorian-day,
+    .gregorian-empty-day {
+        min-height: 42px;
+    }
+
+    .gregorian-calendar-grid.year-view {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 8px;
+    }
+}
+
+/* Swipe-up instruction */
+.jesus-time-swipe-hint {
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: 35px;
+    transform: translateX(-50%);
+    z-index: 30;
+
+    padding: 12px 22px;
+    border: 1px solid #d8b45b;
+    border-radius: 30px;
+
+    background: rgba(20, 25, 30, 0.85);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+    animation: swipeHintPulse 1.8s ease-in-out infinite;
+}
+
+#homePage.jesus-time-intro .jesus-time-swipe-hint {
+    display: block;
+    pointer-events: none;
+}
+
+@keyframes swipeHintPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
 </style>
 </head>
 
@@ -6713,15 +7130,16 @@ body.dark-mode #homePage::after {
 
     <div class="daily-reading-box">
 
-        <button
-            class="daily-reading-close"
-            onclick="closeDailyReadingPopup()"
-            aria-label="Close"
-            title="Close">
+        
+<button
+    type="button"
+    class="daily-reading-close"
+    onclick="closeDailyReadingPopup(true)"
+    aria-label="Close"
+    title="Close">
+    ✕
+</button>
 
-            ✕
-
-        </button>
 
         <div class="daily-reading-icon">
             📖
@@ -7036,6 +7454,11 @@ body.dark-mode #homePage::after {
     class="page"
     style="display:block;">
 
+    <!-- SWIPE-UP NOTIFICATION -->
+<div id="jesusTimeSwipeHint" class="jesus-time-swipe-hint">
+    ☝ Swipe up to continue
+</div>
+
     <!-- DAILY PROMISE CARD -->
     <article class="daily-promise-card" aria-live="polite" aria-atomic="true">
         <h2 class="daily-promise-heading">✦ DAILY PROMISE ✦</h2>
@@ -7104,6 +7527,7 @@ body.dark-mode #homePage::after {
     </article>
 
 
+
     <div class="home-main-buttons">
 
         <button
@@ -7153,6 +7577,17 @@ body.dark-mode #homePage::after {
             <div class="home-main-title">OFFERINGS</div>
 
         </button>
+
+        
+        <button
+            class="home-main-button"
+            onclick="openGregorianCalendar()">
+
+            <div class="home-main-icon">📅</div>
+            <div class="home-main-title">CALENDAR</div>
+
+        </button>
+
 
     </div>
 
@@ -7808,6 +8243,72 @@ body.dark-mode #homePage::after {
     <div
         id="verseFavoritesList"
         class="favorites-list">
+    </div>
+
+</section>
+
+<!-- GREGORIAN CALENDAR PAGE -->
+<section id="gregorianCalendarPage" class="page" style="display:none;">
+
+    <div class="gregorian-calendar-page">
+
+        <div class="gregorian-calendar-heading">
+            <h2>📅 Gregorian Calendar</h2>
+            <p>Bible Reading Plan &amp; Important Days</p>
+        </div>
+
+        <div class="gregorian-calendar-toolbar">
+
+            <button type="button" onclick="changeGregorianYear(-1)"
+                    aria-label="Previous year">‹</button>
+
+            <select id="gregorianYearSelect"
+                    aria-label="Select year"
+                    onchange="changeGregorianYearTo(this.value)">
+            </select>
+
+            <button type="button" onclick="changeGregorianYear(1)"
+                    aria-label="Next year">›</button>
+
+        </div>
+
+        <div class="gregorian-calendar-view-switch">
+            <button id="gregorianMonthViewBtn"
+                    type="button"
+                    class="active"
+                    onclick="setGregorianCalendarView('month')">
+                Month View
+            </button>
+
+            <button id="gregorianYearViewBtn"
+                    type="button"
+                    onclick="setGregorianCalendarView('year')">
+                12 Months
+            </button>
+        </div>
+
+        <div id="gregorianMonthControls"
+             class="gregorian-month-controls">
+
+            <button type="button" onclick="changeGregorianMonth(-1)">‹</button>
+
+            <select id="gregorianMonthSelect"
+                    aria-label="Select month"
+                    onchange="changeGregorianMonthTo(this.value)">
+            </select>
+
+            <button type="button" onclick="changeGregorianMonth(1)">›</button>
+
+        </div>
+
+        <div id="gregorianCalendarGrid"
+             class="gregorian-calendar-grid"></div>
+
+        <div class="gregorian-calendar-legend">
+            <span class="gregorian-today-legend">Today</span>
+            <span class="gregorian-event-legend">● Bible event</span>
+        </div>
+
     </div>
 
 </section>
@@ -12100,6 +12601,15 @@ button.onclick = function() {
  
 function openChapter(book, chapter, verseNumber = null) {
 
+      // Remember where the chapter was opened from
+    if (
+        document.getElementById("gregorianCalendarPage").style.display === "block"
+    ) {
+        sessionStorage.setItem("chapterReturnPage", "gregorianCalendar");
+    } else {
+        sessionStorage.setItem("chapterReturnPage", "");
+    }
+
     /* Normal chapter navigation 
     sessionStorage.removeItem("cameFromBibleSearch");
     sessionStorage.removeItem("bibleSearchText");*/
@@ -12115,6 +12625,9 @@ document.getElementById("chapterPage").style.display =
     "none";
 
 document.getElementById("favoritesPage").style.display =
+    "none";
+
+    document.getElementById("gregorianCalendarPage").style.display =
     "none";
 
 document.getElementById("videoPage").style.display =
@@ -13676,11 +14189,6 @@ function playNextVideo() {
 } 
  
  
-/* ========================================================= 
-   OPEN YOUTUBE VIDEO 
-========================================================= */ 
- 
- 
  
  
 /* ========================================================= 
@@ -13702,9 +14210,6 @@ function closeBibleVideo() {
  
 } 
  
-/* ========================================================= 
-   BACK TO MATTHEW CHAPTERS 
-========================================================= */ 
  
 /* ========================================================= 
    BACK TO CHAPTERS 
@@ -13729,6 +14234,7 @@ function backToChapters() {
     document.getElementById( 
         "bookPage" 
     ).style.display = "none"; 
+    
  
     document.getElementById( 
         "chapterPage" 
@@ -13852,6 +14358,7 @@ function goHome() {
     document.getElementById("videoPage").style.display = "none";
     document.getElementById("searchPage").style.display = "none";
     document.getElementById("bibleTextSearchPage").style.display = "none";
+    document.getElementById("gregorianCalendarPage").style.display = "none";
     hideGroupedPages();
     document.getElementById("offeringsPage").style.display = "none";
     document.getElementById("homePage").style.display = "block";
@@ -15794,6 +16301,7 @@ function updateTestamentNavigation() {
 if (
     !page ||
     page === "home" ||
+    page === "gregorianCalendar" ||
     page === "search" ||
     page === "searchGroup" ||
     page === "bibleGroup" ||
@@ -16493,6 +17001,7 @@ function openBibleSearchResult(book, chapter, verse) {
 
     // Hide Bible search
     document.getElementById("bibleTextSearchPage").style.display = "none";
+    
 
     // Show video page
     document.getElementById("videoPage").style.display = "block";
@@ -16533,6 +17042,38 @@ function openBibleSearchResult(book, chapter, verse) {
 ========================================================= */
 
 function goBackFromChapter() {
+
+    // Return to Gregorian Calendar
+if (
+    sessionStorage.getItem("chapterReturnPage") === "gregorianCalendar"
+) {
+    closeBibleReader();
+
+    document.body.classList.remove("bible-reading-mode");
+
+    document.getElementById("videoPage").style.display = "none";
+    document.getElementById("chapterPage").style.display = "none";
+    document.getElementById("gregorianCalendarPage").style.display = "block";
+
+    // Restore the normal header
+    const header = document.querySelector(".header");
+    if (header) {
+        header.style.removeProperty("display");
+    }
+
+    // Restore the calendar page state
+    sessionStorage.setItem("page", "gregorianCalendar");
+    sessionStorage.removeItem("chapterReturnPage");
+
+    // Restore the calendar header and navigation layout
+    updateHomeHeader("other");
+    updateTestamentNavigation();
+
+    // Return to the top
+    window.scrollTo(0, 0);
+
+    return;
+} 
 
     /* =====================================================
    RETURN TO FAVORITES
@@ -17080,6 +17621,72 @@ const TOTAL_READING_DAYS =
     }
 
 
+    
+function getBibleReadingForDate(selectedDate) {
+
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth();
+    const date = selectedDate.getDate();
+
+    // Check whether the selected year is a leap year
+    const isLeapYear =
+        year % 4 === 0 &&
+        (year % 100 !== 0 || year % 400 === 0);
+
+    const daysInYear = isLeapYear ? 366 : 365;
+
+    // Calculate the selected date's day number
+    const daysInMonths = [
+        31,
+        isLeapYear ? 29 : 28,
+        31, 30, 31, 30,
+        31, 31, 30, 31, 30, 31
+    ];
+
+    let dayOfYear = date;
+
+    for (let i = 0; i < month; i++) {
+        dayOfYear += daysInMonths[i];
+    }
+
+    // Distribute all 1,189 chapters across the year
+    const startIndex =
+        Math.floor(
+            ((dayOfYear - 1) * TOTAL_BIBLE_CHAPTERS) /
+            daysInYear
+        ) + 1;
+
+    const endIndex =
+        Math.floor(
+            (dayOfYear * TOTAL_BIBLE_CHAPTERS) /
+            daysInYear
+        );
+
+    const startChapter =
+        getBibleChapterByIndex(startIndex);
+
+    const endChapter =
+        getBibleChapterByIndex(endIndex);
+
+    if (!startChapter || !endChapter) {
+        return null;
+    }
+
+    return {
+        day: dayOfYear,
+        totalDays: daysInYear,
+
+        startBook: startChapter.book,
+        startChapter: startChapter.chapter,
+
+        endBook: endChapter.book,
+        endChapter: endChapter.chapter,
+
+        chapterCount: endIndex - startIndex + 1
+    };
+}
+
+
     /* =========================================================
     READING REFERENCE TEXT
     ========================================================= */
@@ -17149,86 +17756,220 @@ const TOTAL_READING_DAYS =
         return "Approx. " + minutes + " min";
     }
 
+    /* =========================================================
+   CLOSE DAILY READING POPUP
+========================================================= */
+
+
+function closeDailyReadingPopup(showJesusTime = false) {
+    const popup = document.getElementById("dailyReadingPopup");
+
+    if (!popup) return;
+
+    popup.style.display = "none";
+
+    // Start the scenery effect only when the user closes the popup.
+    if (showJesusTime) {
+        startJesusTimeIntro();
+    }
+}
+
+
+function startJesusTimeIntro() {
+    const homePage = document.getElementById("homePage");
+
+    if (!homePage || homePage.style.display !== "block") return;
+
+    // Reset the intro for a fresh entrance.
+    homePage.classList.remove(
+        "jesus-time-intro",
+        "jesus-intro-enter",
+        "jesus-swipe-finish"
+    );
+
+    homePage.style.removeProperty("--jesus-swipe-y");
+    homePage.dataset.jesusIntroReady = "no";
+
+    void homePage.offsetWidth;
+
+    homePage.classList.add(
+        "jesus-time-intro",
+        "jesus-intro-enter"
+    );
+
+    // Allow the entrance animation to finish before interaction.
+    setTimeout(function () {
+        if (homePage.classList.contains("jesus-time-intro")) {
+            homePage.classList.remove("jesus-intro-enter");
+            homePage.dataset.jesusIntroReady = "yes";
+        }
+    }, 1050);
+
+    // Register interaction handlers only once.
+    if (homePage.dataset.jesusTimeHandlers === "yes") return;
+
+    homePage.dataset.jesusTimeHandlers = "yes";
+
+    let touchStartY = 0;
+    let swipeDistance = 0;
+    let isSwiping = false;
+    let finishTimer = null;
+
+    function dismissImage() {
+    if (!homePage.classList.contains("jesus-time-intro")) return;
+
+    clearTimeout(finishTimer);
+    isSwiping = false;
+
+    homePage.classList.remove("jesus-intro-enter");
+    homePage.classList.add("jesus-swipe-finish");
+
+    // Move both scenery layers above the Home content and off-screen.
+    homePage.style.setProperty("--jesus-swipe-y", "-110vh");
+
+    finishTimer = setTimeout(function () {
+        homePage.classList.remove(
+            "jesus-time-intro",
+            "jesus-intro-enter",
+            "jesus-swipe-finish"
+        );
+
+        homePage.style.removeProperty("--jesus-swipe-y");
+        homePage.dataset.jesusIntroReady = "no";
+    }, 1050);
+}
+
+    function returnImageToStart() {
+        clearTimeout(finishTimer);
+
+        homePage.classList.add("jesus-swipe-finish");
+        homePage.style.setProperty("--jesus-swipe-y", "0px");
+
+        finishTimer = setTimeout(function () {
+            homePage.classList.remove("jesus-swipe-finish");
+            homePage.style.removeProperty("--jesus-swipe-y");
+        }, 380);
+    }
+
+    // MOBILE: start tracking the finger.
+    homePage.addEventListener("touchstart", function (event) {
+        if (!homePage.classList.contains("jesus-time-intro")) return;
+        if (homePage.dataset.jesusIntroReady !== "yes") return;
+
+        clearTimeout(finishTimer);
+
+        touchStartY = event.touches[0].clientY;
+        swipeDistance = 0;
+        isSwiping = true;
+
+        homePage.classList.remove("jesus-swipe-finish");
+    }, { passive: true });
+
+    // MOBILE: make the image follow the finger in both directions.
+    homePage.addEventListener("touchmove", function (event) {
+        if (!isSwiping) return;
+        if (!homePage.classList.contains("jesus-time-intro")) return;
+
+        swipeDistance = event.touches[0].clientY - touchStartY;
+
+        homePage.style.setProperty(
+            "--jesus-swipe-y",
+            swipeDistance + "px"
+        );
+    }, { passive: true });
+
+    // MOBILE: decide what happens when the finger is released.
+    homePage.addEventListener("touchend", function () {
+        if (!isSwiping) return;
+
+        isSwiping = false;
+
+        if (swipeDistance < -100) {
+            // A sufficiently long upward swipe dismisses the image.
+            dismissImage();
+        } else {
+            // Short swipe or return toward the starting point:
+            // keep the image visible.
+            returnImageToStart();
+        }
+    }, { passive: true });
+
+    homePage.addEventListener("touchcancel", function () {
+        if (!isSwiping) return;
+
+        isSwiping = false;
+        returnImageToStart();
+    }, { passive: true });
+
+    
+// DESKTOP: double-click smoothly slides the image upward.
+homePage.addEventListener("dblclick", function (event) {
+    if (!homePage.classList.contains("jesus-time-intro")) return;
+    if (homePage.dataset.jesusIntroReady !== "yes") return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    dismissImage();
+});
+
+}
+
+
+
+
 
     /* =========================================================
     SHOW DAILY READING POPUP
     ========================================================= */
 
-    function showDailyReadingPopup() {
+    
+function showDailyReadingPopup(selectedDate = new Date()) {
 
-        const popup =
-            document.getElementById(
-                "dailyReadingPopup"
-            );
+    const popup =
+        document.getElementById("dailyReadingPopup");
 
-        if (!popup) {
-            return;
-        }
+    if (!popup) return;
 
-        todayBibleReading =
-            getTodayBibleReading();
+    todayBibleReading =
+        getBibleReadingForDate(selectedDate);
 
-        if (!todayBibleReading) {
-            return;
-        }
+    if (!todayBibleReading) return;
 
-        document.getElementById("dailyReadingDay").textContent =
-    "Day " + todayBibleReading.day + " of " + TOTAL_READING_DAYS;
+    document.getElementById("dailyReadingDay").textContent =
+        "Day " +
+        String(todayBibleReading.day).padStart(2, "0") +
+        " of " +
+        todayBibleReading.totalDays;
 
-        document.getElementById(
-        "dailyReadingDate"
-    ).textContent =
-        new Date().toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric"
-        });    
-        
-        document.getElementById(
-            "dailyReadingReference"
-        ).textContent =
-            getReadingReference(
-                todayBibleReading
-            );
+    const monthNames = [
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+    ];
 
-        document.getElementById(
-            "dailyReadingChapterCount"
-        ).textContent =
-            todayBibleReading.chapterCount +
-            (
-                todayBibleReading.chapterCount === 1
-                    ? " chapter"
-                    : " chapters"
-            );
+    document.getElementById("dailyReadingDate").textContent =
+        String(selectedDate.getDate()).padStart(2, "0") +
+        " " +
+        monthNames[selectedDate.getMonth()] +
+        " " +
+        selectedDate.getFullYear();
 
-        document.getElementById(
-            "dailyReadingTime"
-        ).textContent =
-            getReadingTime(
-                todayBibleReading.chapterCount
-            );
+    document.getElementById("dailyReadingReference").textContent =
+        getReadingReference(todayBibleReading);
 
-        popup.style.display = "flex";
-    }
+    document.getElementById("dailyReadingChapterCount").textContent =
+        todayBibleReading.chapterCount +
+        (todayBibleReading.chapterCount === 1
+            ? " chapter"
+            : " chapters");
 
+    document.getElementById("dailyReadingTime").textContent =
+        getReadingTime(todayBibleReading.chapterCount);
 
-    /* =========================================================
-    CLOSE DAILY READING POPUP
-    ========================================================= */
+    popup.style.display = "flex";
+}
 
-    function closeDailyReadingPopup() {
-
-        const popup =
-            document.getElementById(
-                "dailyReadingPopup"
-            );
-
-        if (!popup) {
-            return;
-        }
-
-        popup.style.display = "none";
-    }
 
 
     /* =========================================================
@@ -17257,6 +17998,7 @@ const TOTAL_READING_DAYS =
         document.getElementById("videoPage").style.display = "none";
         document.getElementById("searchPage").style.display = "none";
         document.getElementById("bibleTextSearchPage").style.display = "none";
+        
 
         // Open the selected book's chapter page
         showChapters(reading.startBook, book[1]);
@@ -19889,6 +20631,244 @@ if (state === YT.PlayerState.PLAYING) {
 
 }
 
+/* =====================================
+   GREGORIAN CALENDAR LOGIC
+===================================== */
+
+let gregorianCalendarYear;
+let gregorianCalendarMonth;
+let gregorianCalendarView = "month";
+
+const GREGORIAN_MONTH_NAMES = [
+    "January", "February", "March", "April",
+    "May", "June", "July", "August",
+    "September", "October", "November", "December"
+];
+
+const GREGORIAN_WEEKDAYS = [
+    "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+];
+
+/* Construct UTC dates safely, including years 0–99. */
+function gregorianUTCDate(year, month, day) {
+    const date = new Date(0);
+    date.setUTCHours(0, 0, 0, 0);
+    date.setUTCFullYear(Number(year), Number(month), Number(day));
+    return date;
+}
+
+function gregorianDaysInMonth(year, month) {
+    return gregorianUTCDate(year, month + 1, 0).getUTCDate();
+}
+
+function gregorianWeekday(year, month, day) {
+    return gregorianUTCDate(year, month, day).getUTCDay();
+}
+
+function openGregorianCalendar() {
+    const pagesToHide = [
+        "homePage", "bookPage", "chapterPage", "videoPage",
+        "searchPage", "bibleTextSearchPage", "favoritesPage",
+        "treasureListPage", "verseTreasurePage"
+    ];
+
+    pagesToHide.forEach(function(id) {
+        const page = document.getElementById(id);
+        if (page) page.style.display = "none";
+    });
+
+    if (typeof hideGroupedPages === "function") {
+        hideGroupedPages();
+    }
+
+    document.getElementById("gregorianCalendarPage").style.display = "block";
+
+    const now = new Date();
+    gregorianCalendarYear = now.getFullYear();
+    gregorianCalendarMonth = now.getMonth();
+    gregorianCalendarView = "month";
+
+    const yearSelect = document.getElementById("gregorianYearSelect");
+    yearSelect.innerHTML = "";
+
+    for (let year = 0; year <= 3000; year++) {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+    }
+
+    const monthSelect = document.getElementById("gregorianMonthSelect");
+    monthSelect.innerHTML = "";
+
+    GREGORIAN_MONTH_NAMES.forEach(function(name, index) {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = name;
+        monthSelect.appendChild(option);
+    });
+
+    sessionStorage.setItem("page", "gregorianCalendar");
+    updateHomeHeader("other");
+    updateTestamentNavigation();
+    renderGregorianCalendar();
+}
+
+function closeGregorianCalendar() {
+    document.getElementById("gregorianCalendarPage").style.display = "none";
+    goHome();
+}
+
+function changeGregorianYear(amount) {
+    gregorianCalendarYear = Math.max(
+        0,
+        Math.min(3000, gregorianCalendarYear + amount)
+    );
+    renderGregorianCalendar();
+}
+
+function changeGregorianYearTo(value) {
+    gregorianCalendarYear = Math.max(
+        0,
+        Math.min(3000, Number(value))
+    );
+    renderGregorianCalendar();
+}
+
+function changeGregorianMonth(amount) {
+    let month = gregorianCalendarMonth + amount;
+
+    if (month < 0) {
+        if (gregorianCalendarYear === 0) return;
+        gregorianCalendarYear--;
+        month = 11;
+    } else if (month > 11) {
+        if (gregorianCalendarYear === 3000) return;
+        gregorianCalendarYear++;
+        month = 0;
+    }
+
+    gregorianCalendarMonth = month;
+    renderGregorianCalendar();
+}
+
+function changeGregorianMonthTo(value) {
+    gregorianCalendarMonth = Number(value);
+    renderGregorianCalendar();
+}
+
+function setGregorianCalendarView(view) {
+    gregorianCalendarView = view;
+    renderGregorianCalendar();
+}
+
+function renderGregorianCalendar() {
+    const yearSelect = document.getElementById("gregorianYearSelect");
+    const monthSelect = document.getElementById("gregorianMonthSelect");
+    const monthControls = document.getElementById("gregorianMonthControls");
+    const grid = document.getElementById("gregorianCalendarGrid");
+
+    if (!grid || !yearSelect || !monthSelect) return;
+
+    yearSelect.value = String(gregorianCalendarYear);
+    monthSelect.value = String(gregorianCalendarMonth);
+
+    document.getElementById("gregorianMonthViewBtn")
+        .classList.toggle("active", gregorianCalendarView === "month");
+
+    document.getElementById("gregorianYearViewBtn")
+        .classList.toggle("active", gregorianCalendarView === "year");
+
+    monthControls.style.display =
+        gregorianCalendarView === "month" ? "flex" : "none";
+
+    grid.innerHTML = "";
+    grid.classList.toggle(
+        "year-view",
+        gregorianCalendarView === "year"
+    );
+
+    if (gregorianCalendarView === "month") {
+        renderGregorianMonth(grid, gregorianCalendarYear, gregorianCalendarMonth, false);
+    } else {
+        for (let month = 0; month < 12; month++) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "gregorian-mini-month";
+
+            const title = document.createElement("h3");
+            title.textContent = GREGORIAN_MONTH_NAMES[month];
+            wrapper.appendChild(title);
+
+            const monthGrid = document.createElement("div");
+            monthGrid.className = "gregorian-mini-month-grid";
+
+            renderGregorianMonth(
+                monthGrid,
+                gregorianCalendarYear,
+                month,
+                true
+            );
+
+            wrapper.appendChild(monthGrid);
+            grid.appendChild(wrapper);
+        }
+    }
+}
+
+function renderGregorianMonth(container, year, month, mini) {
+    GREGORIAN_WEEKDAYS.forEach(function(dayName) {
+        const weekday = document.createElement("div");
+        weekday.className = "gregorian-weekday";
+        weekday.textContent = dayName;
+        container.appendChild(weekday);
+    });
+
+    const firstWeekday = gregorianWeekday(year, month, 1);
+    const daysInMonth = gregorianDaysInMonth(year, month);
+
+    for (let blank = 0; blank < firstWeekday; blank++) {
+        const empty = document.createElement("div");
+        empty.className = "gregorian-empty-day";
+        container.appendChild(empty);
+    }
+
+    const now = new Date();
+    const todayYear = now.getFullYear();
+    const todayMonth = now.getMonth();
+    const todayDay = now.getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "gregorian-day";
+        button.textContent = String(day);
+        button.setAttribute(
+            "aria-label",
+            GREGORIAN_MONTH_NAMES[month] + " " + day + ", " + year
+        );
+
+        if (
+            year === todayYear &&
+            month === todayMonth &&
+            day === todayDay
+        ) {
+            button.classList.add("is-today");
+        }
+
+        button.addEventListener("click", function() {
+            openGregorianSelectedDate(year, month, day);
+        });
+
+        container.appendChild(button);
+    }
+}
+
+
+function openGregorianSelectedDate(year, month, day) {
+    const selectedDate = new Date(year, month, day);
+
+    showDailyReadingPopup(selectedDate);
+}
 
 
 </script>
