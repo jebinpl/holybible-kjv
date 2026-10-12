@@ -6573,17 +6573,21 @@ body.dark-mode #homePage::after {
     margin-left: 0;
 }
 
-/* Hide the center control while playing */
+
+/* Hide the button while the video is playing */
 .video-player.is-playing .youtube-center-toggle {
     opacity: 0;
     pointer-events: none;
 }
 
-/* Show the control when the mouse is over the video */
-.video-player.is-playing:hover .youtube-center-toggle {
-    opacity: 1;
-    pointer-events: auto;
+/* Show the button on hover only on desktop devices */
+@media (hover: hover) and (pointer: fine) {
+    .video-player.is-playing:hover .youtube-center-toggle {
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
+
 
 
 /* Maximize button */
@@ -6642,6 +6646,22 @@ body.dark-mode #homePage::after {
         currentColor 12px,
         currentColor 18px
     );
+}
+/*iphone SE video player Positioning*/
+@media screen and (max-width: 375px) {
+    #videoPlayerContainer .video-player {
+        position: relative;
+        overflow: hidden;
+    }
+
+    #videoPlayerContainer #youtubeCenterToggle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
+        z-index: 10;
+    }
 }
 
 </style>
@@ -13460,6 +13480,7 @@ let currentVideoIndex = -1;
  
 
 
+
 function onYouTubeIframeAPIReady() {
 
     youtubePlayer = new YT.Player("youtubePlayer", {
@@ -13467,18 +13488,18 @@ function onYouTubeIframeAPIReady() {
         playerVars: {
             controls: 0,
             disablekb: 1,
-            fs: 0
+            fs: 0,
+            cc_load_policy: 0
         },
 
         events: {
-
             onStateChange: onPlayerStateChange
-
         }
 
     });
 
 }
+
 
 
  
@@ -13488,13 +13509,23 @@ function onYouTubeIframeAPIReady() {
 ========================================================= */ 
  
 
+
 function onPlayerStateChange(event) {
     updateCenterPlayPauseButton(event.data);
 
+    // Turn off captions when playback starts
+    if (event.data === YT.PlayerState.PLAYING) {
+        if (youtubePlayer && youtubePlayer.unloadModule) {
+            youtubePlayer.unloadModule("captions");
+        }
+    }
+
+    // Play the next video when the current video ends
     if (event.data === YT.PlayerState.ENDED) {
         playNextVideo();
     }
 }
+
 
  
  
