@@ -7135,6 +7135,72 @@ body.dark-mode .gregorian-month-controls select {
     max-height: 180px;
     overflow-y: auto;
 }
+
+/* Gregorian Calendar Year Input */
+.gregorian-calendar-toolbar input#gregorianYearSelect {
+    width: 110px;
+    min-width: 0;
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #b8943d;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #333333;
+    font-size: 15px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Dark Mode */
+body.dark-mode .gregorian-calendar-toolbar input#gregorianYearSelect {
+    background: #2d2c25;
+    color: #f3e8ca;
+    border-color: #b8943d;
+}
+
+/* Mobile */
+@media screen and (max-width: 600px) {
+    .gregorian-calendar-toolbar input#gregorianYearSelect {
+        width: 100px;
+        font-size: 16px;
+    }
+}
+
+.gregorian-month-controls input#gregorianMonthSelect {
+    width: 140px;
+    min-width: 0;
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #b8943d;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #333333;
+    font-size: 15px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+body.dark-mode .gregorian-month-controls input#gregorianMonthSelect {
+    background: #2d2c25;
+    color: #f3e8ca;
+    border-color: #b8943d;
+}
+
+@media screen and (max-width: 600px) {
+    .gregorian-month-controls input#gregorianMonthSelect {
+        width: 120px;
+        font-size: 16px;
+    }
+}
+
+.gregorian-month-controls select#gregorianMonthSelect {
+    width: 150px;
+    min-width: 150px;
+    height: 40px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    font-size: 15px;
+}
 </style>
 </head>
 
@@ -8305,10 +8371,16 @@ body.dark-mode .gregorian-month-controls select {
             <button type="button" onclick="changeGregorianYear(-1)"
                     aria-label="Previous year">‹</button>
 
-            <select id="gregorianYearSelect"
-                    aria-label="Select year"
-                    onchange="changeGregorianYearTo(this.value)">
-            </select>
+            <input
+    type="number"
+    id="gregorianYearSelect"
+    aria-label="Enter year"
+    min="0"
+    max="3000"
+    step="1"
+    inputmode="numeric"
+    onchange="changeGregorianYearTo(this.value)"
+>
 
             <button type="button" onclick="changeGregorianYear(1)"
                     aria-label="Next year">›</button>
@@ -8335,10 +8407,11 @@ body.dark-mode .gregorian-month-controls select {
 
             <button type="button" onclick="changeGregorianMonth(-1)">‹</button>
 
-            <select id="gregorianMonthSelect"
-                    aria-label="Select month"
-                    onchange="changeGregorianMonthTo(this.value)">
-            </select>
+           <select
+    id="gregorianMonthSelect"
+    aria-label="Select month"
+    onchange="changeGregorianMonthTo(this.value)">
+</select>
 
             <button type="button" onclick="changeGregorianMonth(1)">›</button>
 
@@ -8349,7 +8422,7 @@ body.dark-mode .gregorian-month-controls select {
 
         <div class="gregorian-calendar-legend">
             <span class="gregorian-today-legend">Today</span>
-            <span class="gregorian-event-legend">● Bible event</span>
+            
         </div>
 
     </div>
@@ -20732,26 +20805,22 @@ function openGregorianCalendar() {
     gregorianCalendarView = "month";
 
     const yearSelect = document.getElementById("gregorianYearSelect");
-    yearSelect.innerHTML = "";
-
-    for (let year = 0; year <= 3000; year++) {
-    const option = document.createElement("option");
-    option.value = year;
-    option.textContent = year;
-    yearSelect.appendChild(option);
-}
+yearSelect.min = "0";
+yearSelect.max = "3000";
+yearSelect.step = "1";
 
 yearSelect.size = 1;
 
     const monthSelect = document.getElementById("gregorianMonthSelect");
-    monthSelect.innerHTML = "";
 
-    GREGORIAN_MONTH_NAMES.forEach(function(name, index) {
-        const option = document.createElement("option");
-        option.value = index;
-        option.textContent = name;
-        monthSelect.appendChild(option);
-    });
+monthSelect.innerHTML = "";
+
+GREGORIAN_MONTH_NAMES.forEach(function(name, index) {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = name;
+    monthSelect.appendChild(option);
+});
 
     sessionStorage.setItem("page", "gregorianCalendar");
     updateHomeHeader("other");
@@ -20811,6 +20880,7 @@ function changeGregorianMonth(amount) {
 
 function changeGregorianMonthTo(value) {
     gregorianCalendarMonth = Number(value);
+
     renderGregorianCalendar();
 }
 
