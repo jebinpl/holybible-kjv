@@ -6574,19 +6574,29 @@ body.dark-mode #homePage::after {
 }
 
 
-/* Hide the button while the video is playing */
+
+/* Hide the button while playing on desktop */
 .video-player.is-playing .youtube-center-toggle {
     opacity: 0;
     pointer-events: none;
 }
 
-/* Show the button on hover only on desktop devices */
+/* Desktop: show button when hovering */
 @media (hover: hover) and (pointer: fine) {
     .video-player.is-playing:hover .youtube-center-toggle {
         opacity: 1;
         pointer-events: auto;
     }
 }
+
+/* Mobile: keep play/pause button visible and tappable */
+@media (hover: none), (pointer: coarse) {
+    .video-player.is-playing .youtube-center-toggle {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
 
 
 
@@ -19213,6 +19223,8 @@ function openUPIPayment() {
     const PROMISES_JSON_PATH = "./daily-promises.json";
     const STORAGE_DATE_KEY = "dailyPromiseDate";
     const STORAGE_INDEX_KEY = "dailyPromiseIndex";
+    const STORAGE_ORDER_KEY = "dailyPromiseOrder";
+    const STORAGE_POSITION_KEY = "dailyPromisePosition";
     const LANGUAGE_CYCLE = [
         { key: "en", label: "ENGLISH" },
         { key: "ta", label: "தமிழ்" },
@@ -19236,61 +19248,176 @@ function openUPIPayment() {
         return `${year}-${month}-${day}`;
     }
 
-    function choosePromiseForToday() {
-        if (!Array.isArray(dailyPromiseItems) || dailyPromiseItems.length === 0) {
-            return;
-        }
-
-        const today = getLocalDateKey();
-        let savedDate = "";
-        let savedIndex = -1;
-
-        try {
-            savedDate = localStorage.getItem(STORAGE_DATE_KEY) || "";
-            savedIndex = Number(localStorage.getItem(STORAGE_INDEX_KEY));
-        } catch (error) {
-            console.warn("Daily Promise storage is unavailable:", error);
-        }
-
-        
-if (
-    savedDate === today &&
-    Number.isInteger(savedIndex) &&
-    savedIndex >= 0 &&
-    savedIndex < dailyPromiseItems.length
-) {
-    // Keep the same promise for today's date.
-    currentPromise = dailyPromiseItems[savedIndex];
-
-} else {
-    // Select the next promise sequentially: 1, 2, 3...
-    let newIndex = 0;
+    
+function choosePromiseForToday() {
 
     if (
-        Number.isInteger(savedIndex) &&
-        savedIndex >= 0 &&
-        savedIndex < dailyPromiseItems.length - 1
+        !Array.isArray(dailyPromiseItems) ||
+        dailyPromiseItems.length === 0
     ) {
-        newIndex = savedIndex + 1;
+        return;
     }
 
-    // After the last promise, restart from the first.
+    const today = getLocalDateKey();
+    const total = dailyPromiseItems.length;
+
+    let savedDate = "";
+    let savedIndex = -1;
+    let savedOrder = [];
+    let savedPosition = -1;
+
+    try {
+        savedDate = localStorage.getItem(STORAGE_DATE_KEY) || "";
+
+        savedIndex = Number(
+            localStorage.getItem(STORAGE_INDEX_KEY)
+        );
+
+        savedOrder = JSON.parse(
+            localStorage.getItem(STORAGE_ORDER_KEY) || "[]"
+        );
+
+        savedPosition = Number(
+            localStorage.getItem(STORAGE_POSITION_KEY)
+        );
+
+    } catch (error) {
+        console.warn(
+            "Daily Promise storage is unavailable:",
+            error
+        );
+    }
+
+    // Validate the saved shuffled sequence.
+    const validOrder =
+        Array.isArray(savedOrder) &&
+        savedOrder.length === total &&
+        savedOrder.every(
+            index =>
+                Number.isInteger(index) &&
+                index >= 0 &&
+                index < total
+        ) &&
+        new Set(savedOrder).size === total;
+
+    const validPosition =
+        Number.isInteger(savedPosition) &&
+        savedPosition >= 0 &&
+        savedPosition < total;
+
+    let order;
+    let position;
+
+    if (
+        validOrder &&
+        validPosition &&
+        savedDate === today &&
+        savedIndex === savedOrder[savedPosition]
+    ) {
+
+        // Keep today's promise on refresh.
+        order = savedOrder;
+        position = savedPosition;
+
+    } else if (
+        validOrder &&
+        validPosition &&
+        savedDate !== "" &&
+        savedDate !== today
+    ) {
+
+        // Advance one position on a new calendar day.
+        if (savedPosition < total - 1) {
+
+            order = savedOrder;
+            position = savedPosition + 1;
+
+        } else {
+
+            // All promises have been shown.
+            // Start a fresh shuffled cycle.
+            order = Array.from(
+                { length: total },
+                (_, index) => index
+            );
+
+            // Fisher-Yates shuffle.
+            for (let i = total - 1; i > 0; i--) {
+
+                const j = Math.floor(
+                    Math.random() * (i + 1)
+                );
+
+                [order[i], order[j]] =
+                    [order[j], order[i]];
+            }
+
+            position = 0;
+        }
+
+    } else {
+
+        // First use, invalid saved data, or changed
+        // number of promises: create a new sequence.
+        order = Array.from(
+            { length: total },
+            (_, index) => index
+        );
+
+        for (let i = total - 1; i > 0; i--) {
+
+            const j = Math.floor(
+                Math.random() * (i + 1)
+            );
+
+            [order[i], order[j]] =
+                [order[j], order[i]];
+        }
+
+        position = 0;
+    }
+
+    // Save the selected promise and cycle progress.
+    const newIndex = order[position];
+
     currentPromise = dailyPromiseItems[newIndex];
 
     try {
-        localStorage.setItem(STORAGE_DATE_KEY, today);
-        localStorage.setItem(STORAGE_INDEX_KEY, String(newIndex));
+
+        localStorage.setItem(
+            STORAGE_DATE_KEY,
+            today
+        );
+
+        localStorage.setItem(
+            STORAGE_INDEX_KEY,
+            String(newIndex)
+        );
+
+        localStorage.setItem(
+            STORAGE_ORDER_KEY,
+            JSON.stringify(order)
+        );
+
+        localStorage.setItem(
+            STORAGE_POSITION_KEY,
+            String(position)
+        );
+
     } catch (error) {
-        console.warn("Could not save today's Daily Promise:", error);
+        console.warn(
+            "Could not save today's Daily Promise:",
+            error
+        );
     }
+
+    lastKnownDate = today;
+    currentLanguageIndex = 0;
+
+    renderDailyPromise(false);
+    restartLanguageRotation();
 }
 
-
-        lastKnownDate = today;
-        currentLanguageIndex = 0;
-        renderDailyPromise(false);
-        restartLanguageRotation();
-    }
 
     
 function fitDailyPromiseVerse() {
