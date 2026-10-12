@@ -6575,27 +6575,34 @@ body.dark-mode #homePage::after {
 
 
 
-/* Hide the button while playing on desktop */
+
+
+/* Playing: fade the button away after 2 seconds */
 .video-player.is-playing .youtube-center-toggle {
     opacity: 0;
     pointer-events: none;
+    transition: opacity 0.4s ease 2s;
 }
 
-/* Desktop: show button when hovering */
+/* Desktop: show the button on hover */
 @media (hover: hover) and (pointer: fine) {
     .video-player.is-playing:hover .youtube-center-toggle {
         opacity: 1;
         pointer-events: auto;
+        transition-delay: 0s;
     }
 }
 
-/* Mobile: keep play/pause button visible and tappable */
+/* Mobile: show the button temporarily when the video area is tapped */
 @media (hover: none), (pointer: coarse) {
-    .video-player.is-playing .youtube-center-toggle {
+    .video-player.is-playing .youtube-center-toggle.touch-visible {
         opacity: 1;
         pointer-events: auto;
+        transition-delay: 0s;
     }
 }
+
+
 
 
 
@@ -13491,6 +13498,7 @@ let currentVideoIndex = -1;
 
 
 
+
 function onYouTubeIframeAPIReady() {
 
     youtubePlayer = new YT.Player("youtubePlayer", {
@@ -13508,7 +13516,48 @@ function onYouTubeIframeAPIReady() {
 
     });
 
+    /* Mobile: reveal the center button when tapping the video area */
+    const playerBox = document.querySelector(
+        "#videoPlayerContainer .video-player"
+    );
+
+    if (playerBox && !playerBox.dataset.tapHandlerAdded) {
+
+        playerBox.dataset.tapHandlerAdded = "true";
+
+        playerBox.addEventListener("click", function (event) {
+
+            if (event.target.closest("#youtubeCenterToggle")) {
+                return;
+            }
+
+            if (
+                youtubePlayer &&
+                youtubePlayer.getPlayerState() === YT.PlayerState.PLAYING
+            ) {
+
+                const button = document.getElementById(
+                    "youtubeCenterToggle"
+                );
+
+                if (!button) return;
+
+                button.classList.add("touch-visible");
+
+                clearTimeout(window.youtubeButtonHideTimer);
+
+                window.youtubeButtonHideTimer = setTimeout(function () {
+                    button.classList.remove("touch-visible");
+                }, 2500);
+
+            }
+
+        });
+
+    }
+
 }
+
 
 
 
