@@ -6448,8 +6448,10 @@ body:has(#homePage[style*="display: block"]) #homePage {
 #homePage.jesus-time-intro::after {
     z-index: 20;
     transform: translateY(var(--jesus-swipe-y, 0px));
-    transition: none;
-    will-change: transform;
+    /* Keep the cross-dissolve opacity transition enabled even during Jesus Time.
+       Only the transform stays immediate so swipe-following remains responsive. */
+    transition: opacity 1.5s ease-in-out, transform 0s;
+    will-change: transform, opacity;
 }
 
 /* Smooth finish after the finger is released */
@@ -18092,9 +18094,17 @@ function closeDailyReadingPopup(showJesusTime = false) {
 
     popup.style.display = "none";
 
-    // Start the scenery effect only when the user closes the popup.
+    // Start the bottom-to-top Home background entrance immediately when
+    // the popup closes. Do not wait for the next random image to load or
+    // for its cross-dissolve to finish; image rotation runs alongside it.
     if (showJesusTime) {
-        startJesusTimeIntro();
+        const homePage = document.getElementById("homePage");
+        if (homePage && homePage.style.display === "block") {
+            startJesusTimeIntro();
+            rotateGalileeBackground();
+        } else {
+            startJesusTimeIntro();
+        }
     }
 }
 
@@ -20773,7 +20783,7 @@ window.readDailyPromiseVerse = async function () {
 
 /* =========================================
    GALILEE HOME BACKGROUND COLLECTION
-   Random image + cross-dissolve every 30 sec
+   Random image after the reading popup, on Home entry, and cross-dissolve every 30 sec
 ========================================= */
 
 const galileeBackgrounds = [
@@ -20782,14 +20792,36 @@ const galileeBackgrounds = [
     "./images/galilee-background-3.png"
 ];
 
+// Preload the Galilee collection while the app is running so the next image
+// is ready as soon as the reading popup is dismissed.
+const galileeImageCache = galileeBackgrounds.map(function (src) {
+    const image = new Image();
+    image.src = src;
+    return image;
+});
+
 let currentGalileeImage = null;
 let galileeTransitioning = false;
 
-function rotateGalileeBackground() {
+function rotateGalileeBackground(onComplete) {
     const homePage = document.getElementById("homePage");
 
-    if (!homePage) return;
-    if (galileeTransitioning) return;
+    if (!homePage) {
+        if (typeof onComplete === "function") onComplete();
+        return;
+    }
+    if (galileeTransitioning) {
+        // Let the active cross-dissolve finish before starting the intro.
+        if (typeof onComplete === "function") {
+            const waitForTransition = setInterval(function () {
+                if (!galileeTransitioning) {
+                    clearInterval(waitForTransition);
+                    onComplete();
+                }
+            }, 50);
+        }
+        return;
+    }
 
     // Avoid repeating the current image
     const choices = galileeBackgrounds.filter(
@@ -20824,6 +20856,7 @@ function rotateGalileeBackground() {
                 selectedImage
             );
 
+            if (typeof onComplete === "function") onComplete();
             return;
         }
 
@@ -20859,6 +20892,7 @@ function rotateGalileeBackground() {
             );
 
             galileeTransitioning = false;
+            if (typeof onComplete === "function") onComplete();
         }, 1600);
     };
 
@@ -20875,6 +20909,7 @@ function rotateGalileeBackground() {
 
         currentGalileeImage = null;
         galileeTransitioning = false;
+        if (typeof onComplete === "function") onComplete();
     };
 
     img.src = selectedImage;
