@@ -1,10 +1,37 @@
-const CACHE_NAME = "holy-bible-v89";
+/* =====================================================
+   HOLY BIBLE KJV - SERVICE WORKER
+   Offline support for app shell, Bible JSON,
+   Daily Promise, backgrounds, and fonts
+===================================================== */
+
+const CACHE_NAME = "holy-bible-v91";
+
+/* =====================================================
+   APP FILES
+===================================================== */
 
 const APP_FILES = [
     "./",
     "./index.html",
-    "./logo.png"
+    "./logo.png",
+    "./manifest.json",
+    "./daily-promises.json",
+
+    // Galilee home backgrounds
+    "./images/galilee-background.png",
+    "./images/galilee-background-2.png",
+    "./images/galilee-background-3.png",
+
+    // Fonts
+    "./fonts/NotoSans-Regular.ttf",
+    "./fonts/NotoSansTamil-Regular.ttf",
+    "./fonts/NotoSansMalayalam-Regular.ttf",
+    "./fonts/NotoSansDevanagari-Regular.ttf"
 ];
+
+/* =====================================================
+   BIBLE BOOKS
+===================================================== */
 
 const BIBLE_BOOKS = [
     "Genesis",
@@ -75,39 +102,293 @@ const BIBLE_BOOKS = [
     "Revelation"
 ];
 
-const BIBLE_FILES = BIBLE_BOOKS.map(
-    book => "./bible/" + encodeURIComponent(book) + ".json"
-);
+/* =====================================================
+   BIBLE LANGUAGE FOLDERS
+===================================================== */
 
-const FILES_TO_CACHE = [
-    ...APP_FILES,
-    ...BIBLE_FILES
+const BIBLE_LANGUAGES = [
+    "bible-en",
+    "bible-ta",
+    "bible-ml",
+    "bible-hi"
 ];
 
-self.addEventListener("install", event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(FILES_TO_CACHE))
-            .then(() => self.skipWaiting())
-    );
+/* =====================================================
+   GENERATE ALL BIBLE JSON PATHS
+===================================================== */
+
+const BIBLE_FILES = [];
+
+BIBLE_LANGUAGES.forEach(function (language) {
+
+    BIBLE_BOOKS.forEach(function (book) {
+
+        BIBLE_FILES.push(
+            "./bible/" +
+            language +
+            "/" +
+            encodeURIComponent(book) +
+            ".json"
+        );
+
+    });
+
 });
 
-self.addEventListener("activate", event => {
+/* =====================================================
+   INSTALL SERVICE WORKER
+===================================================== */
+
+self.addEventListener("install", function (event) {
+
     event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames
-                    .filter(name => name !== CACHE_NAME)
-                    .map(name => caches.delete(name))
+
+        (async function () {
+
+            const cache = await caches.open(CACHE_NAME);
+
+            const allFiles = [
+                ...APP_FILES,
+                ...BIBLE_FILES
+            ];
+
+            /* Cache files individually.
+               A missing file will not stop the
+               remaining files from being cached. */
+
+            await Promise.allSettled(
+
+                allFiles.map(async function (file) {
+
+                    try {
+
+                        const response = await fetch(
+                            file,
+                            { cache: "reload" }
+                        );
+
+                        if (response.ok) {
+
+                            await cache.put(
+                                file,
+                                response
+                            );
+
+                        } else {
+
+                            console.warn(
+                                "Offline cache skipped:",
+                                file,
+                                response.status
+                            );
+
+                        }
+
+                    } catch (error) {
+
+                        console.warn(
+                            "Could not cache:",
+                            file,
+                            error
+                        );
+
+                    }
+
+                })
+
             );
-        }).then(() => self.clients.claim())
+
+            await self.skipWaiting();
+
+        })()
+
     );
+
 });
 
-self.addEventListener("fetch", event => {
-    event.respondWith(
-        caches.match(event.request).then(cachedResponse => {
-            return cachedResponse || fetch(event.request);
-        })
+/* =====================================================
+   ACTIVATE SERVICE WORKER
+===================================================== */
+
+self.addEventListener("activate", function (event) {
+
+    event.waitUntil(
+
+        (async function () {
+
+            const cacheNames = await caches.keys();
+
+            await Promise.all(
+
+                cacheNames.map(function (cacheName) {
+
+                    if (
+                        cacheName.startsWith("holy-bible-") &&
+                        cacheName !== CACHE_NAME
+                    ) {
+
+                        return caches.delete(cacheName);
+
+                    }
+
+                })
+
+            );
+
+            await self.clients.claim();
+
+        })()
+
     );
+
+});
+
+/* =====================================================
+   FETCH HANDLER
+===================================================== */
+
+self.addEventListener("fetch", function (event) {
+
+    const request = event.request;
+
+    // Only handle GET requests.
+    if (request.method !== "GET") {
+        return;
+    }
+
+    const requestURL = new URL(request.url);
+
+    /* =================================================
+       EXTERNAL RESOURCES
+       YouTube and external PDF libraries
+    ================================================= */
+
+    if (requestURL.origin !== self.location.origin) {
+
+        event.respondWith(
+
+            (async function () {
+
+                const cache = await caches.open(CACHE_NAME);
+
+                try {
+
+                    const response = await fetch(request);
+
+                    if (response && response.ok) {
+
+                        try {
+                            await cache.put(
+                                request,
+                                response.clone()
+                            );
+                        } catch (error) {
+                            // Some external responses cannot be cached.
+                        }
+
+                    }
+
+                    return response;
+
+                } catch (error) {
+
+                    const cachedResponse = await cache.match(request);
+
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+
+                    return new Response(
+                        "This resource is unavailable offline.",
+                        {
+                            status: 503,
+                            statusText: "Offline"
+                        }
+                    );
+
+                }
+
+            })()
+
+        );
+
+        return;
+    }
+
+    /* =================================================
+       SAME-ORIGIN RESOURCES
+       Cache first, then network
+    ================================================= */
+
+    event.respondWith(
+
+        (async function () {
+
+            const cache = await caches.open(CACHE_NAME);
+
+            /* Try the cache first. */
+
+            const cachedResponse = await cache.match(
+                request,
+                { ignoreSearch: true }
+            );
+
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+
+            /* If not cached, try the network. */
+
+            try {
+
+                const response = await fetch(request);
+
+                if (response && response.ok) {
+
+                    await cache.put(
+                        request,
+                        response.clone()
+                    );
+
+                }
+
+                return response;
+
+            } catch (error) {
+
+                /* If offline, return the cached app shell
+                   for navigation requests. */
+
+                if (request.mode === "navigate") {
+
+                    const cachedIndex = await cache.match(
+                        "./index.html"
+                    );
+
+                    if (cachedIndex) {
+                        return cachedIndex;
+                    }
+
+                }
+
+                /* Return a clear offline response if
+                   the requested file is not cached. */
+
+                return new Response(
+                    "This file is not available offline. Please open the app online once to cache it.",
+                    {
+                        status: 503,
+                        statusText: "Offline",
+                        headers: {
+                            "Content-Type": "text/plain; charset=utf-8"
+                        }
+                    }
+                );
+
+            }
+
+        })()
+
+    );
+
 });
