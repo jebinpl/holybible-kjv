@@ -2010,6 +2010,116 @@ body.dark-mode #favoritesPage .sticky-page-header {
     text-align: center;
 }
 
+/* =========================
+   ABOUT PAGE
+========================= */
+
+#aboutPage .sticky-page-header {
+    width: 100%;
+    margin: 0 0 20px;
+    padding: 8px 12px;
+    background: linear-gradient(180deg, #fffdf5, #f5ecd5);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#aboutPage .page-title {
+    text-align: center;
+    font-size: 24px;
+    margin: 0;
+    padding: 4px 0 2px;
+    background: none;
+    border: none;
+}
+
+#aboutPage .page-subtitle {
+    text-align: center;
+    font-size: 14px;
+    margin: 0;
+    padding: 2px 0 5px;
+    color: #76582e;
+    background: none;
+    border: none;
+}
+
+.about-container {
+    padding-bottom: 30px;
+}
+
+.about-card {
+    margin: 0 0 16px;
+    padding: 20px;
+    border: 1px solid #c7a85b;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #fffdf5, #f7efd8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    line-height: 1.7;
+}
+
+.about-card h3 {
+    margin: 0 0 10px;
+    color: #70451e;
+    font-size: 20px;
+}
+
+.about-card p {
+    margin: 0 0 10px;
+    line-height: 1.75;
+}
+
+.about-card ul {
+    padding-left: 22px;
+    line-height: 1.9;
+}
+
+.about-card blockquote {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-left: 4px solid #b8943d;
+    background: rgba(212, 175, 55, 0.12);
+    font-style: italic;
+}
+
+.about-card blockquote strong {
+    display: block;
+    margin-top: 8px;
+    font-style: normal;
+}
+
+.about-developer {
+    text-align: center;
+}
+
+.about-developer-name {
+    font-size: 21px;
+    font-weight: bold;
+    color: #70451e;
+}
+
+body.dark-mode #aboutPage .sticky-page-header {
+    background: #202020;
+}
+
+body.dark-mode #aboutPage .page-title,
+body.dark-mode #aboutPage .page-subtitle {
+    color: #f1f1f1;
+}
+
+body.dark-mode .about-card {
+    background: linear-gradient(135deg, #252525, #303030);
+    border-color: #8a7135;
+    color: #f1f1f1;
+}
+
+body.dark-mode .about-card h3,
+body.dark-mode .about-developer-name {
+    color: #f4d982;
+}
+
+body.dark-mode .about-card blockquote {
+    background: rgba(212, 175, 55, 0.08);
+}
+
 /* SEARCH BOX */
 
 .search-sticky-header .search-box-container {
@@ -2382,6 +2492,17 @@ body.dark-mode #favoritesPage .sticky-page-header {
         background 0.2s;
 }
 
+
+.home-main-button.home-offering-button {
+    grid-column: 1 / -1;
+    min-height: 76px;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.home-main-button.home-offering-button .home-main-icon {
+    font-size: 26px;
+}
 
 .home-main-button:hover {
     transform: translateY(-3px);
@@ -7383,6 +7504,28 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
     filter: none !important;
 }
 
+.about-developer-qualification {
+    font-weight: 600;
+    color: #b8943d;
+    margin-top: -6px;
+    letter-spacing: 0.5px;
+}
+
+.about-developer-name {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    text-align: center;
+}
+
+.about-developer-qualification {
+    font-size: 0.75em;
+    font-weight: 600;
+    color: #b8943d;
+}
+
 </style>
 </head>
 
@@ -7815,70 +7958,63 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
 
     <div class="home-main-buttons">
 
+        <!-- Row 1: Search | Bible -->
         <button
             class="home-main-button"
             onclick="openSearchGroup()">
-
             <div class="home-main-icon">🔍</div>
             <div class="home-main-title">SEARCH</div>
-
         </button>
-
 
         <button
             class="home-main-button"
             onclick="openBibleGroup()">
-
             <div class="home-main-icon">📖</div>
             <div class="home-main-title">BIBLE</div>
-
         </button>
 
-
+        <!-- Row 2: Treasure | Calendar -->
         <button
             class="home-main-button"
             onclick="showFavorites()">
-
             <div class="home-main-icon">♥</div>
             <div class="home-main-title">TREASURE</div>
-
         </button>
 
+        <button
+            class="home-main-button"
+            onclick="openGregorianCalendar()">
+            <div class="home-main-icon">
+                <div class="custom-calendar-icon">
+                    <div id="calendarMonth"></div>
+                    <div id="calendarDay"></div>
+                </div>
+            </div>
+            <div class="home-main-title">CALENDAR</div>
+        </button>
 
+        <!-- Row 3: Settings | About -->
         <button
             class="home-main-button"
             onclick="openSettingsPage()">
-
             <div class="home-main-icon">⚙️</div>
-            <div class="home-main-title">SETTING</div>
-
+            <div class="home-main-title">SETTINGS</div>
         </button>
 
         <button
             class="home-main-button"
-            onclick="openOfferings()">
-
-            <div class="home-main-icon">❤️</div>
-            <div class="home-main-title">OFFERINGS</div>
-
+            onclick="openAboutPage()">
+            <div class="home-main-icon">ℹ️</div>
+            <div class="home-main-title">ABOUT</div>
         </button>
 
-        
-                <button
-    class="home-main-button"
-    onclick="openGregorianCalendar()">
-
-    <div class="home-main-icon">
-        <div class="custom-calendar-icon">
-            <div id="calendarMonth"></div>
-            <div id="calendarDay"></div>
-        </div>
-    </div>
-
-    <div class="home-main-title">CALENDAR</div>
-
-</button>
-
+        <!-- Row 4: Offering across both columns -->
+        <button
+            class="home-main-button home-offering-button"
+            onclick="openOfferings()">
+            <div class="home-main-icon">❤️</div>
+            <div class="home-main-title">OFFERING</div>
+        </button>
 
     </div>
 
@@ -8174,6 +8310,70 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
             </label>
 
         </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     ABOUT PAGE
+========================= -->
+
+<section id="aboutPage" class="page">
+
+    <div class="sticky-page-header">
+        <h2 class="page-title">ABOUT</h2>
+        <p class="page-subtitle">Holy Bible – King James Version</p>
+    </div>
+
+    <div class="settings-container about-container">
+
+        <article class="about-card">
+            <h3>About This App</h3>
+            <p>
+                Welcome to Holy Bible – King James Version.
+                This app is designed to help you read, study,
+                and meditate on God's Word every day.
+            </p>
+        </article>
+
+        <article class="about-card">
+            <h3>Features</h3>
+            <ul>
+                <li>Bible reading in English, Tamil, Malayalam and Hindi</li>
+                <li>Daily Promise verses</li>
+                <li>Bible reading plan</li>
+                <li>Save and share favorite verses</li>
+                <li>Audio Bible reading on supported devices</li>
+                <li>Offline reading of cached Bible content</li>
+                <li>Light and dark modes</li>
+            </ul>
+        </article>
+
+        <article class="about-card">
+            <h3>Our Mission</h3>
+            <p>
+                Our mission is to help people discover the hope,
+                peace, truth and wisdom found in God's Word.
+            </p>
+            <blockquote>
+                “Thy word is a lamp unto my feet, and a light unto my path.”
+                <strong>Psalm 119:105 (KJV)</strong>
+            </blockquote>
+        </article>
+
+     <article class="about-card about-developer">
+    <h3>Developer</h3>
+    <p class="about-developer-name">
+        Jebin P. L.
+        <span class="about-developer-qualification">(B.Tech, M.E.)</span>
+    </p>
+    <p>
+        Created with faith and dedication to make God's Word
+        accessible to everyone.
+    </p>
+</article>
 
     </div>
 
@@ -13827,6 +14027,7 @@ function hideGroupedPages() {
         "searchGroupPage",
         "bibleGroupPage",
         "settingsPage",
+        "aboutPage",
         "favoritesPage",
         "treasureListPage",
         "verseTreasurePage"
@@ -13922,6 +14123,44 @@ function openSettingsPage() {
     updateSettingsDarkMode();
 
     updateTestamentNavigation();
+}
+
+
+/* =========================================================
+   OPEN ABOUT PAGE
+========================================================= */
+
+function openAboutPage() {
+
+    updateHomeHeader("other");
+
+    hideGroupedPages();
+
+    const pagesToHide = [
+        "homePage",
+        "bookPage",
+        "chapterPage",
+        "videoPage",
+        "searchPage",
+        "bibleTextSearchPage",
+        "offeringsPage",
+        "gregorianCalendarPage"
+    ];
+
+    pagesToHide.forEach(function (id) {
+        const page = document.getElementById(id);
+        if (page) {
+            page.style.display = "none";
+        }
+    });
+
+    document.getElementById("aboutPage").style.display = "block";
+
+    sessionStorage.setItem("page", "about");
+
+    updateTestamentNavigation();
+
+    window.scrollTo(0, 0);
 }
 
 
@@ -15926,6 +16165,7 @@ window.addEventListener("DOMContentLoaded", function () {
     "searchGroupPage",
     "bibleGroupPage",
     "settingsPage",
+    "aboutPage",
     "favoritesPage",
     "treasureListPage",
     "verseTreasurePage"
@@ -16001,6 +16241,21 @@ window.addEventListener("DOMContentLoaded", function () {
 
         document.getElementById(
             "settingsPage"
+        ).style.display = "block";
+
+        updateTestamentNavigation();
+
+        return;
+    }
+
+    /* =====================================================
+       ABOUT
+    ===================================================== */
+
+    if (savedPage === "about") {
+
+        document.getElementById(
+            "aboutPage"
         ).style.display = "block";
 
         updateTestamentNavigation();
@@ -16557,7 +16812,8 @@ function headerBack() {
     } else if (
         page === "searchGroup" ||
         page === "bibleGroup" ||
-        page === "settings"
+        page === "settings" ||
+        page === "about"
     ) {
 
         goHome();
@@ -16632,6 +16888,7 @@ if (
     page === "searchGroup" ||
     page === "bibleGroup" ||
     page === "settings" ||
+    page === "about" ||
     page === "favorites" ||
     page === "treasureList" ||
     page === "verseTreasure" ||
