@@ -6961,7 +6961,16 @@ body.dark-mode .gregorian-calendar-button {
 .gregorian-today-legend {
     border: 2px solid #b8943d;
     border-radius: 6px;
-    padding: 4px 8px;
+    padding: 4px 10px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.gregorian-today-legend:hover {
+    background: #fff2c9;
+    color: #302b20;
 }
 
 .gregorian-event-legend {
@@ -7201,6 +7210,163 @@ body.dark-mode .gregorian-month-controls input#gregorianMonthSelect {
     box-sizing: border-box;
     font-size: 15px;
 }
+
+
+/* =========================================================
+   COMPACT iOS-STYLE MONTH / YEAR WHEEL PICKERS
+   Scoped only to the Gregorian calendar.
+========================================================= */
+#gregorianCalendarPage .gregorian-picker-state {
+    display: none !important;
+}
+
+#gregorianCalendarPage .gregorian-calendar-toolbar,
+#gregorianCalendarPage .gregorian-month-controls {
+    position: relative;
+}
+
+#gregorianCalendarPage .gregorian-picker-anchor {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+#gregorianCalendarPage .gregorian-picker-button {
+    min-width: 110px;
+    width: auto;
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #b8943d;
+    border-radius: 8px;
+    background: linear-gradient(to bottom, #fffdf5, #ead9ad);
+    color: #5b3a00;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#gregorianCalendarPage .gregorian-month-picker-button {
+    min-width: 150px;
+}
+
+#gregorianCalendarPage .gregorian-picker-button:focus-visible {
+    outline: 2px solid #b8943d;
+    outline-offset: 2px;
+}
+
+#gregorianCalendarPage .gregorian-picker-popover {
+    position: absolute;
+    top: calc(100% + 7px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1200;
+    width: 190px;
+    padding: 10px;
+    border: 1px solid #b8943d;
+    border-radius: 14px;
+    background: #fffdf5;
+    color: #3b2817;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.24);
+}
+
+#gregorianCalendarPage .gregorian-picker-popover[hidden] {
+    display: none !important;
+}
+
+#gregorianCalendarPage .gregorian-picker-heading {
+    margin: 0 0 7px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#gregorianCalendarPage .gregorian-picker-wheel {
+    position: relative;
+    height: 200px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    touch-action: pan-y;
+    border-radius: 8px;
+    background: rgba(212,175,55,0.07);
+}
+
+#gregorianCalendarPage .gregorian-picker-wheel::after {
+    content: "";
+    position: sticky;
+    display: block;
+    top: 80px;
+    height: 40px;
+    margin-top: -200px;
+    border-top: 1px solid rgba(184,148,61,0.7);
+    border-bottom: 1px solid rgba(184,148,61,0.7);
+    background: rgba(212,175,55,0.10);
+    pointer-events: none;
+}
+
+#gregorianCalendarPage .gregorian-picker-option {
+    display: block;
+    width: 100%;
+    height: 40px;
+    min-height: 40px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    text-align: center;
+    scroll-snap-align: center;
+    cursor: pointer;
+}
+
+#gregorianCalendarPage .gregorian-picker-option.is-selected {
+    color: #5b3a00;
+    font-weight: bold;
+}
+
+body.dark-mode #gregorianCalendarPage .gregorian-picker-button {
+    background: linear-gradient(to bottom, #3a3528, #29251d);
+    color: #f3e8ca;
+    border-color: #b8943d;
+}
+
+body.dark-mode #gregorianCalendarPage .gregorian-picker-popover {
+    background: #242424;
+    color: #f3e8ca;
+    border-color: #b8943d;
+}
+
+body.dark-mode #gregorianCalendarPage .gregorian-picker-wheel {
+    background: rgba(212,175,55,0.08);
+}
+
+body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
+    color: #ffe59a;
+}
+
+@media (max-width: 600px) {
+    #gregorianCalendarPage .gregorian-picker-popover {
+        width: 180px;
+    }
+
+    #gregorianCalendarPage .gregorian-picker-button {
+        min-width: 100px;
+        font-size: 16px;
+    }
+
+    #gregorianCalendarPage .gregorian-month-picker-button {
+        min-width: 135px;
+    }
+}
+
 </style>
 </head>
 
@@ -8380,7 +8546,21 @@ body.dark-mode .gregorian-month-controls input#gregorianMonthSelect {
     step="1"
     inputmode="numeric"
     onchange="changeGregorianYearTo(this.value)"
+    class="gregorian-picker-state"
 >
+            <div class="gregorian-picker-anchor">
+                <button
+                    type="button"
+                    id="gregorianYearPickerButton"
+                    class="gregorian-picker-button"
+                    aria-label="Choose year"
+                    aria-expanded="false"
+                    onclick="toggleGregorianPicker('year')">2026 ▾</button>
+                <div id="gregorianYearPicker" class="gregorian-picker-popover" hidden>
+                    <div class="gregorian-picker-heading">Choose year</div>
+                    <div id="gregorianYearWheel" class="gregorian-picker-wheel" role="listbox" aria-label="Years"></div>
+                </div>
+            </div>
 
             <button type="button" onclick="changeGregorianYear(1)"
                     aria-label="Next year">›</button>
@@ -8407,11 +8587,25 @@ body.dark-mode .gregorian-month-controls input#gregorianMonthSelect {
 
             <button type="button" onclick="changeGregorianMonth(-1)">‹</button>
 
-           <select
-    id="gregorianMonthSelect"
-    aria-label="Select month"
-    onchange="changeGregorianMonthTo(this.value)">
-</select>
+            <select
+                id="gregorianMonthSelect"
+                aria-label="Select month"
+                onchange="changeGregorianMonthTo(this.value)"
+                class="gregorian-picker-state">
+            </select>
+            <div class="gregorian-picker-anchor">
+                <button
+                    type="button"
+                    id="gregorianMonthPickerButton"
+                    class="gregorian-picker-button gregorian-month-picker-button"
+                    aria-label="Choose month"
+                    aria-expanded="false"
+                    onclick="toggleGregorianPicker('month')">January ▾</button>
+                <div id="gregorianMonthPicker" class="gregorian-picker-popover" hidden>
+                    <div class="gregorian-picker-heading">Choose month</div>
+                    <div id="gregorianMonthWheel" class="gregorian-picker-wheel" role="listbox" aria-label="Months"></div>
+                </div>
+            </div>
 
             <button type="button" onclick="changeGregorianMonth(1)">›</button>
 
@@ -8421,7 +8615,7 @@ body.dark-mode .gregorian-month-controls input#gregorianMonthSelect {
              class="gregorian-calendar-grid"></div>
 
         <div class="gregorian-calendar-legend">
-            <span class="gregorian-today-legend">Today</span>
+            <button type="button" class="gregorian-today-legend" onclick="goToGregorianToday()" aria-label="Return to today's month and date">Today</button>
             
         </div>
 
@@ -20747,6 +20941,177 @@ if (state === YT.PlayerState.PLAYING) {
 
 }
 
+
+
+/* =========================================================
+   GREGORIAN COMPACT WHEEL PICKERS
+   Works with touch, mouse-wheel scrolling, and click/tap.
+========================================================= */
+let gregorianPickerScrollTimer = null;
+
+function toggleGregorianPicker(type) {
+    const picker = document.getElementById(
+        type === "year" ? "gregorianYearPicker" : "gregorianMonthPicker"
+    );
+    const button = document.getElementById(
+        type === "year" ? "gregorianYearPickerButton" : "gregorianMonthPickerButton"
+    );
+
+    if (!picker || !button) return;
+
+    const shouldOpen = picker.hidden;
+
+    closeGregorianPickers();
+
+    if (!shouldOpen) return;
+
+    picker.hidden = false;
+    button.setAttribute("aria-expanded", "true");
+
+    if (type === "year") {
+        buildGregorianYearWheel();
+        scrollGregorianWheelTo("gregorianYearWheel", gregorianCalendarYear);
+    } else {
+        buildGregorianMonthWheel();
+        scrollGregorianWheelTo("gregorianMonthWheel", gregorianCalendarMonth);
+    }
+}
+
+function closeGregorianPickers() {
+    ["gregorianYearPicker", "gregorianMonthPicker"].forEach(function(id) {
+        const picker = document.getElementById(id);
+        if (picker) picker.hidden = true;
+    });
+
+    ["gregorianYearPickerButton", "gregorianMonthPickerButton"].forEach(function(id) {
+        const button = document.getElementById(id);
+        if (button) button.setAttribute("aria-expanded", "false");
+    });
+}
+
+function scrollGregorianWheelTo(wheelId, value) {
+    const wheel = document.getElementById(wheelId);
+    if (!wheel) return;
+
+    const option = wheel.querySelector('[data-value="' + String(value) + '"]');
+    if (option) {
+        wheel.scrollTop = option.offsetTop - (wheel.clientHeight - option.offsetHeight) / 2;
+    }
+}
+
+function buildGregorianMonthWheel() {
+    const wheel = document.getElementById("gregorianMonthWheel");
+    if (!wheel) return;
+
+    wheel.innerHTML = "";
+
+    GREGORIAN_MONTH_NAMES.forEach(function(name, index) {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "gregorian-picker-option";
+        option.textContent = name;
+        option.dataset.value = String(index);
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected", String(index === gregorianCalendarMonth));
+
+        if (index === gregorianCalendarMonth) option.classList.add("is-selected");
+
+        option.addEventListener("click", function() {
+            changeGregorianMonthTo(index);
+            closeGregorianPickers();
+        });
+
+        wheel.appendChild(option);
+    });
+
+    attachGregorianWheelScroll(wheel, "month");
+}
+
+function buildGregorianYearWheel() {
+    const wheel = document.getElementById("gregorianYearWheel");
+    if (!wheel) return;
+
+    wheel.innerHTML = "";
+
+    for (let year = 0; year <= 3000; year++) {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "gregorian-picker-option";
+        option.textContent = String(year);
+        option.dataset.value = String(year);
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected", String(year === gregorianCalendarYear));
+
+        if (year === gregorianCalendarYear) option.classList.add("is-selected");
+
+        option.addEventListener("click", function() {
+            changeGregorianYearTo(year);
+            closeGregorianPickers();
+        });
+
+        wheel.appendChild(option);
+    }
+
+    attachGregorianWheelScroll(wheel, "year");
+}
+
+function attachGregorianWheelScroll(wheel, type) {
+    wheel.onscroll = function() {
+        if (gregorianPickerScrollTimer) {
+            clearTimeout(gregorianPickerScrollTimer);
+        }
+
+        gregorianPickerScrollTimer = setTimeout(function() {
+            const wheelRect = wheel.getBoundingClientRect();
+            const centerY = wheelRect.top + wheel.clientHeight / 2;
+            const options = wheel.querySelectorAll(".gregorian-picker-option");
+            let closestOption = null;
+            let closestDistance = Infinity;
+
+            options.forEach(function(option) {
+                const rect = option.getBoundingClientRect();
+                const distance = Math.abs((rect.top + rect.bottom) / 2 - centerY);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestOption = option;
+                }
+            });
+
+            if (!closestOption) return;
+
+            const value = Number(closestOption.dataset.value);
+
+            if (type === "year" && value !== gregorianCalendarYear) {
+                changeGregorianYearTo(value);
+            } else if (type === "month" && value !== gregorianCalendarMonth) {
+                changeGregorianMonthTo(value);
+            }
+
+            options.forEach(function(option) {
+                const selected = option === closestOption;
+                option.classList.toggle("is-selected", selected);
+                option.setAttribute("aria-selected", String(selected));
+            });
+
+            scrollGregorianWheelTo(wheel.id, value);
+        }, 120);
+    };
+}
+
+document.addEventListener("click", function(event) {
+    const calendarPage = document.getElementById("gregorianCalendarPage");
+    if (!calendarPage || !calendarPage.contains(event.target)) return;
+
+    if (!event.target.closest(".gregorian-picker-anchor")) {
+        closeGregorianPickers();
+    }
+});
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") closeGregorianPickers();
+});
+
+
 /* =====================================
    GREGORIAN CALENDAR LOGIC
 ===================================== */
@@ -20828,6 +21193,25 @@ GREGORIAN_MONTH_NAMES.forEach(function(name, index) {
     renderGregorianCalendar();
 }
 
+function goToGregorianToday() {
+    const today = new Date();
+
+    gregorianCalendarYear = today.getFullYear();
+    gregorianCalendarMonth = today.getMonth();
+    gregorianCalendarView = "month";
+
+    closeGregorianPickers();
+    renderGregorianCalendar();
+
+    // Keep the calendar positioned at the current month, with today's date highlighted.
+    const todayButton = document.querySelector(
+        '#gregorianCalendarGrid .gregorian-day.is-today'
+    );
+    if (todayButton) {
+        todayButton.setAttribute("aria-current", "date");
+    }
+}
+
 function updateGregorianTodayDate() {
     const dateElement = document.getElementById("gregorianTodayDate");
     if (!dateElement) return;
@@ -20885,6 +21269,7 @@ function changeGregorianMonthTo(value) {
 }
 
 function setGregorianCalendarView(view) {
+    closeGregorianPickers();
     gregorianCalendarView = view;
     renderGregorianCalendar();
 }
@@ -20899,6 +21284,17 @@ function renderGregorianCalendar() {
 
     yearSelect.value = String(gregorianCalendarYear);
     monthSelect.value = String(gregorianCalendarMonth);
+
+    const yearPickerButton = document.getElementById("gregorianYearPickerButton");
+    const monthPickerButton = document.getElementById("gregorianMonthPickerButton");
+
+    if (yearPickerButton) {
+        yearPickerButton.textContent = String(gregorianCalendarYear) + " ▾";
+    }
+
+    if (monthPickerButton) {
+        monthPickerButton.textContent = GREGORIAN_MONTH_NAMES[gregorianCalendarMonth] + " ▾";
+    }
 
     document.getElementById("gregorianMonthViewBtn")
         .classList.toggle("active", gregorianCalendarView === "month");
