@@ -7526,6 +7526,11 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
     color: #b8943d;
 }
 
+/* Sunday dates in the Gregorian calendar */
+#gregorianCalendarPage .gregorian-sunday {
+    color: #ff0000 !important;
+}
+
 </style>
 </head>
 
@@ -21645,12 +21650,17 @@ function renderGregorianCalendar() {
 }
 
 function renderGregorianMonth(container, year, month, mini) {
-    GREGORIAN_WEEKDAYS.forEach(function(dayName) {
-        const weekday = document.createElement("div");
-        weekday.className = "gregorian-weekday";
-        weekday.textContent = dayName;
-        container.appendChild(weekday);
-    });
+    GREGORIAN_WEEKDAYS.forEach(function(dayName, index) {
+    const weekday = document.createElement("div");
+    weekday.className = "gregorian-weekday";
+
+    if (index === 0) {
+        weekday.classList.add("gregorian-sunday");
+    }
+
+    weekday.textContent = dayName;
+    container.appendChild(weekday);
+});
 
     const firstWeekday = gregorianWeekday(year, month, 1);
     const daysInMonth = gregorianDaysInMonth(year, month);
@@ -21670,7 +21680,12 @@ function renderGregorianMonth(container, year, month, mini) {
         const button = document.createElement("button");
         button.type = "button";
         button.className = "gregorian-day";
-        button.textContent = String(day);
+
+if (gregorianWeekday(year, month, day) === 0) {
+    button.classList.add("gregorian-sunday");
+}
+
+button.textContent = String(day);
         button.setAttribute(
             "aria-label",
             GREGORIAN_MONTH_NAMES[month] + " " + day + ", " + year
