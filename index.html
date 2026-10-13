@@ -7367,6 +7367,20 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
     }
 }
 
+
+
+/* Disable the global animated gold edge only inside the Gregorian calendar.
+   Keep the buttons' normal appearance and click behavior unchanged. */
+#gregorianCalendarPage button::after,
+#gregorianCalendarPage input[type="button"]::after,
+#gregorianCalendarPage input[type="submit"]::after,
+#gregorianCalendarPage input[type="reset"]::after,
+#gregorianCalendarPage [role="button"]::after {
+    content: none !important;
+    animation: none !important;
+    filter: none !important;
+}
+
 </style>
 </head>
 
