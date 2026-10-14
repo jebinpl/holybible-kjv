@@ -4,7 +4,7 @@
    Daily Promise, backgrounds, and fonts
 ===================================================== */
 
-const CACHE_NAME = "holy-bible-v102";
+const CACHE_NAME = "holy-bible-v103";
 
 /* =====================================================
    APP FILES
@@ -314,6 +314,62 @@ self.addEventListener("fetch", function (event) {
 
         return;
     }
+
+    
+    /* =================================================
+       INTRO MUSIC
+       Network first; preserve media Range requests
+    ================================================= */
+
+    if (
+        requestURL.origin === self.location.origin &&
+        /\/songs\/[^/]+\.mp4$/i.test(requestURL.pathname)
+    ) {
+
+        event.respondWith(
+
+            (async function () {
+
+                try {
+
+                    // Request the song directly from GitHub Pages.
+                    // Preserve the original request, including Range headers.
+                    return await fetch(request);
+
+                } catch (error) {
+
+                    // If offline, try a previously cached full song.
+                    if (!request.headers.has("Range")) {
+
+                        const cache = await caches.open(CACHE_NAME);
+                        const cachedResponse = await cache.match(request);
+
+                        if (cachedResponse) {
+                            return cachedResponse;
+                        }
+
+                    }
+
+                    return new Response(
+                        "Intro music is unavailable. Please check your connection and try again.",
+                        {
+                            status: 503,
+                            statusText: "Music Unavailable",
+                            headers: {
+                                "Content-Type": "text/plain; charset=utf-8"
+                            }
+                        }
+                    );
+
+                }
+
+            })()
+
+        );
+
+        return;
+    }
+
 
     /* =================================================
        SAME-ORIGIN RESOURCES
