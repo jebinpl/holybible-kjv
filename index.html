@@ -18543,15 +18543,33 @@ function setupIntroMusicPlayer() {
 
     async function playCurrentTrack() {
         try {
+            // First attempt: reuse the already-loaded song. This is important
+            // on mobile when resuming after the screen has slept.
             await audio.play();
             updatePlayButton(true);
             await requestIntroMusicWakeLock();
-        } catch (error) {
+            return;
+        } catch (firstError) {
+            // A brief mobile/network interruption can make the first play()
+            // attempt fail. Retry once without changing the selected filename.
+            console.warn("First music playback attempt failed; retrying:", firstError);
+        }
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await audio.play();
+
+            updatePlayButton(true);
+            await requestIntroMusicWakeLock();
+        } catch (retryError) {
+            // Do not interrupt the user with a misleading filename alert.
+            // Leave the Play button available so the user can tap to retry.
             updatePlayButton(false);
+            playButton.title = "Tap to retry music";
+            playButton.setAttribute("aria-label", "Retry intro music");
             await releaseIntroMusicWakeLock();
 
-            console.error("Intro music playback failed:", error);
-            alert("Unable to play the music. Check the filenames in songs/.");
+            console.warn("Music could not resume. Tap Play to try again:", retryError);
         }
     }
 
