@@ -2010,36 +2010,41 @@ body.dark-mode #favoritesPage .sticky-page-header {
     text-align: center;
 }
 
-/* =========================
-   ABOUT PAGE
-========================= */
+/* ==============================
+   ABOUT CONTENT INSIDE SETTINGS
+============================== */
 
-#aboutPage .sticky-page-header {
-    width: 100%;
-    margin: 0 0 20px;
-    padding: 8px 12px;
-    background: linear-gradient(180deg, #fffdf5, #f5ecd5);
+.settings-about-heading {
+    margin: 28px 0 16px;
+    padding: 18px 12px 12px;
     text-align: center;
-    box-sizing: border-box;
+    border-top: 2px solid #c7a85b;
 }
 
-#aboutPage .page-title {
-    text-align: center;
-    font-size: 24px;
+.settings-about-heading h3 {
     margin: 0;
-    padding: 4px 0 2px;
-    background: none;
-    border: none;
+    color: #70451e;
+    font-size: 22px;
 }
 
-#aboutPage .page-subtitle {
-    text-align: center;
-    font-size: 14px;
-    margin: 0;
-    padding: 2px 0 5px;
+.settings-about-heading p {
+    margin: 6px 0 0;
     color: #76582e;
-    background: none;
-    border: none;
+    font-size: 14px;
+}
+
+body.dark-mode .settings-about-heading {
+    border-top-color: #8a7135;
+}
+
+body.dark-mode .settings-about-heading h3,
+body.dark-mode .settings-about-heading p {
+    color: #f4d982;
+}
+
+.songs-container {
+    max-width: 760px;
+    margin: 20px auto;
 }
 
 .about-container {
@@ -2096,14 +2101,6 @@ body.dark-mode #favoritesPage .sticky-page-header {
     color: #70451e;
 }
 
-body.dark-mode #aboutPage .sticky-page-header {
-    background: #202020;
-}
-
-body.dark-mode #aboutPage .page-title,
-body.dark-mode #aboutPage .page-subtitle {
-    color: #f1f1f1;
-}
 
 body.dark-mode .about-card {
     background: linear-gradient(135deg, #252525, #303030);
@@ -7201,7 +7198,7 @@ body.dark-mode .gregorian-month-controls select {
     display: none;
     position: absolute;
     left: 50%;
-    bottom: 35px;
+    bottom: 100px;
     transform: translateX(-50%);
     z-index: 30;
 
@@ -7530,6 +7527,9 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
 #gregorianCalendarPage .gregorian-sunday {
     color: #ff0000 !important;
 }
+
+
+
 
 </style>
 </head>
@@ -7892,7 +7892,9 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
     ☝ Swipe up to continue
 </div>
 
-    <!-- DAILY PROMISE CARD -->
+
+
+<!-- DAILY PROMISE CARD -->
     <article class="daily-promise-card" aria-live="polite" aria-atomic="true">
         <h2 class="daily-promise-heading">✦ DAILY PROMISE ✦</h2>
         <div id="dailyPromiseContent" class="daily-promise-content">
@@ -7998,7 +8000,7 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
             <div class="home-main-title">CALENDAR</div>
         </button>
 
-        <!-- Row 3: Settings | About -->
+        <!-- Row 3: Settings | Songs -->
         <button
             class="home-main-button"
             onclick="openSettingsPage()">
@@ -8008,9 +8010,9 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
 
         <button
             class="home-main-button"
-            onclick="openAboutPage()">
-            <div class="home-main-icon">ℹ️</div>
-            <div class="home-main-title">ABOUT</div>
+            onclick="openSongsPage()">
+            <div class="home-main-icon">🎵</div>
+            <div class="home-main-title">SONGS</div>
         </button>
 
         <!-- Row 4: Offering across both columns -->
@@ -8024,6 +8026,48 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
     </div>
 
 </section>
+
+<!-- INTRO MUSIC PLAYER -->
+<div id="introMusicPlayer" class="speech-player" style="display: none;">
+
+    <div class="speech-player-controls">
+
+        <button
+            id="introMusicPreviousButton"
+            type="button"
+            title="Previous Track">
+            ◀◀
+        </button>
+
+        <button
+            id="introMusicPlayButton"
+            type="button"
+            title="Play">
+            ▶
+        </button>
+
+        <button
+            id="introMusicNextButton"
+            type="button"
+            title="Next Track">
+            ▶▶
+        </button>
+
+    </div>
+
+    
+
+<audio id="introMusicAudio" preload="none">
+    <source src="./songs/045.mp4" type="audio/mp4">
+    <source src="./songs/421.mp4" type="audio/mp4">
+    <source src="./songs/620.mp4" type="audio/mp4">
+</audio>
+
+
+
+</div>
+
+
 
 <!-- =========================
      OFFERINGS PAGE
@@ -8272,69 +8316,38 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
     class="page">
 
     <div class="sticky-page-header">
-
-        <h2 class="page-title">
-            SETTINGS
-        </h2>
-
-        <p class="page-subtitle">
-            Customize your Bible app
-        </p>
-
+        <h2 class="page-title">SETTINGS</h2>
+        <p class="page-subtitle">Customize your Bible app</p>
     </div>
-
 
     <div class="settings-container">
 
         <!-- DARK MODE -->
-
         <div class="setting-item">
-
             <div class="setting-info">
-
-                <div class="setting-title">
-                    Dark Mode
-                </div>
-
+                <div class="setting-title">Dark Mode</div>
                 <div class="setting-description">
                     Use dark appearance throughout the app
                 </div>
-
             </div>
 
-
             <label class="settings-switch">
-
                 <input
                     type="checkbox"
                     id="settingsDarkMode"
                     onchange="changeSettingsDarkMode()">
-
                 <span class="settings-slider"></span>
-
             </label>
-
         </div>
 
-    </div>
+        <!-- ABOUT INFORMATION, NOW INSIDE SETTINGS -->
+        <div class="settings-about-heading">
+            <h3>ABOUT</h3>
+            <p>Holy Bible – King James Version</p>
+        </div>
 
-</section>
-
-
-<!-- =========================
-     ABOUT PAGE
-========================= -->
-
-<section id="aboutPage" class="page">
-
-    <div class="sticky-page-header">
-        <h2 class="page-title">ABOUT</h2>
-        <p class="page-subtitle">Holy Bible – King James Version</p>
-    </div>
-
-    <div class="settings-container about-container">
-
-        <article class="about-card">
+        <div class="about-container">
+            <article class="about-card">
             <h3>About This App</h3>
             <p>
                 Welcome to Holy Bible – King James Version.
@@ -8368,26 +8381,72 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
             </blockquote>
         </article>
 
-     <article class="about-card about-developer">
-    <h3>Developer's</h3>
+     
+<article class="about-card about-developer">
+    <h3>
+        <span style="color: #b8943d;">★</span>
+        Developers
+        <span style="color: #b8943d;">★</span>
+    </h3>
+
     <p class="about-developer-name">
         Jebin P. L.
         <span class="about-developer-qualification">(B.Tech, M.E.)</span>
     </p>
-         <p class="about-developer-name">
-        Evelin Gnana Prissy 
-        <span class="about-developer-qualification">(M.sc - IT)</span>
-    </p>
+
     <p class="about-developer-name">
-        Jelin Tirshatha
-        <span class="about-developer-qualification">(Bible App Tester)</span>
+        Evelin Gnana Prissy
+        <span class="about-developer-qualification">(M.Sc - IT)</span>
     </p>
+
+    <hr style="border: 0; border-top: 1px solid #b8943d; margin: 18px 0;">
+
+    <h3 class="junior-tester-heading">
+        <span style="color: #b8943d;">★</span>
+        Junior App Tester
+        <span style="color: #b8943d;">★</span>
+    </h3>
+
+    <p class="about-developer-name junior-tester-name">
+        Jelin Tirshatha
+        <span class="about-developer-qualification">(4th Grade)</span>
+    </p>
+
     <p>
         Created with faith and dedication to make God's Word
         accessible to everyone.
     </p>
 </article>
 
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     SONGS PAGE
+========================= -->
+<section id="songsPage" class="page">
+
+    <div class="sticky-page-header">
+        <h2 class="page-title">SONGS</h2>
+        <p class="page-subtitle">Listen to devotional music</p>
+    </div>
+
+    <div class="settings-container songs-container">
+        <article class="about-card">
+            <h3>Music Player</h3>
+            <p>
+                Use the music controls at the bottom of the screen
+                to play, pause, or change songs.
+            </p>
+            <p>
+                Music can continue while you move between pages.
+                Use the Songs page whenever you want to listen.
+            </p>
+        </article>
     </div>
 
 </section>
@@ -14040,7 +14099,7 @@ function hideGroupedPages() {
         "searchGroupPage",
         "bibleGroupPage",
         "settingsPage",
-        "aboutPage",
+        "songsPage",
         "favoritesPage",
         "treasureListPage",
         "verseTreasurePage"
@@ -14140,17 +14199,17 @@ function openSettingsPage() {
 
 
 /* =========================================================
-   OPEN ABOUT PAGE
+   SONGS BUTTON — RUN THE SAME INTRO AS CLOSING THE DAILY POPUP
 ========================================================= */
 
-function openAboutPage() {
-
-    updateHomeHeader("other");
-
+function openSongsPage() {
+    // The Songs button reuses the exact same Home intro experience that
+    // starts after the Daily Reading popup closes. It does not open a
+    // separate Songs page or start music automatically.
+    updateHomeHeader("home");
     hideGroupedPages();
 
-    const pagesToHide = [
-        "homePage",
+    [
         "bookPage",
         "chapterPage",
         "videoPage",
@@ -14158,22 +14217,21 @@ function openAboutPage() {
         "bibleTextSearchPage",
         "offeringsPage",
         "gregorianCalendarPage"
-    ];
-
-    pagesToHide.forEach(function (id) {
+    ].forEach(function (id) {
         const page = document.getElementById(id);
-        if (page) {
-            page.style.display = "none";
-        }
+        if (page) page.style.display = "none";
     });
 
-    document.getElementById("aboutPage").style.display = "block";
+    const homePage = document.getElementById("homePage");
+    if (homePage) homePage.style.display = "block";
 
-    sessionStorage.setItem("page", "about");
-
+    sessionStorage.setItem("page", "home");
     updateTestamentNavigation();
+    rotateGalileeBackground();
 
-    window.scrollTo(0, 0);
+    // This handles the bottom-to-top image entrance, fade/rotation,
+    // player reveal, Play/Pause wake lock, and swipe-up dismissal.
+    startJesusTimeIntro();
 }
 
 
@@ -16178,7 +16236,7 @@ window.addEventListener("DOMContentLoaded", function () {
     "searchGroupPage",
     "bibleGroupPage",
     "settingsPage",
-    "aboutPage",
+    "songsPage",
     "favoritesPage",
     "treasureListPage",
     "verseTreasurePage"
@@ -16262,14 +16320,32 @@ window.addEventListener("DOMContentLoaded", function () {
     }
 
     /* =====================================================
-       ABOUT
+       OLD ABOUT LINKS: REDIRECT TO SETTINGS
     ===================================================== */
 
     if (savedPage === "about") {
 
-        document.getElementById(
-            "aboutPage"
-        ).style.display = "block";
+        document.getElementById("settingsPage").style.display = "block";
+        updateSettingsDarkMode();
+        sessionStorage.setItem("page", "settings");
+        updateTestamentNavigation();
+
+        return;
+    }
+
+    /* =====================================================
+       SONGS
+    ===================================================== */
+
+    if (savedPage === "songs") {
+
+        document.getElementById("songsPage").style.display = "block";
+        setupIntroMusicPlayer();
+
+        const player = document.getElementById("introMusicPlayer");
+        if (player) {
+            player.style.display = "flex";
+        }
 
         updateTestamentNavigation();
 
@@ -16901,7 +16977,7 @@ if (
     page === "searchGroup" ||
     page === "bibleGroup" ||
     page === "settings" ||
-    page === "about" ||
+    page === "songs" ||
     page === "favorites" ||
     page === "treasureList" ||
     page === "verseTreasure" ||
@@ -18351,10 +18427,197 @@ function closeDailyReadingPopup(showJesusTime = false) {
 }
 
 
+/* =====================================================
+   INTRO MUSIC PLAYER
+===================================================== */
+
+let introMusicWakeLock = null;
+
+async function requestIntroMusicWakeLock() {
+    if (!("wakeLock" in navigator)) return;
+
+    try {
+        introMusicWakeLock =
+            await navigator.wakeLock.request("screen");
+
+        introMusicWakeLock.addEventListener("release", function () {
+            introMusicWakeLock = null;
+        });
+    } catch (error) {
+        console.log("Intro screen wake lock unavailable:", error);
+    }
+}
+
+async function releaseIntroMusicWakeLock() {
+    if (!introMusicWakeLock) return;
+
+    try {
+        await introMusicWakeLock.release();
+    } catch (error) {
+        console.log("Intro wake lock release:", error);
+    }
+
+    introMusicWakeLock = null;
+}
+
+function stopIntroMusic() {
+    const audio = document.getElementById("introMusicAudio");
+    const player = document.getElementById("introMusicPlayer");
+
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+    }
+
+    if (player) {
+        player.style.display = "none";
+    }
+
+    releaseIntroMusicWakeLock();
+}
+
+
+
+function setupIntroMusicPlayer() {
+    const player = document.getElementById("introMusicPlayer");
+    const audio = document.getElementById("introMusicAudio");
+    const playButton = document.getElementById("introMusicPlayButton");
+    const previousButton = document.getElementById("introMusicPreviousButton");
+    const nextButton = document.getElementById("introMusicNextButton");
+
+    if (!player || !audio || !playButton ||
+        !previousButton || !nextButton) return;
+
+    if (player.dataset.handlersReady === "yes") return;
+    player.dataset.handlersReady = "yes";
+
+    // Add every song filename here.
+    const tracks = [
+        "./songs/045.mp4",
+        "./songs/421.mp4",
+        "./songs/620.mp4"
+        // Example:
+        // ,"./songs/046.mp4"
+        // ,"./songs/047.mp4"
+    ];
+
+    let history = [];
+    let historyPosition = -1;
+
+    function chooseRandomTrack() {
+        if (tracks.length <= 1) return 0;
+
+        let index;
+        do {
+            index = Math.floor(Math.random() * tracks.length);
+        } while (index === history[historyPosition]);
+
+        return index;
+    }
+
+    function updatePlayButton(isPlaying) {
+        playButton.textContent = isPlaying ? "⏸" : "▶";
+        playButton.title = isPlaying ? "Pause" : "Play";
+        playButton.setAttribute(
+            "aria-label",
+            isPlaying ? "Pause intro music" : "Play intro music"
+        );
+    }
+
+    async function playCurrentTrack() {
+        try {
+            await audio.play();
+            updatePlayButton(true);
+            await requestIntroMusicWakeLock();
+        } catch (error) {
+            updatePlayButton(false);
+            await releaseIntroMusicWakeLock();
+
+            console.error("Intro music playback failed:", error);
+            alert("Unable to play the music. Check the filenames in songs/.");
+        }
+    }
+
+    function loadTrack(index) {
+        audio.src = tracks[index];
+        audio.load();
+    }
+
+    async function playRandomTrack() {
+        const index = chooseRandomTrack();
+
+        // Forget any forward history when choosing a new random song.
+        history = history.slice(0, historyPosition + 1);
+        history.push(index);
+        historyPosition = history.length - 1;
+
+        loadTrack(index);
+        await playCurrentTrack();
+    }
+
+    playButton.addEventListener("click", async function (event) {
+        event.stopPropagation();
+
+        if (audio.paused) {
+            // Start the first random song if none has been selected.
+            if (historyPosition === -1) {
+                await playRandomTrack();
+            } else {
+                await playCurrentTrack();
+            }
+        } else {
+            audio.pause();
+            updatePlayButton(false);
+            await releaseIntroMusicWakeLock();
+        }
+    });
+
+    previousButton.addEventListener("click", async function (event) {
+        event.stopPropagation();
+
+        if (historyPosition > 0) {
+            historyPosition--;
+            loadTrack(history[historyPosition]);
+            await playCurrentTrack();
+        } else if (historyPosition === 0) {
+            // At the beginning, restart the current song.
+            audio.currentTime = 0;
+            await playCurrentTrack();
+        } else {
+            await playRandomTrack();
+        }
+    });
+
+    nextButton.addEventListener("click", async function (event) {
+        event.stopPropagation();
+        await playRandomTrack();
+    });
+
+    // When a song finishes, automatically play another random song.
+    audio.addEventListener("ended", async function () {
+        await playRandomTrack();
+    });
+
+    audio.addEventListener("pause", function () {
+        updatePlayButton(false);
+    });
+
+    updatePlayButton(false);
+}
+
+
 function startJesusTimeIntro() {
     const homePage = document.getElementById("homePage");
 
     if (!homePage || homePage.style.display !== "block") return;
+
+    const introPlayer = document.getElementById("introMusicPlayer");
+
+if (introPlayer) {
+    introPlayer.style.display = "none";
+}
+
+setupIntroMusicPlayer();
 
     // Reset the intro for a fresh entrance.
     homePage.classList.remove(
@@ -18378,6 +18641,11 @@ function startJesusTimeIntro() {
         if (homePage.classList.contains("jesus-time-intro")) {
             homePage.classList.remove("jesus-intro-enter");
             homePage.dataset.jesusIntroReady = "yes";
+            const introPlayer = document.getElementById("introMusicPlayer");
+
+if (introPlayer) {
+    introPlayer.style.display = "flex";
+}
         }
     }, 1050);
 
@@ -18393,6 +18661,9 @@ function startJesusTimeIntro() {
 
     function dismissImage() {
     if (!homePage.classList.contains("jesus-time-intro")) return;
+
+    // Stop intro music and release its screen wake lock.
+    stopIntroMusic();
 
     clearTimeout(finishTimer);
     isSwiping = false;
