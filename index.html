@@ -5952,22 +5952,6 @@ body.dark-mode .speech-player-controls button {
 }
 
 
-/* Prevent the mobile tap/focus square on the intro music Play/Pause button.
-   Keep a visible focus indicator for keyboard navigation. */
-#introMusicPlayButton {
-    -webkit-tap-highlight-color: transparent;
-}
-
-#introMusicPlayButton:focus:not(:focus-visible) {
-    outline: none;
-    box-shadow: none;
-}
-
-#introMusicPlayButton:focus-visible {
-    outline: 2px solid #b8943d;
-    outline-offset: 3px;
-}
-
 /* =====================================
    CURRENT SPEAKING VERSE HIGHLIGHT
 ===================================== */
@@ -7210,41 +7194,6 @@ body.dark-mode .gregorian-month-controls select {
     }
 }
 
-/* Swipe-up instruction — stays above the music/audio player on all screens */
-.jesus-time-swipe-hint {
-    display: none;
-    position: fixed;
-    left: 50%;
-    bottom: 100px;
-    transform: translateX(-50%);
-    z-index: 10001;
-
-    padding: 12px 22px;
-    border: 1px solid #d8b45b;
-    border-radius: 30px;
-
-    background: rgba(20, 25, 30, 0.85);
-    color: #fff;
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
-
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
-    animation: swipeHintPulse 1.8s ease-in-out infinite;
-}
-
-#homePage.jesus-time-intro .jesus-time-swipe-hint {
-    display: block;
-    pointer-events: none;
-}
-
-@keyframes swipeHintPulse {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
-}
-
-
 .custom-calendar-icon {
     width: 42px;
     height: 42px;
@@ -7547,6 +7496,247 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
 
 
 
+
+
+/* =========================================================
+   iPOD WHEEL — INTRO SONG PLAYER ONLY
+   Isolated from the Bible reading speech player styles.
+========================================================= */
+#introMusicPlayer.ipod-song-player {
+    position: fixed !important;
+    left: 50% !important;
+    bottom: 12px !important;
+    transform: translateX(-50%) !important;
+    z-index: 10001 !important;
+    width: 164px !important;
+    height: 164px !important;
+    min-width: 164px !important;
+    max-width: 164px !important;
+    padding: 7px !important;
+    margin: 0 !important;
+    display: none;
+    box-sizing: border-box !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+}
+
+#introMusicPlayer .ipod-wheel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #c7a85b;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fffdf5, #f3e3bd);
+    box-shadow: inset 0 2px 5px rgba(255,255,255,.8), 0 4px 12px rgba(0,0,0,.20);
+}
+/* Put the animated gold ring around the OUTER wheel only. */
+#introMusicPlayer .ipod-wheel::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    box-sizing: border-box;
+    padding: 2px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+    background: conic-gradient(
+        from var(--bible-gold-angle),
+        transparent 0deg,
+        transparent 278deg,
+        rgba(184, 134, 11, 0.04) 292deg,
+        rgba(218, 165, 32, 0.18) 308deg,
+        rgba(240, 190, 72, 0.48) 324deg,
+        rgba(255, 225, 145, 0.92) 338deg,
+        rgba(255, 248, 220, 0.98) 345deg,
+        rgba(218, 165, 32, 0.54) 352deg,
+        rgba(184, 134, 11, 0.12) 358deg,
+        transparent 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    filter: drop-shadow(0 0 1px rgba(218,165,32,.32)) drop-shadow(0 0 3px rgba(255,210,100,.16));
+    animation: bibleGoldEdgeTravel 1s linear 1 forwards;
+}
+
+/* Prevent the global gold-ring animation from appearing on inner controls. */
+body:not(.bible-reading-mode) #introMusicPlayer .ipod-button::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+    background: none !important;
+    filter: none !important;
+}
+
+#introMusicPlayer .ipod-button {
+    position: absolute !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    /* Keep the icons clean: no individual circular rings */
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #4b3018 !important;
+    font: bold 15px Arial, sans-serif !important;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    cursor: pointer;
+}
+
+#introMusicPlayer .ipod-skip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    gap: 0;
+}
+
+#introMusicPlayer .ipod-skip-icon .skip-triangle {
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+}
+
+#introMusicPlayer .ipod-previous .skip-triangle {
+    border-right: 19px solid currentColor;
+}
+
+#introMusicPlayer .ipod-next .skip-triangle {
+    border-left: 19px solid currentColor;
+}
+
+#introMusicPlayer .ipod-skip-icon .skip-bar {
+    display: block;
+    flex: 0 0 2px;
+    height: 20px;
+    background: currentColor;
+}
+
+#introMusicPlayer .ipod-previous .skip-bar {
+    margin-left: 1px;
+    margin-right: 2px;
+}
+
+#introMusicPlayer .ipod-next .skip-bar {
+    margin-left: 2px;
+    margin-right: 1px;
+}
+
+#introMusicPlayer .ipod-previous {
+    top: 50% !important;
+    left: 4px !important;
+    transform: translateY(-50%) !important;
+}
+
+#introMusicPlayer .ipod-next {
+    top: 50% !important;
+    right: 4px !important;
+    transform: translateY(-50%) !important;
+}
+
+#introMusicPlayer .ipod-play {
+    bottom: 4px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+#introMusicPlayer .ipod-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 58px;
+    height: 58px;
+    transform: translate(-50%,-50%);
+    border: 1px solid #c7a85b;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f3e3bd, #e3c98d);
+    box-shadow: inset 0 1px 4px rgba(0,0,0,.12);
+    pointer-events: none;
+}
+
+#introMusicPlayer .ipod-button:active {
+    filter: brightness(.96);
+}
+
+/* Dark mode styling for the intro iPod player */
+body.dark-mode #introMusicPlayer .ipod-wheel {
+    background: #242326 !important;
+    border-color: rgba(255,255,255,.14) !important;
+    box-shadow: inset 0 2px 5px rgba(255,255,255,.04), 0 4px 16px rgba(0,0,0,.55) !important;
+}
+
+body.dark-mode #introMusicPlayer .ipod-button {
+    color: #f4d982 !important;
+}
+
+body.dark-mode #introMusicPlayer .ipod-center {
+    background: linear-gradient(145deg, #555358, #363539) !important;
+    border-color: rgba(255,255,255,.12) !important;
+    box-shadow: inset 0 1px 4px rgba(255,255,255,.04) !important;
+}
+
+/* Keep SWIPE UP inside the wheel at the 12 o'clock position. */
+#introMusicPlayer .ipod-swipe-instruction {
+    position: absolute;
+    left: 50%;
+    top: 8%;
+    transform: translate(-50%, -4px);
+    width: max-content;
+    max-width: 90%;
+    box-sizing: border-box;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: #4b3018;
+    font: 900 13px/1.05 Georgia, "Times New Roman", serif;
+    -webkit-text-stroke: 0.25px currentColor;
+    letter-spacing: 0;
+    white-space: normal;
+    text-align: center;
+    text-shadow: none;
+    box-shadow: none;
+    animation: none !important;
+    pointer-events: none;
+    z-index: 4;
+}
+
+@keyframes swipeHintPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+body.dark-mode #introMusicPlayer .ipod-swipe-instruction {
+    background: transparent;
+    border-color: transparent;
+    color: #f4d982;
+}
+
+@media (max-width: 450px) {
+    #introMusicPlayer.ipod-song-player {
+        width: 154px !important;
+        height: 154px !important;
+        min-width: 154px !important;
+        max-width: 154px !important;
+        bottom: 10px !important;
+    }
+}
 
 </style>
 </head>
@@ -7904,12 +8094,6 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
     class="page"
     style="display:block;">
 
-    <!-- SWIPE-UP NOTIFICATION -->
-<div id="jesusTimeSwipeHint" class="jesus-time-swipe-hint">
-    ☝ Swipe up to continue
-</div>
-
-
 
 <!-- DAILY PROMISE CARD -->
     <article class="daily-promise-card" aria-live="polite" aria-atomic="true">
@@ -8044,44 +8228,19 @@ body.dark-mode #gregorianCalendarPage .gregorian-picker-option.is-selected {
 
 </section>
 
-<!-- INTRO MUSIC PLAYER -->
-<div id="introMusicPlayer" class="speech-player" style="display: none;">
-
-    <div class="speech-player-controls">
-
-        <button
-            id="introMusicPreviousButton"
-            type="button"
-            title="Previous Track">
-            ◀◀
-        </button>
-
-        <button
-            id="introMusicPlayButton"
-            type="button"
-            title="Play">
-            ▶
-        </button>
-
-        <button
-            id="introMusicNextButton"
-            type="button"
-            title="Next Track">
-            ▶▶
-        </button>
-
+<!-- FRESH INTRO SONG PLAYER: iPOD WHEEL -->
+<div id="introMusicPlayer" class="ipod-song-player" style="display:none;">
+    <div class="ipod-wheel" role="group" aria-label="Intro music controls">
+        <div class="ipod-swipe-instruction" aria-hidden="true">Swipe<br>up</div>
+        <button id="introMusicPreviousButton" class="ipod-button ipod-previous"
+            type="button" title="Previous track" aria-label="Previous track"><span class="ipod-skip-icon" aria-hidden="true"><span class="skip-bar"></span><span class="skip-triangle"></span></span></button>
+        <button id="introMusicPlayButton" class="ipod-button ipod-play"
+            type="button" title="Play" aria-label="Play intro music"><span class="youtube-icon-play" aria-hidden="true"></span></button>
+        <button id="introMusicNextButton" class="ipod-button ipod-next"
+            type="button" title="Next track" aria-label="Next track"><span class="ipod-skip-icon" aria-hidden="true"><span class="skip-triangle"></span><span class="skip-bar"></span></span></button>
+        <span class="ipod-center" aria-hidden="true"></span>
     </div>
-
-    
-
-<audio id="introMusicAudio" preload="none">
-    <source src="./songs/045.mp3" type="audio/mpeg">
-    <source src="./songs/421.mp3" type="audio/mpeg">
-    <source src="./songs/620.mp3" type="audio/mpeg">
-</audio>
-
-
-
+    <audio id="introMusicAudio" preload="none"></audio>
 </div>
 
 
@@ -18502,139 +18661,84 @@ function setupIntroMusicPlayer() {
     const previousButton = document.getElementById("introMusicPreviousButton");
     const nextButton = document.getElementById("introMusicNextButton");
 
-    if (!player || !audio || !playButton ||
-        !previousButton || !nextButton) return;
-
+    if (!player || !audio || !playButton || !previousButton || !nextButton) return;
     if (player.dataset.handlersReady === "yes") return;
     player.dataset.handlersReady = "yes";
 
-    // Add every song filename here.
+    // Keep this list synchronized with the MP3 files in the songs/ folder.
     const tracks = [
         "./songs/045.mp3",
         "./songs/421.mp3",
-        "./songs/620.mp3"
-        // Example:
-        // ,"./songs/046.mp4"
-        // ,"./songs/047.mp4"
+        "./songs/620.mp3",
+        "./songs/011.mp3"
     ];
 
+    let remainingTracks = [];
     let history = [];
     let historyPosition = -1;
+    let currentTrackIndex = -1;
 
-    function chooseRandomTrack() {
-        if (tracks.length <= 1) return 0;
-
-        let index;
-        do {
-            index = Math.floor(Math.random() * tracks.length);
-        } while (index === history[historyPosition]);
-
-        return index;
+    function updatePlayButton(playing) {
+        const icon = playButton.querySelector("span");
+        if (icon) {
+            icon.classList.toggle("youtube-icon-pause", playing);
+            icon.classList.toggle("youtube-icon-play", !playing);
+        }
+        playButton.title = playing ? "Pause" : "Play";
+        playButton.setAttribute("aria-label", playing ? "Pause intro music" : "Play intro music");
     }
 
-    function updatePlayButton(isPlaying) {
-        playButton.textContent = isPlaying ? "⏸" : "▶";
-        playButton.title = isPlaying ? "Pause" : "Play";
-        playButton.setAttribute(
-            "aria-label",
-            isPlaying ? "Pause intro music" : "Play intro music"
-        );
-    }
-
-    async function playCurrentTrack() {
-        try {
-            // Start directly from the user's tap. Avoid a timer before retrying,
-            // because some mobile browsers may reject playback after that delay.
-            await audio.play();
-            updatePlayButton(true);
-            playButton.title = "Pause";
-            playButton.setAttribute("aria-label", "Pause intro music");
-            await requestIntroMusicWakeLock();
-            return;
-        } catch (firstError) {
-            console.warn("Music playback attempt failed; checking audio readiness:", firstError);
+    function shuffleTracks() {
+        const bag = tracks.map((_, index) => index);
+        for (let i = bag.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [bag[i], bag[j]] = [bag[j], bag[i]];
         }
 
-        try {
-            // If mobile suspended/unloaded the media resource, reload the same
-            // selected track and wait briefly for it to become playable.
-            if (audio.error || audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE || audio.readyState === HTMLMediaElement.HAVE_NOTHING) {
-                const savedTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
-                const currentSource = audio.currentSrc || audio.src;
-
-                if (currentSource) {
-                    audio.src = currentSource;
-                    audio.load();
-
-                    await new Promise((resolve, reject) => {
-                        let settled = false;
-                        const cleanup = () => {
-                            audio.removeEventListener("canplay", onReady);
-                            audio.removeEventListener("error", onError);
-                            clearTimeout(timeout);
-                        };
-                        const finish = (fn, value) => {
-                            if (settled) return;
-                            settled = true;
-                            cleanup();
-                            fn(value);
-                        };
-                        const onReady = () => finish(resolve);
-                        const onError = () => finish(reject, new Error("The selected song could not be loaded."));
-                        const timeout = setTimeout(() => finish(reject, new Error("Timed out waiting for the song to load.")), 5000);
-
-                        audio.addEventListener("canplay", onReady, { once: true });
-                        audio.addEventListener("error", onError, { once: true });
-                        if (audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) finish(resolve);
-                    });
-
-                    try {
-                        audio.currentTime = savedTime;
-                    } catch (_) {
-                        // Some mobile browsers do not allow seeking until more data arrives.
-                    }
-                }
-            }
-
-            // Retry immediately after readiness checks; don't add an arbitrary delay.
-            await audio.play();
-            updatePlayButton(true);
-            playButton.title = "Pause";
-            playButton.setAttribute("aria-label", "Pause intro music");
-            await requestIntroMusicWakeLock();
-        } catch (retryError) {
-            updatePlayButton(false);
-            playButton.title = "Tap to retry music";
-            playButton.setAttribute("aria-label", "Retry intro music");
-            await releaseIntroMusicWakeLock();
-            console.warn("Music could not resume. Tap Play to try again:", retryError);
+        // Avoid repeating the last song from the previous complete cycle first.
+        if (bag.length > 1 && bag[bag.length - 1] === currentTrackIndex) {
+            [bag[bag.length - 1], bag[bag.length - 2]] = [bag[bag.length - 2], bag[bag.length - 1]];
         }
+        remainingTracks = bag;
     }
 
     function loadTrack(index) {
+        currentTrackIndex = index;
         audio.src = tracks[index];
         audio.load();
     }
 
-    async function playRandomTrack() {
-        const index = chooseRandomTrack();
+    async function playCurrentTrack() {
+        try {
+            await audio.play();
+            updatePlayButton(true);
+            await requestIntroMusicWakeLock();
+        } catch (error) {
+            updatePlayButton(false);
+            await releaseIntroMusicWakeLock();
+            console.error("Intro music playback failed:", error);
+        }
+    }
 
-        // Forget any forward history when choosing a new random song.
+    async function playNextUnusedTrack() {
+        if (remainingTracks.length === 0) {
+            shuffleTracks();
+        }
+
+        const index = remainingTracks.pop();
         history = history.slice(0, historyPosition + 1);
         history.push(index);
         historyPosition = history.length - 1;
-
         loadTrack(index);
         await playCurrentTrack();
     }
 
     playButton.addEventListener("click", async function (event) {
         event.stopPropagation();
-
         if (audio.paused) {
-            // Start the first random song if none has been selected.
-            if (historyPosition === -1) {
-                await playRandomTrack();
+            if (currentTrackIndex === -1) {
+                shuffleTracks();
+                await playNextUnusedTrack();
             } else {
                 await playCurrentTrack();
             }
@@ -18647,39 +18751,34 @@ function setupIntroMusicPlayer() {
 
     previousButton.addEventListener("click", async function (event) {
         event.stopPropagation();
-
         if (historyPosition > 0) {
             historyPosition--;
             loadTrack(history[historyPosition]);
             await playCurrentTrack();
         } else if (historyPosition === 0) {
-            // At the beginning, restart the current song.
             audio.currentTime = 0;
             await playCurrentTrack();
         } else {
-            await playRandomTrack();
+            if (remainingTracks.length === 0) shuffleTracks();
+            await playNextUnusedTrack();
         }
     });
 
     nextButton.addEventListener("click", async function (event) {
         event.stopPropagation();
-        await playRandomTrack();
+        await playNextUnusedTrack();
     });
 
-    // When a song finishes, automatically play another random song.
     audio.addEventListener("ended", async function () {
-        await playRandomTrack();
+        await playNextUnusedTrack();
     });
 
     audio.addEventListener("pause", function () {
         updatePlayButton(false);
-        // A paused/idle song must never keep the screen awake.
-        releaseIntroMusicWakeLock();
     });
 
     updatePlayButton(false);
 }
-
 
 function startJesusTimeIntro() {
     const homePage = document.getElementById("homePage");
