@@ -5951,6 +5951,23 @@ body.dark-mode .speech-player-controls button {
     z-index: 10000;
 }
 
+
+/* Prevent the mobile tap/focus square on the intro music Play/Pause button.
+   Keep a visible focus indicator for keyboard navigation. */
+#introMusicPlayButton {
+    -webkit-tap-highlight-color: transparent;
+}
+
+#introMusicPlayButton:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+}
+
+#introMusicPlayButton:focus-visible {
+    outline: 2px solid #b8943d;
+    outline-offset: 3px;
+}
+
 /* =====================================
    CURRENT SPEAKING VERSE HIGHLIGHT
 ===================================== */
@@ -18600,6 +18617,8 @@ function setupIntroMusicPlayer() {
 
     audio.addEventListener("pause", function () {
         updatePlayButton(false);
+        // A paused/idle song must never keep the screen awake.
+        releaseIntroMusicWakeLock();
     });
 
     updatePlayButton(false);
@@ -20635,6 +20654,9 @@ function resetSpeechButton() {
         playButton.textContent = "▶";
     }
 
+    // Reset/stop means the reading player is idle; release its wake lock.
+    releaseBibleScreenAwake();
+
 }
 
 function getSpeechVoices() {
@@ -21292,6 +21314,42 @@ window.readDailyPromiseVerse = async function () {
     }
 })();
 
+
+
+/* =====================================================
+   SCREEN WAKE-LOCK LIFECYCLE SAFETY
+   Keep the screen awake only during active playback.
+===================================================== */
+document.addEventListener("visibilitychange", function () {
+    const introAudio = document.getElementById("introMusicAudio");
+    const introPlayer = document.getElementById("introMusicPlayer");
+
+    if (document.visibilityState === "hidden") {
+        // Browsers may release wake locks automatically in the background;
+        // clear our references and ensure idle playback doesn't retain one.
+        releaseIntroMusicWakeLock();
+        releaseBibleScreenAwake();
+        return;
+    }
+
+    // Re-acquire only when playback is genuinely active after returning.
+    if (
+        introAudio &&
+        !introAudio.paused &&
+        introPlayer &&
+        introPlayer.style.display !== "none"
+    ) {
+        requestIntroMusicWakeLock();
+    }
+
+    if (
+        bibleReaderOpen &&
+        !speechPaused &&
+        window.speechSynthesis.speaking
+    ) {
+        keepBibleScreenAwake();
+    }
+});
 
 
 /* =========================================
