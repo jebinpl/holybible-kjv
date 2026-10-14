@@ -18543,32 +18543,70 @@ function setupIntroMusicPlayer() {
 
     async function playCurrentTrack() {
         try {
-            // First attempt: reuse the already-loaded song. This is important
-            // on mobile when resuming after the screen has slept.
+            // Start directly from the user's tap. Avoid a timer before retrying,
+            // because some mobile browsers may reject playback after that delay.
             await audio.play();
             updatePlayButton(true);
+            playButton.title = "Pause";
+            playButton.setAttribute("aria-label", "Pause intro music");
             await requestIntroMusicWakeLock();
             return;
         } catch (firstError) {
-            // A brief mobile/network interruption can make the first play()
-            // attempt fail. Retry once without changing the selected filename.
-            console.warn("First music playback attempt failed; retrying:", firstError);
+            console.warn("Music playback attempt failed; checking audio readiness:", firstError);
         }
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 500));
-            await audio.play();
+            // If mobile suspended/unloaded the media resource, reload the same
+            // selected track and wait briefly for it to become playable.
+            if (audio.error || audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE || audio.readyState === HTMLMediaElement.HAVE_NOTHING) {
+                const savedTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+                const currentSource = audio.currentSrc || audio.src;
 
+                if (currentSource) {
+                    audio.src = currentSource;
+                    audio.load();
+
+                    await new Promise((resolve, reject) => {
+                        let settled = false;
+                        const cleanup = () => {
+                            audio.removeEventListener("canplay", onReady);
+                            audio.removeEventListener("error", onError);
+                            clearTimeout(timeout);
+                        };
+                        const finish = (fn, value) => {
+                            if (settled) return;
+                            settled = true;
+                            cleanup();
+                            fn(value);
+                        };
+                        const onReady = () => finish(resolve);
+                        const onError = () => finish(reject, new Error("The selected song could not be loaded."));
+                        const timeout = setTimeout(() => finish(reject, new Error("Timed out waiting for the song to load.")), 5000);
+
+                        audio.addEventListener("canplay", onReady, { once: true });
+                        audio.addEventListener("error", onError, { once: true });
+                        if (audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) finish(resolve);
+                    });
+
+                    try {
+                        audio.currentTime = savedTime;
+                    } catch (_) {
+                        // Some mobile browsers do not allow seeking until more data arrives.
+                    }
+                }
+            }
+
+            // Retry immediately after readiness checks; don't add an arbitrary delay.
+            await audio.play();
             updatePlayButton(true);
+            playButton.title = "Pause";
+            playButton.setAttribute("aria-label", "Pause intro music");
             await requestIntroMusicWakeLock();
         } catch (retryError) {
-            // Do not interrupt the user with a misleading filename alert.
-            // Leave the Play button available so the user can tap to retry.
             updatePlayButton(false);
             playButton.title = "Tap to retry music";
             playButton.setAttribute("aria-label", "Retry intro music");
             await releaseIntroMusicWakeLock();
-
             console.warn("Music could not resume. Tap Play to try again:", retryError);
         }
     }
