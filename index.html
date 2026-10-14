@@ -7193,14 +7193,14 @@ body.dark-mode .gregorian-month-controls select {
     }
 }
 
-/* Swipe-up instruction */
+/* Swipe-up instruction — stays above the music/audio player on all screens */
 .jesus-time-swipe-hint {
     display: none;
-    position: absolute;
+    position: fixed;
     left: 50%;
     bottom: 100px;
     transform: translateX(-50%);
-    z-index: 30;
+    z-index: 10001;
 
     padding: 12px 22px;
     border: 1px solid #d8b45b;
@@ -16839,7 +16839,7 @@ document.addEventListener("touchmove", function (event) {
 // OFFLINE BIBLE APP
 // =========================================================
 
-if ("serviceWorker" in navigator) {
+/*if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function () {
 
@@ -16863,7 +16863,7 @@ if ("serviceWorker" in navigator) {
 
     });
 
-}
+} */
 
 function headerBack() {
 
