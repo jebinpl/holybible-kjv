@@ -7918,6 +7918,54 @@ body.dark-mode #songsPage .songs-page-header .page-title {
     color: #76582e;
     font-size: 12px;
 }
+
+/* Animated equalizer marks the personal song currently playing */
+.song-library-playing-indicator {
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    width: 22px;
+    height: 18px;
+    flex: 0 0 22px;
+    margin-left: auto;
+    color: #16834a;
+}
+.song-library-row.is-playing .song-library-playing-indicator {
+    display: inline-flex;
+}
+.song-library-playing-indicator span {
+    display: block;
+    width: 3px;
+    height: 5px;
+    border-radius: 2px;
+    background: currentColor;
+    transform-origin: bottom;
+    animation: songEqualizer 650ms ease-in-out infinite alternate;
+}
+.song-library-playing-indicator span:nth-child(2) {
+    height: 12px;
+    animation-delay: 180ms;
+}
+.song-library-playing-indicator span:nth-child(3) {
+    height: 8px;
+    animation-delay: 320ms;
+}
+@keyframes songEqualizer {
+    from { transform: scaleY(.45); }
+    to { transform: scaleY(1); }
+}
+.song-library-row:not(.is-playing) .song-library-playing-indicator span {
+    animation-play-state: paused;
+}
+body.dark-mode .song-library-playing-indicator {
+    color: #65d995;
+}
+@media (prefers-reduced-motion: reduce) {
+    .song-library-playing-indicator span {
+        animation: none;
+    }
+}
 .song-library-row .song-library-button {
     flex: 0 0 auto;
     padding: 8px 11px;
@@ -19221,6 +19269,13 @@ function setupIntroMusicPlayer() {
     let historyPosition = -1;
     let currentTrackId = null;
     const personalObjectUrls = new Map();
+    let longPressSeekTimer = null;
+    let longPressSeekInterval = null;
+    let longPressTriggered = false;
+    let longPressPointerId = null;
+    const LONG_PRESS_DELAY_MS = 350;
+    const SEEK_STEP_SECONDS = 4;
+    const SEEK_REPEAT_MS = 250;
 
     function openSongsDatabase() {
         if (!("indexedDB" in window)) {
@@ -19379,6 +19434,7 @@ function setupIntroMusicPlayer() {
         const track = tracks.find(function (item) { return item.id === id; });
         if (!track) return false;
         currentTrackId = id;
+        updatePlayingSongIndicator();
         audio.src = track.src;
         audio.load();
         return true;
@@ -19393,6 +19449,7 @@ function setupIntroMusicPlayer() {
         try {
             await audio.play();
             updatePlayButton(true);
+            updatePlayingSongIndicator();
             if (!introMusicAppLocked) {
                 await requestIntroMusicWakeLock();
             } else {
@@ -19432,6 +19489,64 @@ function setupIntroMusicPlayer() {
         history.push(id);
         historyPosition = history.length - 1;
         await playCurrentTrack();
+    }
+
+    function updatePlayingSongIndicator() {
+        if (!libraryList) return;
+        const isPlaying = !audio.paused && !audio.ended;
+        libraryList.querySelectorAll(".song-library-row").forEach(function (row) {
+            const active = isPlaying && row.dataset.songId === currentTrackId;
+            row.classList.toggle("is-playing", active);
+            row.setAttribute("aria-current", active ? "true" : "false");
+        });
+    }
+
+    function clearLongPressSeek() {
+        if (longPressSeekTimer !== null) {
+            clearTimeout(longPressSeekTimer);
+            longPressSeekTimer = null;
+        }
+        if (longPressSeekInterval !== null) {
+            clearInterval(longPressSeekInterval);
+            longPressSeekInterval = null;
+        }
+        longPressPointerId = null;
+    }
+
+    function beginLongPressSeek(button, direction) {
+        button.addEventListener("pointerdown", function (event) {
+            if (event.button !== undefined && event.button !== 0) return;
+            clearLongPressSeek();
+            longPressTriggered = false;
+            longPressPointerId = event.pointerId;
+
+            longPressSeekTimer = setTimeout(function () {
+                longPressTriggered = true;
+                // Prevent a long press from also triggering the normal track skip.
+                longPressSeekInterval = setInterval(function () {
+                    if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+                    const nextTime = audio.currentTime + direction * SEEK_STEP_SECONDS;
+                    audio.currentTime = Math.max(0, Math.min(audio.duration, nextTime));
+                }, SEEK_REPEAT_MS);
+            }, LONG_PRESS_DELAY_MS);
+        });
+
+        function finishPointer(event) {
+            if (longPressPointerId !== null &&
+                event.pointerId !== undefined &&
+                event.pointerId !== longPressPointerId) return;
+            clearLongPressSeek();
+        }
+
+        button.addEventListener("pointerup", finishPointer);
+        button.addEventListener("pointercancel", finishPointer);
+        button.addEventListener("pointerleave", function (event) {
+            // Keep seeking if the finger moves outside the button while held.
+            if (event.pointerType === "mouse") finishPointer(event);
+        });
+        button.addEventListener("contextmenu", function (event) {
+            event.preventDefault();
+        });
     }
 
     function safeText(value) {
@@ -19513,11 +19628,13 @@ function setupIntroMusicPlayer() {
             savedSongs.forEach(function (song) {
                 const row = document.createElement("div");
                 row.className = "song-library-row";
+                row.dataset.songId = song.id;
                 row.innerHTML =
                     '<div class="song-library-info">' +
                         '<span class="song-library-name">' + safeText(song.name) + '</span>' +
                         '<span class="song-library-kind">Your MP3 · Saved on this device</span>' +
                     '</div>' +
+                    '<span class="song-library-playing-indicator" aria-label="Currently playing" title="Currently playing" role="img"><span></span><span></span><span></span></span>' +
                     '<button type="button" class="song-library-button secondary" data-action="play" data-id="' + safeText(song.id) + '">Play</button>' +
                     '<button type="button" class="song-library-button" data-action="delete-personal" data-id="' + safeText(song.id) + '">Remove</button>';
                 libraryList.appendChild(row);
@@ -19526,6 +19643,7 @@ function setupIntroMusicPlayer() {
             if (!libraryList.children.length) {
                 libraryList.innerHTML = '<p>Your personal playlist is empty. Use Add MP3 Songs to add your favorites. Default music is available separately.</p>';
             }
+            updatePlayingSongIndicator();
         } catch (error) {
             console.error("Could not render personal song library:", error);
             libraryStatus.textContent = "Local song storage is unavailable in this browser. Try a supported, up-to-date browser.";
@@ -19661,8 +19779,17 @@ function setupIntroMusicPlayer() {
         }
     });
 
+    // Short taps keep their existing Previous/Next behavior.
+    // Holding Previous/Next seeks backward/forward without changing tracks.
+    beginLongPressSeek(previousButton, -1);
+    beginLongPressSeek(nextButton, 1);
+
     previousButton.addEventListener("click", async function (event) {
         event.stopPropagation();
+        if (longPressTriggered) {
+            longPressTriggered = false;
+            return;
+        }
         await refreshTracks();
         if (historyPosition > 0) {
             historyPosition--;
@@ -19677,6 +19804,10 @@ function setupIntroMusicPlayer() {
 
     nextButton.addEventListener("click", async function (event) {
         event.stopPropagation();
+        if (longPressTriggered) {
+            longPressTriggered = false;
+            return;
+        }
         await playNextUnusedTrack();
     });
 
@@ -19696,10 +19827,13 @@ function setupIntroMusicPlayer() {
         await playNextUnusedTrack();
     });
 
+    audio.addEventListener("play", updatePlayingSongIndicator);
     audio.addEventListener("pause", function () {
         updatePlayButton(false);
+        updatePlayingSongIndicator();
         releaseIntroMusicWakeLock();
     });
+    audio.addEventListener("ended", updatePlayingSongIndicator);
 
     window.addEventListener("pagehide", function () {
         releaseIntroMusicWakeLock();
