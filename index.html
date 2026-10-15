@@ -18990,6 +18990,7 @@ function closeDailyReadingPopup(showJesusTime = false) {
 ===================================================== */
 
 let introMusicWakeLock = null;
+let introMusicWakeLockRequestId = 0;
 let introMusicAppLocked = false;
 let introMusicLockHintTimer = null;
 
@@ -19018,7 +19019,12 @@ function setIntroMusicAppLocked(locked) {
     }
 
     if (introMusicAppLocked) {
-        // Release the screen wake lock so the device may sleep, but do not pause audio.
+        // Locking must allow sleep without stopping the music.
+        releaseIntroMusicWakeLock();
+    } else if (shouldKeepIntroMusicScreenAwake()) {
+        // Unlocking during playback may keep the screen awake again.
+        requestIntroMusicWakeLock();
+    } else {
         releaseIntroMusicWakeLock();
     }
 }
@@ -19088,56 +19094,75 @@ document.addEventListener("dblclick", function (event) {
     event.stopPropagation();
 }, true);
 
-async function requestIntroMusicWakeLock() {
+function shouldKeepIntroMusicScreenAwake() {
     const audio = document.getElementById("introMusicAudio");
     const player = document.getElementById("introMusicPlayer");
-
-    // Keep the screen awake only while music is actively playing, unlocked,
-    // and the player is being used on Songs or during the Jesus Time intro.
-    if (introMusicAppLocked || !audio || audio.paused || !player || player.style.display === "none") {
-        await releaseIntroMusicWakeLock();
-        return;
-    }
-
     const songsPage = document.getElementById("songsPage");
     const homePage = document.getElementById("homePage");
-    const onSongsPage = songsPage && songsPage.style.display === "block";
-    const inJesusTimeIntro = homePage && homePage.classList.contains("jesus-time-intro");
-    if (!onSongsPage && !inJesusTimeIntro) {
+
+    const onSongsPage = Boolean(songsPage && songsPage.style.display === "block");
+    const inJesusTimeIntro = Boolean(homePage && homePage.classList.contains("jesus-time-intro"));
+
+    return Boolean(
+        !document.hidden &&
+        !introMusicAppLocked &&
+        audio && !audio.paused &&
+        player && player.style.display !== "none" &&
+        (onSongsPage || inJesusTimeIntro)
+    );
+}
+
+async function requestIntroMusicWakeLock() {
+    // Each new request invalidates any older request still waiting to finish.
+    const requestId = ++introMusicWakeLockRequestId;
+
+    if (!shouldKeepIntroMusicScreenAwake()) {
         await releaseIntroMusicWakeLock();
         return;
     }
 
     if (!("wakeLock" in navigator)) return;
 
+    // Do not create duplicate locks if one is already active.
+    if (introMusicWakeLock && !introMusicWakeLock.released) return;
+
     try {
         const requestedWakeLock = await navigator.wakeLock.request("screen");
 
-        // The user may have locked or paused the player while the request was pending.
-        if (introMusicAppLocked || audio.paused || player.style.display === "none") {
+        // Re-check every condition after the asynchronous request completes.
+        if (
+            requestId !== introMusicWakeLockRequestId ||
+            !shouldKeepIntroMusicScreenAwake()
+        ) {
             await requestedWakeLock.release();
             return;
         }
 
         introMusicWakeLock = requestedWakeLock;
-        introMusicWakeLock.addEventListener("release", function () {
-            introMusicWakeLock = null;
-        });
+        requestedWakeLock.addEventListener("release", function () {
+            // An old sentinel must not clear a newer active sentinel.
+            if (introMusicWakeLock === requestedWakeLock) {
+                introMusicWakeLock = null;
+            }
+        }, { once: true });
     } catch (error) {
         console.log("Intro screen wake lock unavailable:", error);
     }
 }
 
 async function releaseIntroMusicWakeLock() {
-    if (!introMusicWakeLock) return;
+    // Invalidate requests that have not yet completed, even if no lock exists yet.
+    introMusicWakeLockRequestId++;
+
+    const lockToRelease = introMusicWakeLock;
+    introMusicWakeLock = null;
+    if (!lockToRelease || lockToRelease.released) return;
 
     try {
-        await introMusicWakeLock.release();
+        await lockToRelease.release();
     } catch (error) {
         console.log("Intro wake lock release:", error);
     }
-
-    introMusicWakeLock = null;
 }
 
 function stopIntroMusic() {
@@ -19673,6 +19698,10 @@ function setupIntroMusicPlayer() {
 
     audio.addEventListener("pause", function () {
         updatePlayButton(false);
+        releaseIntroMusicWakeLock();
+    });
+
+    window.addEventListener("pagehide", function () {
         releaseIntroMusicWakeLock();
     });
 
