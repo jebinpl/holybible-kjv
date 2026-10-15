@@ -19117,6 +19117,41 @@ document.addEventListener("click", function (event) {
     }
 }, true);
 
+// Block press/hold handlers (including long-press seeking) during lock.
+// The lock button remains the only interactive control. Keep click events
+// available so tapping elsewhere can show the unlock hint above.
+function blockLockedPointerInteraction(event) {
+    if (!introMusicAppLocked) return;
+    const lockButton = event.target && event.target.closest
+        ? event.target.closest("#introMusicLockButton")
+        : null;
+    if (lockButton) return;
+
+    // Do not prevent the click itself; the click handler below uses it to
+    // display "Tap the lock to unlock the app".
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === "function") {
+        event.stopImmediatePropagation();
+    }
+}
+
+document.addEventListener("pointerdown", blockLockedPointerInteraction, true);
+document.addEventListener("pointerup", blockLockedPointerInteraction, true);
+document.addEventListener("pointermove", blockLockedPointerInteraction, true);
+document.addEventListener("pointercancel", blockLockedPointerInteraction, true);
+document.addEventListener("mousedown", blockLockedPointerInteraction, true);
+document.addEventListener("mouseup", blockLockedPointerInteraction, true);
+document.addEventListener("keydown", function (event) {
+    if (!introMusicAppLocked) return;
+    const lockButton = event.target && event.target.closest
+        ? event.target.closest("#introMusicLockButton")
+        : null;
+    if (lockButton) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
+}, true);
+
 // Prevent swipe gestures from dismissing the intro while the app is locked.
 document.addEventListener("touchstart", function (event) {
     if (!introMusicAppLocked) return;
