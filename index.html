@@ -7793,6 +7793,262 @@ body.dark-mode #introMusicPlayer .ipod-swipe-instruction {
     }
 }
 
+
+/* =========================================================
+   PERSONAL SONG LIBRARY + SONGS PAGE HEADER
+========================================================= */
+#songsPage .songs-page-header {
+    position: sticky;
+    top: 105px;
+    z-index: 900;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin: 0 0 16px;
+    padding: 10px 8px 12px;
+    background: linear-gradient(180deg, #fffdf5, #f5ecd5);
+    border-bottom: 2px solid #b8943d;
+    box-sizing: border-box;
+}
+#songsPage .songs-page-header .page-title {
+    grid-column: 2;
+    text-align: center;
+    white-space: nowrap;
+    font-size: clamp(17px, 4vw, 24px);
+    margin: 0;
+}
+#songsPage .songs-page-header .songs-action-button:first-child {
+    grid-column: 1;
+    justify-self: start;
+}
+#songsPage .songs-page-header .songs-action-button:last-of-type {
+    grid-column: 3;
+    justify-self: end;
+}
+.songs-action-button,
+.song-library-button {
+    border: 1px solid #b8943d;
+    border-radius: 22px;
+    padding: 9px 12px;
+    background: linear-gradient(135deg, #70451e, #3b210d);
+    color: #fff8dc;
+    font: bold 14px Georgia, "Times New Roman", serif;
+    cursor: pointer;
+    white-space: nowrap;
+}
+#songsPage .songs-container {
+    margin-top: 0;
+}
+#songsPage .songs-library-status {
+    margin-top: 0;
+}
+body.dark-mode #songsPage .songs-page-header {
+    background: linear-gradient(180deg, #2b2925, #202020);
+    border-bottom-color: #8a7135;
+}
+body.dark-mode #songsPage .songs-page-header .page-title {
+    color: #f4d982;
+}
+@media (max-width: 700px) {
+    #songsPage .songs-page-header {
+        top: 95px;
+        gap: 5px;
+        padding: 8px 4px 10px;
+    }
+    #songsPage .songs-action-button {
+        padding: 8px 9px;
+        font-size: 12px;
+    }
+}
+@media (max-width: 450px) {
+    #songsPage .songs-page-header {
+        top: 90px;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 3px;
+    }
+    #songsPage .songs-page-header .page-title {
+        font-size: 16px;
+        letter-spacing: 0;
+    }
+    #songsPage .songs-action-button {
+        padding: 7px 6px;
+        font-size: 10px;
+        border-radius: 16px;
+    }
+}
+.songs-action-button:active,
+.song-library-button:active {
+    transform: scale(.98);
+}
+.songs-library-status {
+    margin: 12px 0;
+    color: #76582e;
+    font-size: 14px;
+}
+.songs-library-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 14px;
+}
+.song-library-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #d7c28a;
+    border-radius: 10px;
+    background: rgba(255,255,255,.75);
+}
+.song-library-info {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.song-library-name {
+    display: block;
+    font-weight: bold;
+    color: #4b3018;
+}
+.song-library-kind {
+    display: block;
+    margin-top: 4px;
+    color: #76582e;
+    font-size: 12px;
+}
+.song-library-row .song-library-button {
+    flex: 0 0 auto;
+    padding: 8px 11px;
+    font-size: 13px;
+}
+.song-library-row .song-library-button.secondary {
+    background: linear-gradient(135deg, #f5ecd5, #ead9ad);
+    color: #4b3018;
+}
+.songs-storage-note {
+    margin-top: 18px !important;
+    font-size: 12px;
+    color: #76582e;
+}
+body.dark-mode .songs-library-status,
+body.dark-mode .songs-storage-note {
+    color: #e5d4a0;
+}
+body.dark-mode .song-library-row {
+    background: #252525;
+    border-color: #6d5b30;
+}
+body.dark-mode .song-library-name {
+    color: #f4d982;
+}
+body.dark-mode .song-library-kind {
+    color: #ddd0ae;
+}
+@media (max-width: 450px) {
+    .song-library-row {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+    .song-library-info {
+        flex-basis: calc(100% - 10px);
+    }
+    .song-library-row .song-library-button {
+        margin-top: 2px;
+    }
+}
+
+
+
+/* PERSONAL SONG DELETE CONFIRMATION DIALOG */
+.song-confirm-dialog {
+    width: min(90vw, 390px);
+    max-width: 390px;
+    box-sizing: border-box;
+    padding: 26px 24px 22px;
+    border: 1px solid rgba(184, 148, 61, 0.45);
+    border-radius: 18px;
+    background: var(--card-bg, #ffffff);
+    color: var(--text-color, #222222);
+    text-align: center;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+}
+
+.song-confirm-dialog::backdrop {
+    background: rgba(10, 15, 25, 0.62);
+    backdrop-filter: blur(3px);
+}
+
+.song-confirm-dialog .song-confirm-icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: rgba(220, 53, 69, 0.12);
+    color: #dc3545;
+    font-size: 26px;
+}
+
+.song-confirm-dialog h3 {
+    margin: 0 0 9px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.song-confirm-dialog .song-confirm-message {
+    margin: 0 0 22px;
+    font-size: 15px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    opacity: 0.88;
+}
+
+.song-confirm-dialog .song-confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.song-confirm-dialog .song-confirm-actions button {
+    min-width: 112px;
+    padding: 11px 18px;
+    border: 0;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.song-confirm-dialog .song-confirm-actions button:active {
+    transform: scale(0.97);
+}
+
+.song-confirm-dialog .song-confirm-cancel {
+    background: #e9edf2;
+    color: #263244;
+}
+
+.song-confirm-dialog .song-confirm-delete {
+    background: #dc3545;
+    color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .song-confirm-dialog {
+        background: #20242b;
+        color: #f5f5f5;
+    }
+    .song-confirm-dialog .song-confirm-cancel {
+        background: #373d47;
+        color: #f5f5f5;
+    }
+}
+
 </style>
 </head>
 
@@ -8676,23 +8932,25 @@ body.dark-mode #introMusicPlayer .ipod-swipe-instruction {
 ========================= -->
 <section id="songsPage" class="page">
 
-    <div class="sticky-page-header">
+    <div class="songs-page-header">
+        <button type="button" id="defaultSongsButton" class="songs-action-button"
+            onclick="openDefaultSongsIntro()">▶ Default Song</button>
         <h2 class="page-title">SONGS</h2>
-        <p class="page-subtitle">Listen to devotional music</p>
+        <button type="button" id="addLocalSongsButton" class="songs-action-button"
+            onclick="document.getElementById('localMp3FilesInput').click()">＋ Add MP3</button>
+        <input id="localMp3FilesInput" type="file" accept=".mp3,audio/mpeg"
+            multiple hidden>
     </div>
 
     <div class="settings-container songs-container">
-        <article class="about-card">
-            <h3>Music Player</h3>
-            <p>
-                Use the music controls at the bottom of the screen
-                to play, pause, or change songs.
-            </p>
-            <p>
-                Music can continue while you move between pages.
-                Use the Songs page whenever you want to listen.
-            </p>
-        </article>
+        <p id="songsLibraryStatus" class="songs-library-status" role="status" aria-live="polite">
+            Loading your music library…
+        </p>
+        <div id="songsLibraryList" class="songs-library-list"></div>
+        <p class="songs-storage-note">
+            Personal songs are stored on this device. Browser storage can be cleared by the
+            device owner or browser, so keep your original MP3 files as a backup.
+        </p>
     </div>
 
 </section>
@@ -14449,20 +14707,67 @@ function openSettingsPage() {
 ========================================================= */
 
 function openSongsPage() {
-    // The Songs button reuses the exact same Home intro experience that
-    // starts after the Daily Reading popup closes. It does not open a
-    // separate Songs page or start music automatically.
-    updateHomeHeader("home");
+    // The Songs page is the user's personal library only.
+    window.__holyBibleMusicMode = "personal";
+    updateHomeHeader("other");
+
+    const homePage = document.getElementById("homePage");
+    if (homePage) {
+        homePage.classList.remove(
+            "jesus-time-intro",
+            "jesus-intro-enter",
+            "jesus-swipe-finish"
+        );
+        homePage.style.removeProperty("--jesus-swipe-y");
+        homePage.dataset.jesusIntroReady = "no";
+        homePage.style.display = "none";
+    }
+
     hideGroupedPages();
 
     [
-        "bookPage",
-        "chapterPage",
-        "videoPage",
-        "searchPage",
-        "bibleTextSearchPage",
-        "offeringsPage",
-        "gregorianCalendarPage"
+        "bookPage", "chapterPage", "videoPage", "searchPage",
+        "bibleTextSearchPage", "offeringsPage", "gregorianCalendarPage",
+        "searchGroupPage", "bibleGroupPage", "settingsPage",
+        "favoritesPage", "treasureListPage", "verseTreasurePage"
+    ].forEach(function (id) {
+        const page = document.getElementById(id);
+        if (page) page.style.display = "none";
+    });
+
+    const songsPage = document.getElementById("songsPage");
+    if (songsPage) songsPage.style.display = "block";
+
+    const player = document.getElementById("introMusicPlayer");
+    if (player) player.style.display = "flex";
+
+    sessionStorage.setItem("page", "songs");
+    setupIntroMusicPlayer();
+
+    if (typeof window.__holyBibleSetMusicMode === "function") {
+        window.__holyBibleSetMusicMode("personal");
+    }
+
+    if (typeof window.__holyBibleRenderSongLibrary === "function") {
+        window.__holyBibleRenderSongLibrary();
+    }
+
+    updateTestamentNavigation();
+}
+
+/* Open the existing Jesus Time image intro and play only the GitHub default songs. */
+function openDefaultSongsIntro() {
+    window.__holyBibleMusicMode = "default";
+
+    const songsPage = document.getElementById("songsPage");
+    if (songsPage) songsPage.style.display = "none";
+
+    hideGroupedPages();
+    [
+        "bookPage", "chapterPage", "videoPage", "searchPage",
+        "bibleTextSearchPage", "offeringsPage", "gregorianCalendarPage",
+        "searchGroupPage", "bibleGroupPage", "settingsPage",
+        "favoritesPage", "treasureListPage", "verseTreasurePage"
     ].forEach(function (id) {
         const page = document.getElementById(id);
         if (page) page.style.display = "none";
@@ -14470,16 +14775,14 @@ function openSongsPage() {
 
     const homePage = document.getElementById("homePage");
     if (homePage) homePage.style.display = "block";
-
+    updateHomeHeader("home");
     sessionStorage.setItem("page", "home");
     updateTestamentNavigation();
-    rotateGalileeBackground();
 
-    // This handles the bottom-to-top image entrance, fade/rotation,
-    // player reveal, Play/Pause wake lock, and swipe-up dismissal.
+    setupIntroMusicPlayer();
     startJesusTimeIntro();
+    rotateGalileeBackground();
 }
-
 
 /* =========================================================
    SETTINGS DARK MODE
@@ -15206,9 +15509,17 @@ function backToBooks() {
  
 function goHome() {
 
+    window.__holyBibleMusicMode = "personal";
+
     if (bibleReaderOpen) {
         closeBibleReader();
     }
+
+    // Leaving Songs for Home must stop personal music and hide the player.
+    // The separate Jesus Time intro can start its default music again when requested.
+    stopIntroMusic();
+    const introPlayer = document.getElementById("introMusicPlayer");
+    if (introPlayer) introPlayer.style.display = "none";
 
     releaseBibleScreenAwake();
 
@@ -16586,6 +16897,7 @@ window.addEventListener("DOMContentLoaded", function () {
     if (savedPage === "songs") {
 
         document.getElementById("songsPage").style.display = "block";
+        window.__holyBibleMusicMode = "personal";
         setupIntroMusicPlayer();
 
         const player = document.getElementById("introMusicPlayer");
@@ -18777,12 +19089,37 @@ document.addEventListener("dblclick", function (event) {
 }, true);
 
 async function requestIntroMusicWakeLock() {
+    const audio = document.getElementById("introMusicAudio");
+    const player = document.getElementById("introMusicPlayer");
+
+    // Keep the screen awake only while music is actively playing, unlocked,
+    // and the player is being used on Songs or during the Jesus Time intro.
+    if (introMusicAppLocked || !audio || audio.paused || !player || player.style.display === "none") {
+        await releaseIntroMusicWakeLock();
+        return;
+    }
+
+    const songsPage = document.getElementById("songsPage");
+    const homePage = document.getElementById("homePage");
+    const onSongsPage = songsPage && songsPage.style.display === "block";
+    const inJesusTimeIntro = homePage && homePage.classList.contains("jesus-time-intro");
+    if (!onSongsPage && !inJesusTimeIntro) {
+        await releaseIntroMusicWakeLock();
+        return;
+    }
+
     if (!("wakeLock" in navigator)) return;
 
     try {
-        introMusicWakeLock =
-            await navigator.wakeLock.request("screen");
+        const requestedWakeLock = await navigator.wakeLock.request("screen");
 
+        // The user may have locked or paused the player while the request was pending.
+        if (introMusicAppLocked || audio.paused || player.style.display === "none") {
+            await requestedWakeLock.release();
+            return;
+        }
+
+        introMusicWakeLock = requestedWakeLock;
         introMusicWakeLock.addEventListener("release", function () {
             introMusicWakeLock = null;
         });
@@ -18830,24 +19167,164 @@ function setupIntroMusicPlayer() {
     const previousButton = document.getElementById("introMusicPreviousButton");
     const nextButton = document.getElementById("introMusicNextButton");
     const lockButton = document.getElementById("introMusicLockButton");
+    const fileInput = document.getElementById("localMp3FilesInput");
+    const libraryList = document.getElementById("songsLibraryList");
+    const libraryStatus = document.getElementById("songsLibraryStatus");
 
     if (!player || !audio || !playButton || !previousButton || !nextButton || !lockButton) return;
-    if (player.dataset.handlersReady === "yes") return;
+    if (player.dataset.handlersReady === "yes") {
+        // openSongsPage() renders the library after setupIntroMusicPlayer().
+        // Avoid a second concurrent render when returning to Songs from Home.
+        return;
+    }
     player.dataset.handlersReady = "yes";
 
-    // Keep this list synchronized with the MP3 files in the songs/ folder.
-    const tracks = [
-        "./songs/045.mp3",
-        "./songs/421.mp3",
-        "./songs/620.mp3",
-        "./songs/011.mp3",
-        "./songs/Akkaraykku.mp3"
+    const DEFAULT_TRACKS = [
+        { id: "default-045", name: "045.mp3", src: "./songs/045.mp3", kind: "default" },
+        { id: "default-421", name: "421.mp3", src: "./songs/421.mp3", kind: "default" },
+        { id: "default-620", name: "620.mp3", src: "./songs/620.mp3", kind: "default" },
+        { id: "default-011", name: "011.mp3", src: "./songs/011.mp3", kind: "default" },
+        { id: "default-akkaraykku", name: "Akkaraykku.mp3", src: "./songs/Akkaraykku.mp3", kind: "default" }
     ];
-
+    const DB_NAME = "HolyBibleKJVUserSongs";
+    const DB_STORE = "mp3Files";
+    let databasePromise = null;
+    let tracks = [];
     let remainingTracks = [];
     let history = [];
     let historyPosition = -1;
-    let currentTrackIndex = -1;
+    let currentTrackId = null;
+    const personalObjectUrls = new Map();
+
+    function openSongsDatabase() {
+        if (!("indexedDB" in window)) {
+            return Promise.reject(new Error("This browser does not support local song storage."));
+        }
+        if (databasePromise) return databasePromise;
+
+        databasePromise = new Promise(function (resolve, reject) {
+            const request = indexedDB.open(DB_NAME, 1);
+            request.onupgradeneeded = function () {
+                const db = request.result;
+                if (!db.objectStoreNames.contains(DB_STORE)) {
+                    db.createObjectStore(DB_STORE, { keyPath: "id" });
+                }
+            };
+            request.onsuccess = function () { resolve(request.result); };
+            request.onerror = function () { reject(request.error || new Error("Could not open song storage.")); };
+        });
+        return databasePromise;
+    }
+
+    async function getSavedSongs() {
+        const db = await openSongsDatabase();
+        const allSongs = await new Promise(function (resolve, reject) {
+            const request = db.transaction(DB_STORE, "readonly").objectStore(DB_STORE).getAll();
+            request.onsuccess = function () { resolve(request.result || []); };
+            request.onerror = function () { reject(request.error || new Error("Could not read saved songs.")); };
+        });
+
+        // Clean up duplicates saved by an earlier import, keeping the oldest copy.
+        const seen = new Map();
+        const duplicates = [];
+        allSongs.sort(function (a, b) {
+            return String(a.addedAt || "").localeCompare(String(b.addedAt || ""));
+        });
+
+        allSongs.forEach(function (song) {
+            const blob = song.blob;
+            const size = Number(song.size ?? (blob && blob.size) ?? 0);
+            const modified = Number(song.lastModified ?? (blob && blob.lastModified) ?? 0);
+            const key = String(song.name || "").trim().toLowerCase() + "|" + size + "|" + modified;
+            if (seen.has(key)) duplicates.push(song.id);
+            else seen.set(key, song);
+        });
+
+        if (duplicates.length) {
+            const tx = db.transaction(DB_STORE, "readwrite");
+            const store = tx.objectStore(DB_STORE);
+            duplicates.forEach(function (id) { store.delete(id); });
+            await new Promise(function (resolve, reject) {
+                tx.oncomplete = resolve;
+                tx.onerror = function () { reject(tx.error || new Error("Could not remove duplicate songs.")); };
+                tx.onabort = function () { reject(tx.error || new Error("Could not remove duplicate songs.")); };
+            });
+        }
+
+        return Array.from(seen.values());
+    }
+
+    async function saveSong(record) {
+        const db = await openSongsDatabase();
+        return new Promise(function (resolve, reject) {
+            const request = db.transaction(DB_STORE, "readwrite").objectStore(DB_STORE).put(record);
+            request.onsuccess = function () { resolve(); };
+            request.onerror = function () { reject(request.error || new Error("Could not save this MP3.")); };
+        });
+    }
+
+    async function deleteSong(id) {
+        const db = await openSongsDatabase();
+        return new Promise(function (resolve, reject) {
+            const request = db.transaction(DB_STORE, "readwrite").objectStore(DB_STORE).delete(id);
+            request.onsuccess = function () { resolve(); };
+            request.onerror = function () { reject(request.error || new Error("Could not remove this song.")); };
+        });
+    }
+
+    async function refreshTracks() {
+        const oldCurrentId = currentTrackId;
+        const savedSongs = await getSavedSongs();
+        const musicMode = window.__holyBibleMusicMode === "default" ? "default" : "personal";
+
+        // Keep the two libraries separate: personal uploads never mix with GitHub defaults.
+        tracks = musicMode === "default"
+            ? DEFAULT_TRACKS.map(function (track) { return { ...track }; })
+            : [];
+
+        const savedIds = new Set(savedSongs.map(function (song) { return song.id; }));
+        personalObjectUrls.forEach(function (url, id) {
+            if (!savedIds.has(id)) {
+                URL.revokeObjectURL(url);
+                personalObjectUrls.delete(id);
+            }
+        });
+
+        if (musicMode === "personal") {
+            savedSongs.forEach(function (song) {
+                let url = personalObjectUrls.get(song.id);
+                if (!url) {
+                    url = URL.createObjectURL(song.blob);
+                    personalObjectUrls.set(song.id, url);
+                }
+                tracks.push({
+                    id: song.id,
+                    name: song.name,
+                    src: url,
+                    kind: "personal"
+                });
+            });
+        }
+
+        remainingTracks = remainingTracks.filter(function (id) {
+            return tracks.some(function (track) { return track.id === id; });
+        });
+        history = history.filter(function (id) {
+            return tracks.some(function (track) { return track.id === id; });
+        });
+        historyPosition = Math.min(historyPosition, history.length - 1);
+
+        if (oldCurrentId && tracks.some(function (track) { return track.id === oldCurrentId; })) {
+            currentTrackId = oldCurrentId;
+        } else if (oldCurrentId) {
+            currentTrackId = null;
+            if (!audio.paused) {
+                audio.pause();
+                audio.removeAttribute("src");
+                audio.load();
+            }
+        }
+    }
 
     function updatePlayButton(playing) {
         const icon = playButton.querySelector("span");
@@ -18860,67 +19337,293 @@ function setupIntroMusicPlayer() {
     }
 
     function shuffleTracks() {
-        const bag = tracks.map((_, index) => index);
+        const bag = tracks.map(function (track) { return track.id; });
         for (let i = bag.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [bag[i], bag[j]] = [bag[j], bag[i]];
         }
-
-        // Avoid repeating the last song from the previous complete cycle first.
-        if (bag.length > 1 && bag[bag.length - 1] === currentTrackIndex) {
-            [bag[bag.length - 1], bag[bag.length - 2]] = [bag[bag.length - 2], bag[bag.length - 1]];
+        if (bag.length > 1 && bag[bag.length - 1] === currentTrackId) {
+            [bag[bag.length - 1], bag[bag.length - 2]] =
+                [bag[bag.length - 2], bag[bag.length - 1]];
         }
         remainingTracks = bag;
     }
 
-    function loadTrack(index) {
-        currentTrackIndex = index;
-        audio.src = tracks[index];
+    function loadTrack(id) {
+        const track = tracks.find(function (item) { return item.id === id; });
+        if (!track) return false;
+        currentTrackId = id;
+        audio.src = track.src;
         audio.load();
+        return true;
     }
 
     async function playCurrentTrack() {
+        if (!tracks.length || !currentTrackId) {
+            updatePlayButton(false);
+            if (libraryStatus) libraryStatus.textContent = "Add an MP3 or choose Default Songs to start listening.";
+            return;
+        }
         try {
             await audio.play();
             updatePlayButton(true);
-            await requestIntroMusicWakeLock();
+            if (!introMusicAppLocked) {
+                await requestIntroMusicWakeLock();
+            } else {
+                await releaseIntroMusicWakeLock();
+            }
         } catch (error) {
             updatePlayButton(false);
             await releaseIntroMusicWakeLock();
             console.error("Intro music playback failed:", error);
+            if (libraryStatus) libraryStatus.textContent = "Could not play this track. Check the file and try another song.";
         }
+    }
+
+    async function playTrackById(id) {
+        await refreshTracks();
+        if (!tracks.some(function (track) { return track.id === id; })) return;
+        history = history.slice(0, historyPosition + 1);
+        history.push(id);
+        historyPosition = history.length - 1;
+        remainingTracks = remainingTracks.filter(function (trackId) { return trackId !== id; });
+        if (loadTrack(id)) await playCurrentTrack();
     }
 
     async function playNextUnusedTrack() {
-        if (remainingTracks.length === 0) {
-            shuffleTracks();
+        await refreshTracks();
+        if (!tracks.length) {
+            currentTrackId = null;
+            audio.pause();
+            updatePlayButton(false);
+            if (libraryStatus) libraryStatus.textContent = "Your personal playlist is empty. Add an MP3 or choose Default Songs.";
+            return;
         }
-
-        const index = remainingTracks.pop();
+        if (remainingTracks.length === 0) shuffleTracks();
+        const id = remainingTracks.pop();
+        if (!id || !loadTrack(id)) return;
         history = history.slice(0, historyPosition + 1);
-        history.push(index);
+        history.push(id);
         historyPosition = history.length - 1;
-        loadTrack(index);
         await playCurrentTrack();
     }
 
-    lockButton.addEventListener("click", async function (event) {
-        event.preventDefault();
-        event.stopPropagation();
+    function safeText(value) {
+        return String(value).replace(/[&<>"']/g, function (character) {
+            return ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;",
+                '"': "&quot;", "'": "&#39;"
+            })[character];
+        });
+    }
 
-        if (introMusicAppLocked) {
-            setIntroMusicAppLocked(false);
-            if (!audio.paused) await requestIntroMusicWakeLock();
-        } else {
-            setIntroMusicAppLocked(true);
+    function confirmDeletePersonalSong(songName) {
+        return new Promise(function (resolve) {
+            const dialog = document.createElement("dialog");
+            dialog.className = "song-confirm-dialog";
+            dialog.setAttribute("aria-labelledby", "songDeleteDialogTitle");
+            dialog.setAttribute("aria-describedby", "songDeleteDialogMessage");
+
+            const icon = document.createElement("div");
+            icon.className = "song-confirm-icon";
+            icon.setAttribute("aria-hidden", "true");
+            icon.textContent = "♫";
+
+            const title = document.createElement("h3");
+            title.id = "songDeleteDialogTitle";
+            title.textContent = "Remove this song?";
+
+            const message = document.createElement("p");
+            message.className = "song-confirm-message";
+            message.id = "songDeleteDialogMessage";
+            message.textContent = '“' + songName + '” will be removed from this device.';
+
+            const actions = document.createElement("div");
+            actions.className = "song-confirm-actions";
+
+            const cancelButton = document.createElement("button");
+            cancelButton.type = "button";
+            cancelButton.className = "song-confirm-cancel";
+            cancelButton.textContent = "Cancel";
+            cancelButton.addEventListener("click", function () {
+                dialog.close("cancel");
+            });
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "song-confirm-delete";
+            deleteButton.textContent = "Remove";
+            deleteButton.addEventListener("click", function () {
+                dialog.close("delete");
+            });
+
+            actions.append(cancelButton, deleteButton);
+            dialog.append(icon, title, message, actions);
+            document.body.appendChild(dialog);
+            dialog.addEventListener("close", function () {
+                const confirmed = dialog.returnValue === "delete";
+                dialog.remove();
+                resolve(confirmed);
+            }, { once: true });
+            dialog.addEventListener("cancel", function () {
+                // Escape closes the dialog and safely cancels deletion.
+            });
+            dialog.showModal();
+            cancelButton.focus();
+        });
+    }
+
+    async function renderSongLibrary() {
+        if (!libraryList || !libraryStatus) return;
+        libraryList.innerHTML = "";
+        libraryStatus.textContent = "Loading your personal songs…";
+
+        try {
+            const savedSongs = await getSavedSongs();
+            libraryStatus.textContent = savedSongs.length === 1
+                ? "1 personal MP3 saved on this device."
+                : savedSongs.length + " personal MP3 song(s) saved on this device.";
+
+            savedSongs.forEach(function (song) {
+                const row = document.createElement("div");
+                row.className = "song-library-row";
+                row.innerHTML =
+                    '<div class="song-library-info">' +
+                        '<span class="song-library-name">' + safeText(song.name) + '</span>' +
+                        '<span class="song-library-kind">Your MP3 · Saved on this device</span>' +
+                    '</div>' +
+                    '<button type="button" class="song-library-button secondary" data-action="play" data-id="' + safeText(song.id) + '">Play</button>' +
+                    '<button type="button" class="song-library-button" data-action="delete-personal" data-id="' + safeText(song.id) + '">Remove</button>';
+                libraryList.appendChild(row);
+            });
+
+            if (!libraryList.children.length) {
+                libraryList.innerHTML = '<p>Your personal playlist is empty. Use Add MP3 Songs to add your favorites. Default music is available separately.</p>';
+            }
+        } catch (error) {
+            console.error("Could not render personal song library:", error);
+            libraryStatus.textContent = "Local song storage is unavailable in this browser. Try a supported, up-to-date browser.";
         }
-    });
+    }
+
+    window.__holyBibleRenderSongLibrary = renderSongLibrary;
+    window.__holyBiblePlaySong = playTrackById;
+    window.__holyBibleSetMusicMode = async function (mode) {
+        window.__holyBibleMusicMode = mode === "default" ? "default" : "personal";
+        await refreshTracks();
+    };
+    window.__holyBibleStartDefaultSongs = async function () {
+        window.__holyBibleMusicMode = "default";
+        await refreshTracks();
+        history = [];
+        historyPosition = -1;
+        remainingTracks = [];
+        currentTrackId = null;
+        await playNextUnusedTrack();
+    };
+
+    if (libraryList) {
+        libraryList.addEventListener("click", async function (event) {
+            const button = event.target.closest("button[data-action]");
+            if (!button) return;
+
+            const action = button.dataset.action;
+            const id = button.dataset.id;
+
+            try {
+                if (action === "play") {
+                    window.__holyBibleMusicMode = "personal";
+                    await playTrackById(id);
+                    return;
+                }
+
+                if (action === "delete-personal") {
+                    const song = (await getSavedSongs()).find(function (item) { return item.id === id; });
+                    if (!song) return;
+                    const confirmed = await confirmDeletePersonalSong(song.name);
+                    if (!confirmed) return;
+                    await deleteSong(id);
+                }
+
+                await refreshTracks();
+                await renderSongLibrary();
+            } catch (error) {
+                console.error("Song library action failed:", error);
+                libraryStatus.textContent = "Could not update the playlist. Please try again.";
+            }
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener("change", async function () {
+            const files = Array.from(fileInput.files || []);
+            if (!files.length) return;
+
+            const mp3Files = files.filter(function (file) {
+                return /\.mp3$/i.test(file.name) &&
+                    (!file.type || file.type === "audio/mpeg" || file.type === "audio/mp3");
+            });
+            const rejectedCount = files.length - mp3Files.length;
+
+            try {
+                if (mp3Files.length) {
+                    for (const file of mp3Files) {
+                        const existingSongs = await getSavedSongs();
+                        const alreadyAdded = existingSongs.some(function (song) {
+                            const blob = song.blob;
+                            const existingSize = Number(song.size ?? (blob && blob.size) ?? 0);
+                            const existingModified = Number(song.lastModified ?? (blob && blob.lastModified) ?? 0);
+                            return String(song.name || "").trim().toLowerCase() === file.name.trim().toLowerCase()
+                                && existingSize === file.size
+                                && existingModified === Number(file.lastModified || 0);
+                        });
+
+                        if (alreadyAdded) continue;
+
+                        const record = {
+                            id: "user-" + Date.now() + "-" + Math.random().toString(36).slice(2),
+                            name: file.name,
+                            size: file.size,
+                            lastModified: Number(file.lastModified || 0),
+                            blob: file,
+                            addedAt: new Date().toISOString()
+                        };
+                        await saveSong(record);
+                    }
+                }
+
+                await refreshTracks();
+                await renderSongLibrary();
+
+                if (rejectedCount && libraryStatus) {
+                    libraryStatus.textContent =
+                        rejectedCount + " file(s) skipped. Please select MP3 files only. " +
+                        libraryStatus.textContent;
+                } else if (libraryStatus) {
+                    libraryStatus.textContent = mp3Files.length +
+                        " MP3 song(s) added to this device. " + libraryStatus.textContent;
+                }
+            } catch (error) {
+                console.error("Could not save selected MP3 files:", error);
+                if (libraryStatus) {
+                    libraryStatus.textContent =
+                        "Could not save the selected MP3 files. Check available device storage and try again.";
+                }
+            } finally {
+                fileInput.value = "";
+            }
+        });
+    }
 
     playButton.addEventListener("click", async function (event) {
         event.stopPropagation();
         if (audio.paused) {
-            if (currentTrackIndex === -1) {
-                shuffleTracks();
+            await refreshTracks();
+            if (!tracks.length) {
+                if (libraryStatus) libraryStatus.textContent = "Add an MP3 or choose Default Songs to start listening.";
+                return;
+            }
+            if (!currentTrackId || !tracks.some(function (track) { return track.id === currentTrackId; })) {
                 await playNextUnusedTrack();
             } else {
                 await playCurrentTrack();
@@ -18934,15 +19637,14 @@ function setupIntroMusicPlayer() {
 
     previousButton.addEventListener("click", async function (event) {
         event.stopPropagation();
+        await refreshTracks();
         if (historyPosition > 0) {
             historyPosition--;
-            loadTrack(history[historyPosition]);
-            await playCurrentTrack();
-        } else if (historyPosition === 0) {
+            if (loadTrack(history[historyPosition])) await playCurrentTrack();
+        } else if (historyPosition === 0 && currentTrackId) {
             audio.currentTime = 0;
             await playCurrentTrack();
         } else {
-            if (remainingTracks.length === 0) shuffleTracks();
             await playNextUnusedTrack();
         }
     });
@@ -18950,6 +19652,18 @@ function setupIntroMusicPlayer() {
     nextButton.addEventListener("click", async function (event) {
         event.stopPropagation();
         await playNextUnusedTrack();
+    });
+
+    lockButton.addEventListener("click", async function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (introMusicAppLocked) {
+            setIntroMusicAppLocked(false);
+            if (!audio.paused) await requestIntroMusicWakeLock();
+        } else {
+            setIntroMusicAppLocked(true);
+        }
     });
 
     audio.addEventListener("ended", async function () {
@@ -18961,17 +19675,31 @@ function setupIntroMusicPlayer() {
         releaseIntroMusicWakeLock();
     });
 
-    // Reacquire the wake lock when returning to the visible page during playback.
     document.addEventListener("visibilitychange", function () {
         if (!document.hidden && !audio.paused && !introMusicAppLocked) {
             requestIntroMusicWakeLock();
+        } else {
+            releaseIntroMusicWakeLock();
         }
     });
+
+    refreshTracks()
+        .then(renderSongLibrary)
+        .catch(function (error) {
+            console.error("Could not initialize local songs:", error);
+            if (libraryStatus) {
+                libraryStatus.textContent =
+                    "Default songs can still be used, but local MP3 storage could not be opened.";
+            }
+        });
 
     updatePlayButton(false);
 }
 
 function startJesusTimeIntro() {
+    // The post-popup intro uses the GitHub default library, never personal uploads.
+    window.__holyBibleMusicMode = "default";
+
     const homePage = document.getElementById("homePage");
 
     if (!homePage || homePage.style.display !== "block") return;
@@ -18983,6 +19711,12 @@ if (introPlayer) {
 }
 
 setupIntroMusicPlayer();
+
+    // Prepare the default-song library for the intro, but do not autoplay.
+    // The user can start playback with the visible Play button.
+    if (typeof window.__holyBibleSetMusicMode === "function") {
+        window.__holyBibleSetMusicMode("default");
+    }
 
     // Reset the intro for a fresh entrance.
     homePage.classList.remove(
@@ -21686,9 +22420,12 @@ document.addEventListener("visibilitychange", function () {
         introAudio &&
         !introAudio.paused &&
         introPlayer &&
-        introPlayer.style.display !== "none"
+        introPlayer.style.display !== "none" &&
+        !introMusicAppLocked
     ) {
         requestIntroMusicWakeLock();
+    } else {
+        releaseIntroMusicWakeLock();
     }
 
     if (
