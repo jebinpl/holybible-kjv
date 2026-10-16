@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
-<title>Bible - King James Version</title>
+<title>Holy Bible - KJV</title>
+<meta name="application-name" content="Holy Bible - KJV">
+<meta name="apple-mobile-web-app-title" content="Holy Bible - KJV">
 <link rel="manifest" href="https://jebinpl.github.io/holybible-kjv/manifest.json">
 <meta name="theme-color" content="#fffdf5">
 <link rel="icon" type="image/png" href="logo.png">
@@ -19456,6 +19458,42 @@ function setupIntroMusicPlayer() {
         }
     }
 
+    // Publish the current song to the phone's native lock-screen media controls.
+    // This helps prevent the browser from displaying only the website domain.
+    function updateMediaSessionMetadata(track) {
+        if (!("mediaSession" in navigator) || typeof MediaMetadata === "undefined") return;
+
+        const rawName = track && track.name ? String(track.name) : "Holy Bible - KJV";
+        const title = rawName.replace(/\.(mp3|mpeg|mp4|m4a|wav|ogg|webm)$/i, "").trim() || "Holy Bible - KJV";
+
+        try {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: title,
+                artist: "Holy Bible - KJV",
+                album: "Holy Bible - KJV",
+                artwork: [
+                    {
+                        src: "https://jebinpl.github.io/holybible-kjv/logo.png",
+                        sizes: "512x512",
+                        type: "image/png"
+                    }
+                ]
+            });
+        } catch (error) {
+            console.warn("Could not update lock-screen song metadata:", error);
+        }
+    }
+
+    function updateMediaSessionPlaybackState() {
+        if (!("mediaSession" in navigator)) return;
+        try {
+            navigator.mediaSession.playbackState =
+                audio && !audio.paused && !audio.ended ? "playing" : "paused";
+        } catch (error) {
+            // Some browsers expose Media Session partially; playback should still work.
+        }
+    }
+
     function updatePlayButton(playing) {
         const icon = playButton.querySelector("span");
         if (icon) {
@@ -19483,6 +19521,7 @@ function setupIntroMusicPlayer() {
         const track = tracks.find(function (item) { return item.id === id; });
         if (!track) return false;
         currentTrackId = id;
+        updateMediaSessionMetadata(track);
         updatePlayingSongIndicator();
         audio.src = track.src;
         audio.load();
@@ -19498,6 +19537,7 @@ function setupIntroMusicPlayer() {
         try {
             await audio.play();
             updatePlayButton(true);
+            updateMediaSessionPlaybackState();
             updatePlayingSongIndicator();
             if (!introMusicAppLocked) {
                 await requestIntroMusicWakeLock();
@@ -19810,21 +19850,43 @@ function setupIntroMusicPlayer() {
 
     playButton.addEventListener("click", async function (event) {
         event.stopPropagation();
-        if (audio.paused) {
-            await refreshTracks();
-            if (!tracks.length) {
-                if (libraryStatus) libraryStatus.textContent = "Add an MP3 or choose Default Songs to start listening.";
-                return;
-            }
-            if (!currentTrackId || !tracks.some(function (track) { return track.id === currentTrackId; })) {
-                await playNextUnusedTrack();
-            } else {
-                await playCurrentTrack();
-            }
-        } else {
+
+        if (!audio.paused) {
             audio.pause();
             updatePlayButton(false);
+            updateMediaSessionPlaybackState();
             await releaseIntroMusicWakeLock();
+            return;
+        }
+
+        // IMPORTANT for iOS Safari and Android browsers:
+        // If a phone call interrupted playback, resume the already-loaded track
+        // immediately from this user tap. Do not await refreshTracks() first,
+        // because that asynchronous work can consume the browser's user-activation
+        // window and cause audio.play() to be rejected.
+        if (currentTrackId && tracks.some(function (track) {
+            return track.id === currentTrackId;
+        })) {
+            await playCurrentTrack();
+            return;
+        }
+
+        // Only refresh the library when there is no usable current track.
+        await refreshTracks();
+
+        if (!tracks.length) {
+            if (libraryStatus) {
+                libraryStatus.textContent = "Add an MP3 or choose Default Songs to start listening.";
+            }
+            return;
+        }
+
+        if (currentTrackId && tracks.some(function (track) {
+            return track.id === currentTrackId;
+        })) {
+            await playCurrentTrack();
+        } else {
+            await playNextUnusedTrack();
         }
     });
 
@@ -19876,13 +19938,85 @@ function setupIntroMusicPlayer() {
         await playNextUnusedTrack();
     });
 
-    audio.addEventListener("play", updatePlayingSongIndicator);
+    audio.addEventListener("play", function () {
+        updatePlayingSongIndicator();
+        updateMediaSessionPlaybackState();
+        if ("mediaSession" in navigator) {
+            try { navigator.mediaSession.playbackState = "playing"; } catch (error) {}
+        }
+    });
     audio.addEventListener("pause", function () {
         updatePlayButton(false);
         updatePlayingSongIndicator();
+        updateMediaSessionPlaybackState();
         releaseIntroMusicWakeLock();
     });
-    audio.addEventListener("ended", updatePlayingSongIndicator);
+    audio.addEventListener("ended", function () {
+        updatePlayingSongIndicator();
+        updateMediaSessionPlaybackState();
+    });
+
+    // Connect the lock-screen buttons to the existing player controls.
+    if ("mediaSession" in navigator) {
+        const mediaActions = {
+            play: async function () {
+                if (audio.paused) {
+                    if (!currentTrackId) {
+                        await refreshTracks();
+                        if (tracks.length) await playNextUnusedTrack();
+                    } else {
+                        await playCurrentTrack();
+                    }
+                }
+            },
+            pause: function () {
+                audio.pause();
+                updatePlayButton(false);
+                updateMediaSessionPlaybackState();
+                releaseIntroMusicWakeLock();
+            },
+            previoustrack: async function () {
+                await refreshTracks();
+                if (historyPosition > 0) {
+                    historyPosition--;
+                    if (loadTrack(history[historyPosition])) await playCurrentTrack();
+                } else if (historyPosition === 0 && currentTrackId) {
+                    audio.currentTime = 0;
+                    await playCurrentTrack();
+                } else {
+                    await playNextUnusedTrack();
+                }
+            },
+            nexttrack: async function () {
+                await playNextUnusedTrack();
+            },
+            seekbackward: function (details) {
+                const offset = details && Number.isFinite(details.seekOffset) ? details.seekOffset : 10;
+                if (Number.isFinite(audio.duration)) {
+                    audio.currentTime = Math.max(0, audio.currentTime - offset);
+                }
+            },
+            seekforward: function (details) {
+                const offset = details && Number.isFinite(details.seekOffset) ? details.seekOffset : 10;
+                if (Number.isFinite(audio.duration)) {
+                    audio.currentTime = Math.min(audio.duration, audio.currentTime + offset);
+                }
+            },
+            seekto: function (details) {
+                if (details && Number.isFinite(details.seekTime) && Number.isFinite(audio.duration)) {
+                    audio.currentTime = Math.max(0, Math.min(audio.duration, details.seekTime));
+                }
+            }
+        };
+
+        Object.keys(mediaActions).forEach(function (action) {
+            try {
+                navigator.mediaSession.setActionHandler(action, mediaActions[action]);
+            } catch (error) {
+                // Ignore actions unsupported by this browser or operating system.
+            }
+        });
+    }
 
     window.addEventListener("pagehide", function () {
         releaseIntroMusicWakeLock();
@@ -19907,6 +20041,7 @@ function setupIntroMusicPlayer() {
         });
 
     updatePlayButton(false);
+    updateMediaSessionPlaybackState();
 }
 
 function startJesusTimeIntro() {
