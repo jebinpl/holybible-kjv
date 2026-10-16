@@ -8987,8 +8987,8 @@ body.dark-mode .song-library-kind {
             onclick="openDefaultSongsIntro()">▶ Default Song</button>
         <h2 class="page-title">SONGS</h2>
         <button type="button" id="addLocalSongsButton" class="songs-action-button"
-            onclick="document.getElementById('localMp3FilesInput').click()">＋ Add MP3</button>
-        <input id="localMp3FilesInput" type="file" accept=".mp3,audio/mpeg"
+            onclick="window.__holyBibleAddLocalSongs && window.__holyBibleAddLocalSongs()">＋ Add Songs</button>
+        <input id="localMp3FilesInput" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac,.opus"
             multiple hidden>
     </div>
 
@@ -8998,8 +8998,8 @@ body.dark-mode .song-library-kind {
         </p>
         <div id="songsLibraryList" class="songs-library-list"></div>
         <p class="songs-storage-note">
-            Personal songs are stored on this device. Browser storage can be cleared by the
-            device owner or browser, so keep your original MP3 files as a backup.
+            IndexedDB stores only the file reference and small playlist details, never the audio file itself.
+            Other browsers may keep the selection only until the page is closed or reloaded. The original file must remain on your device.
         </p>
     </div>
 
@@ -19337,6 +19337,7 @@ function setupIntroMusicPlayer() {
         { id: "default-t384", name: "T384.mp3", src: "./songs/T384.mp3", kind: "default" },
         { id: "default-t433", name: "T433.mp3", src: "./songs/T433.mp3", kind: "default" },
         { id: "default-vana", name: "Vana.mp3", src: "./songs/Vana.mp3", kind: "default" },
+        { id: "default-m244", name: "M244.mp3", src: "./songs/M244.mp3", kind: "default" },
         { id: "default-laksholaksham", name: "Laksholaksham.mp3", src: "./songs/Laksholaksham.mp3", kind: "default" },
         { id: "default-akkaraykku", name: "Akkaraykku.mp3", src: "./songs/Akkaraykku.mp3", kind: "default" }
     ];
@@ -19349,6 +19350,8 @@ function setupIntroMusicPlayer() {
     let historyPosition = -1;
     let currentTrackId = null;
     const personalObjectUrls = new Map();
+    // Browsers without persistent file handles keep selected files only for this page session.
+    const sessionSongs = new Map();
     let longPressSeekTimer = null;
     let longPressSeekInterval = null;
     let longPressTriggered = false;
@@ -19436,30 +19439,46 @@ function setupIntroMusicPlayer() {
             request.onerror = function () { reject(request.error || new Error("Could not read saved songs.")); };
         });
 
-        // Clean up duplicates saved by an earlier import, keeping the oldest copy.
+        // Option B: keep only file handles and small metadata in IndexedDB.
+        // Older app versions saved audio Blobs here. Remove those audio bytes while
+        // preserving a small "needs relinking" entry so the user can select the
+        // original file again or remove the old playlist row.
         const seen = new Map();
         const duplicates = [];
+        const migrations = [];
         allSongs.sort(function (a, b) {
             return String(a.addedAt || "").localeCompare(String(b.addedAt || ""));
         });
 
         allSongs.forEach(function (song) {
-            const blob = song.blob;
-            const size = Number(song.size ?? (blob && blob.size) ?? 0);
-            const modified = Number(song.lastModified ?? (blob && blob.lastModified) ?? 0);
-            const key = String(song.name || "").trim().toLowerCase() + "|" + size + "|" + modified;
+            const hadBlob = song.blob instanceof Blob;
+            const size = Number(song.size ?? (hadBlob ? song.blob.size : 0) ?? 0);
+            const modified = Number(song.lastModified ?? (hadBlob ? song.blob.lastModified : 0) ?? 0);
+            const cleanRecord = {
+                id: song.id,
+                name: String(song.name || "Unknown song"),
+                size: size,
+                lastModified: modified,
+                addedAt: song.addedAt || new Date().toISOString(),
+                handle: song.handle || null,
+                needsRelink: Boolean(song.needsRelink || (hadBlob && !song.handle))
+            };
+            if (hadBlob) migrations.push(cleanRecord);
+
+            const key = cleanRecord.name.trim().toLowerCase() + "|" + size + "|" + modified;
             if (seen.has(key)) duplicates.push(song.id);
-            else seen.set(key, song);
+            else seen.set(key, cleanRecord);
         });
 
-        if (duplicates.length) {
+        if (migrations.length || duplicates.length) {
             const tx = db.transaction(DB_STORE, "readwrite");
             const store = tx.objectStore(DB_STORE);
+            migrations.forEach(function (record) { store.put(record); });
             duplicates.forEach(function (id) { store.delete(id); });
             await new Promise(function (resolve, reject) {
                 tx.oncomplete = resolve;
-                tx.onerror = function () { reject(tx.error || new Error("Could not remove duplicate songs.")); };
-                tx.onabort = function () { reject(tx.error || new Error("Could not remove duplicate songs.")); };
+                tx.onerror = function () { reject(tx.error || new Error("Could not update playlist references.")); };
+                tx.onabort = function () { reject(tx.error || new Error("Could not update playlist references.")); };
             });
         }
 
@@ -19489,31 +19508,84 @@ function setupIntroMusicPlayer() {
         const savedSongs = await getSavedSongs();
         const musicMode = window.__holyBibleMusicMode === "default" ? "default" : "personal";
 
-        // Keep the two libraries separate: personal uploads never mix with GitHub defaults.
         tracks = musicMode === "default"
             ? DEFAULT_TRACKS.map(function (track) { return { ...track }; })
             : [];
 
-        const savedIds = new Set(savedSongs.map(function (song) { return song.id; }));
+        const allPersonalIds = new Set(
+            savedSongs.map(function (song) { return song.id; })
+                .concat(Array.from(sessionSongs.keys()))
+        );
+
         personalObjectUrls.forEach(function (url, id) {
-            if (!savedIds.has(id)) {
+            if (!allPersonalIds.has(id)) {
                 URL.revokeObjectURL(url);
                 personalObjectUrls.delete(id);
             }
         });
 
         if (musicMode === "personal") {
-            savedSongs.forEach(function (song) {
-                let url = personalObjectUrls.get(song.id);
-                if (!url) {
-                    url = URL.createObjectURL(song.blob);
-                    personalObjectUrls.set(song.id, url);
+            for (const song of savedSongs) {
+                let file = null;
+                let missing = false;
+                let permissionRequired = false;
+
+                if (song.handle) {
+                    try {
+                        const permission = typeof song.handle.queryPermission === "function"
+                            ? await song.handle.queryPermission({ mode: "read" })
+                            : "granted";
+                        if (permission !== "granted") {
+                            permissionRequired = true;
+                        } else {
+                            file = await song.handle.getFile();
+                        }
+                    } catch (error) {
+                        missing = error && error.name === "NotFoundError";
+                        permissionRequired = !missing;
+                    }
+                } else if (song.needsRelink) {
+                    // Old audio copies are intentionally no longer played from browser storage.
+                    permissionRequired = true;
                 }
+
+                let url = personalObjectUrls.get(song.id);
+                if (file) {
+                    if (url) URL.revokeObjectURL(url);
+                    url = URL.createObjectURL(file);
+                    personalObjectUrls.set(song.id, url);
+                } else if (missing && url) {
+                    URL.revokeObjectURL(url);
+                    personalObjectUrls.delete(song.id);
+                    url = null;
+                } else if (permissionRequired) {
+                    url = null;
+                }
+
                 tracks.push({
                     id: song.id,
                     name: song.name,
+                    src: url || null,
+                    kind: "personal",
+                    missing: missing,
+                    permissionRequired: permissionRequired,
+                    needsRelink: Boolean(song.needsRelink),
+                    handle: song.handle || null
+                });
+            }
+
+            sessionSongs.forEach(function (entry, id) {
+                let url = personalObjectUrls.get(id);
+                if (!url) {
+                    url = URL.createObjectURL(entry.file);
+                    personalObjectUrls.set(id, url);
+                }
+                tracks.push({
+                    id: id,
+                    name: entry.name,
                     src: url,
-                    kind: "personal"
+                    kind: "session",
+                    sessionOnly: true
                 });
             });
         }
@@ -19600,6 +19672,14 @@ function setupIntroMusicPlayer() {
     function loadTrack(id) {
         const track = tracks.find(function (item) { return item.id === id; });
         if (!track) return false;
+        if (!track.src || track.missing || track.permissionRequired) {
+            if (libraryStatus) {
+                libraryStatus.textContent = track.missing
+                    ? 'The original file "' + track.name + '" was not found. Remove this playlist shortcut or add the file again.'
+                    : 'Permission is needed to open "' + track.name + '". Tap Play and allow access to the original file.';
+            }
+            return false;
+        }
         currentTrackId = id;
         updateMediaSessionMetadata(track);
         updatePlayingSongIndicator();
@@ -19842,27 +19922,53 @@ function setupIntroMusicPlayer() {
 
         try {
             const savedSongs = await getSavedSongs();
-            libraryStatus.textContent = savedSongs.length === 1
-                ? "1 personal MP3 saved on this device."
-                : savedSongs.length + " personal MP3 song(s) saved on this device.";
+            const allSongs = savedSongs.concat(Array.from(sessionSongs.values()).map(function (entry) {
+                return { id: entry.id, name: entry.name, sessionOnly: true, handle: null };
+            }));
+            libraryStatus.textContent = allSongs.length === 1
+                ? "1 song in your personal playlist."
+                : allSongs.length + " song(s) in your personal playlist.";
 
-            savedSongs.forEach(function (song) {
+            for (const song of allSongs) {
+                let kindLabel = song.handle
+                    ? "Shortcut to original file · no audio copy saved"
+                    : song.sessionOnly
+                        ? "Original file selected for this session only"
+                        : song.needsRelink
+                            ? "Old playlist entry · select the original file again"
+                            : "File reference unavailable · select the original file again";
+                let isMissing = false;
+                if (song.handle) {
+                    try {
+                        const permission = typeof song.handle.queryPermission === "function"
+                            ? await song.handle.queryPermission({ mode: "read" })
+                            : "granted";
+                        if (permission === "granted") await song.handle.getFile();
+                        else kindLabel = "Original file shortcut · permission needed when played";
+                    } catch (error) {
+                        isMissing = error && error.name === "NotFoundError";
+                        kindLabel = isMissing
+                            ? "Original file missing · shortcut no longer works"
+                            : "Original file unavailable · permission may be needed";
+                    }
+                }
+
                 const row = document.createElement("div");
                 row.className = "song-library-row";
                 row.dataset.songId = song.id;
                 row.innerHTML =
                     '<div class="song-library-info">' +
                         '<span class="song-library-name">' + safeText(song.name) + '</span>' +
-                        '<span class="song-library-kind">Your MP3 · Saved on this device</span>' +
+                        '<span class="song-library-kind">' + safeText(kindLabel) + '</span>' +
                     '</div>' +
                     '<span class="song-library-playing-indicator" aria-label="Currently playing" title="Currently playing" role="img"><span></span><span></span><span></span></span>' +
                     '<button type="button" class="song-library-button secondary" data-action="play" data-id="' + safeText(song.id) + '">Play</button>' +
-                    '<button type="button" class="song-library-button" data-action="delete-personal" data-id="' + safeText(song.id) + '">Remove</button>';
+                    '<button type="button" class="song-library-button" data-action="delete-personal" data-id="' + safeText(song.id) + '">' + (isMissing ? "Remove shortcut" : "Remove") + '</button>';
                 libraryList.appendChild(row);
-            });
+            }
 
             if (!libraryList.children.length) {
-                libraryList.innerHTML = '<p>Your personal playlist is empty. Use Add MP3 Songs to add your favorites. Default music is available separately.</p>';
+                libraryList.innerHTML = '<p>Your personal playlist is empty. Use Add Songs to link your favorite audio files. Default music is available separately.</p>';
             }
             updatePlayingSongIndicator();
         } catch (error) {
@@ -19898,16 +20004,68 @@ function setupIntroMusicPlayer() {
             try {
                 if (action === "play") {
                     window.__holyBibleMusicMode = "personal";
+                    await refreshTracks();
+                    let track = tracks.find(function (item) { return item.id === id; });
+
+                    if (track && track.handle && track.permissionRequired) {
+                        try {
+                            const permission = typeof track.handle.requestPermission === "function"
+                                ? await track.handle.requestPermission({ mode: "read" })
+                                : "granted";
+                            if (permission === "granted") {
+                                const file = await track.handle.getFile();
+                                const oldUrl = personalObjectUrls.get(id);
+                                if (oldUrl) URL.revokeObjectURL(oldUrl);
+                                const url = URL.createObjectURL(file);
+                                personalObjectUrls.set(id, url);
+                                track.src = url;
+                                track.permissionRequired = false;
+                            }
+                        } catch (error) {
+                            if (error && error.name === "NotFoundError") track.missing = true;
+                        }
+                    }
+
+                    if (track && (track.missing || !track.src)) {
+                        const song = (await getSavedSongs()).find(function (item) { return item.id === id; });
+                        if (track.missing && song) {
+                            const confirmed = await confirmDeletePersonalSong(song.name + " (original file missing). Remove this playlist shortcut?");
+                            if (confirmed) await deleteSong(id);
+                        } else if (track.sessionOnly) {
+                            libraryStatus.textContent = "This selected file is no longer available. Add it again.";
+                        } else if (track.needsRelink) {
+                            libraryStatus.textContent = "This entry came from an older version that stored an audio copy. That copy has been removed from app storage. Select the original song again to create a file shortcut, or remove this entry.";
+                        } else if (track.permissionRequired) {
+                            libraryStatus.textContent = "File access was not granted. Tap Play again and allow access, or remove the shortcut.";
+                        }
+                        await refreshTracks();
+                        await renderSongLibrary();
+                        return;
+                    }
+
                     await playTrackById(id);
                     return;
                 }
 
                 if (action === "delete-personal") {
                     const song = (await getSavedSongs()).find(function (item) { return item.id === id; });
-                    if (!song) return;
-                    const confirmed = await confirmDeletePersonalSong(song.name);
-                    if (!confirmed) return;
-                    await deleteSong(id);
+                    if (song) {
+                        const confirmed = await confirmDeletePersonalSong(song.name);
+                        if (!confirmed) return;
+                        await deleteSong(id);
+                    } else if (sessionSongs.has(id)) {
+                        const sessionSong = sessionSongs.get(id);
+                        const confirmed = await confirmDeletePersonalSong(sessionSong.name);
+                        if (!confirmed) return;
+                        sessionSongs.delete(id);
+                        const sessionUrl = personalObjectUrls.get(id);
+                        if (sessionUrl) {
+                            URL.revokeObjectURL(sessionUrl);
+                            personalObjectUrls.delete(id);
+                        }
+                    } else {
+                        return;
+                    }
                 }
 
                 await refreshTracks();
@@ -19919,60 +20077,108 @@ function setupIntroMusicPlayer() {
         });
     }
 
-    if (fileInput) {
-        fileInput.addEventListener("change", async function () {
-            const files = Array.from(fileInput.files || []);
-            if (!files.length) return;
+    async function addSessionFiles(files) {
+        const allFiles = Array.from(files || []);
+        const audioFiles = allFiles.filter(function (file) {
+            return /^audio\//i.test(file.type) ||
+                /\.(mp3|m4a|aac|wav|ogg|oga|flac|opus|weba|webm)$/i.test(file.name);
+        });
+        const rejectedCount = allFiles.length - audioFiles.length;
 
-            const mp3Files = files.filter(function (file) {
-                return /\.mp3$/i.test(file.name) &&
-                    (!file.type || file.type === "audio/mpeg" || file.type === "audio/mp3");
+        for (const file of audioFiles) {
+            const duplicate = Array.from(sessionSongs.values()).some(function (song) {
+                return song.name.toLowerCase() === file.name.toLowerCase() &&
+                    song.file.size === file.size &&
+                    Number(song.file.lastModified || 0) === Number(file.lastModified || 0);
             });
-            const rejectedCount = files.length - mp3Files.length;
+            if (duplicate) continue;
+            const id = "session-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+            sessionSongs.set(id, { id: id, name: file.name, file: file });
+        }
 
+        await refreshTracks();
+        await renderSongLibrary();
+        if (libraryStatus) {
+            libraryStatus.textContent =
+                (rejectedCount ? rejectedCount + " file(s) skipped. " : "") +
+                audioFiles.length + " audio file(s) selected without copying them into app storage. " +
+                "This browser cannot save a persistent file shortcut, so these selections last only until the page is closed or reloaded.";
+        }
+    }
+
+    window.__holyBibleAddLocalSongs = async function () {
+        if (typeof window.showOpenFilePicker === "function") {
             try {
-                if (mp3Files.length) {
-                    for (const file of mp3Files) {
-                        const existingSongs = await getSavedSongs();
-                        const alreadyAdded = existingSongs.some(function (song) {
-                            const blob = song.blob;
-                            const existingSize = Number(song.size ?? (blob && blob.size) ?? 0);
-                            const existingModified = Number(song.lastModified ?? (blob && blob.lastModified) ?? 0);
-                            return String(song.name || "").trim().toLowerCase() === file.name.trim().toLowerCase()
-                                && existingSize === file.size
-                                && existingModified === Number(file.lastModified || 0);
-                        });
+                const handles = await window.showOpenFilePicker({
+                    multiple: true,
+                    types: [{
+                        description: "Audio files",
+                        accept: {
+                            "audio/mpeg": [".mp3"],
+                            "audio/mp4": [".m4a", ".mp4"],
+                            "audio/aac": [".aac"],
+                            "audio/wav": [".wav"],
+                            "audio/ogg": [".ogg", ".oga", ".opus"],
+                            "audio/flac": [".flac"],
+                            "audio/webm": [".webm", ".weba"]
+                        }
+                    }]
+                });
 
-                        if (alreadyAdded) continue;
+                let addedCount = 0;
+                for (const handle of handles) {
+                    const file = await handle.getFile();
+                    const songs = await getSavedSongs();
+                    const matchingSong = songs.find(function (song) {
+                        return String(song.name || "").toLowerCase() === file.name.toLowerCase() &&
+                            Number(song.size || 0) === file.size &&
+                            Number(song.lastModified || 0) === Number(file.lastModified || 0);
+                    });
+                    if (matchingSong && matchingSong.handle) continue;
 
-                        const record = {
-                            id: "user-" + Date.now() + "-" + Math.random().toString(36).slice(2),
-                            name: file.name,
-                            size: file.size,
-                            lastModified: Number(file.lastModified || 0),
-                            blob: file,
-                            addedAt: new Date().toISOString()
-                        };
-                        await saveSong(record);
-                    }
+                    await saveSong({
+                        id: matchingSong ? matchingSong.id : "handle-" + Date.now() + "-" + Math.random().toString(36).slice(2),
+                        name: file.name,
+                        size: file.size,
+                        lastModified: Number(file.lastModified || 0),
+                        handle: handle,
+                        needsRelink: false,
+                        addedAt: matchingSong ? matchingSong.addedAt : new Date().toISOString()
+                    });
+                    addedCount++;
                 }
 
                 await refreshTracks();
                 await renderSongLibrary();
-
-                if (rejectedCount && libraryStatus) {
-                    libraryStatus.textContent =
-                        rejectedCount + " file(s) skipped. Please select MP3 files only. " +
-                        libraryStatus.textContent;
-                } else if (libraryStatus) {
-                    libraryStatus.textContent = mp3Files.length +
-                        " MP3 song(s) added to this device. " + libraryStatus.textContent;
+                if (libraryStatus) {
+                    libraryStatus.textContent = addedCount +
+                        " original file shortcut(s) added. The audio was not copied into app storage.";
                 }
             } catch (error) {
-                console.error("Could not save selected MP3 files:", error);
+                if (error && error.name === "AbortError") return;
+                console.error("Could not link original audio files:", error);
                 if (libraryStatus) {
                     libraryStatus.textContent =
-                        "Could not save the selected MP3 files. Check available device storage and try again.";
+                        "Could not save a reference to the selected file. Try again or use a browser that supports persistent file access.";
+                }
+            }
+            return;
+        }
+
+        // Fallback: use the original File object in memory only. No audio copy is saved.
+        if (fileInput) fileInput.click();
+    };
+
+    if (fileInput) {
+        fileInput.addEventListener("change", async function () {
+            const files = Array.from(fileInput.files || []);
+            if (!files.length) return;
+            try {
+                await addSessionFiles(files);
+            } catch (error) {
+                console.error("Could not use selected audio files:", error);
+                if (libraryStatus) {
+                    libraryStatus.textContent = "Could not open the selected audio files. Try selecting them again.";
                 }
             } finally {
                 fileInput.value = "";
