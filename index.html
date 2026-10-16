@@ -17634,6 +17634,35 @@ window.addEventListener("DOMContentLoaded", function () {
             "holyBibleSplashShown"
         ) === "yes";
 
+    // Phone calls can cause Android/iOS to discard a web app from memory.
+    // If music was playing just before the page was backgrounded, avoid
+    // showing the startup splash and daily-reading popup again on reload.
+    let recentMusicInterruption = false;
+    try {
+        const marker = JSON.parse(
+            localStorage.getItem("holyBibleMusicInterruption") || "null"
+        );
+        recentMusicInterruption = Boolean(
+            marker &&
+            Number.isFinite(marker.timestamp) &&
+            Date.now() - marker.timestamp >= 0 &&
+            Date.now() - marker.timestamp < 30 * 60 * 1000
+        );
+    } catch (error) {}
+
+    if (recentMusicInterruption) {
+        splash.style.display = "none";
+        const dailyPopup = document.getElementById("dailyReadingPopup");
+        if (dailyPopup) dailyPopup.style.display = "none";
+        sessionStorage.setItem("holyBibleSplashShown", "yes");
+
+        // Keep the app's previously selected page/header where session state survives.
+        updateHomeHeader(sessionStorage.getItem("page") || "home");
+
+        try { localStorage.removeItem("holyBibleMusicInterruption"); } catch (error) {}
+        return;
+    }
+
 
     /*
        Function to update header according
@@ -19327,6 +19356,57 @@ function setupIntroMusicPlayer() {
     const LONG_PRESS_DELAY_MS = 350;
     const SEEK_STEP_SECONDS = 4;
     const SEEK_REPEAT_MS = 250;
+    const MUSIC_RESUME_KEY = "holyBibleMusicResumeState";
+    const MUSIC_RESUME_MAX_AGE_MS = 30 * 60 * 1000;
+    let restoringMusicState = false;
+    let lastResumeSaveAt = 0;
+
+    function readMusicResumeState() {
+        try {
+            const state = JSON.parse(localStorage.getItem(MUSIC_RESUME_KEY) || "null");
+            if (!state || state.resumeWanted !== true ||
+                !Number.isFinite(state.timestamp) ||
+                Date.now() - state.timestamp < 0 ||
+                Date.now() - state.timestamp > MUSIC_RESUME_MAX_AGE_MS ||
+                typeof state.trackId !== "string" || !state.trackId) {
+                return null;
+            }
+            return state;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function saveMusicResumeState(force) {
+        if (!currentTrackId || !audio || audio.ended) return;
+        const now = Date.now();
+        if (!force && now - lastResumeSaveAt < 1500) return;
+        lastResumeSaveAt = now;
+
+        try {
+            localStorage.setItem(MUSIC_RESUME_KEY, JSON.stringify({
+                timestamp: now,
+                trackId: currentTrackId,
+                currentTime: Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
+                resumeWanted: true,
+                mode: window.__holyBibleMusicMode === "default" ? "default" : "personal",
+                page: sessionStorage.getItem("page") || "home"
+            }));
+        } catch (error) {
+            // Playback must continue even if browser storage is unavailable.
+        }
+    }
+
+    function clearMusicResumeState() {
+        try { localStorage.removeItem(MUSIC_RESUME_KEY); } catch (error) {}
+    }
+
+    // If a recent interruption state exists, prepare the same library before
+    // refreshTracks() runs, including user-imported MP3s stored in IndexedDB.
+    const initialResumeState = readMusicResumeState();
+    if (initialResumeState) {
+        window.__holyBibleMusicMode = initialResumeState.mode === "default" ? "default" : "personal";
+    }
 
     function openSongsDatabase() {
         if (!("indexedDB" in window)) {
@@ -19526,6 +19606,58 @@ function setupIntroMusicPlayer() {
         audio.src = track.src;
         audio.load();
         return true;
+    }
+
+    async function restoreInterruptedMusic() {
+        if (restoringMusicState) return;
+        const state = readMusicResumeState();
+        if (!state || !state.trackId || !tracks.some(function (track) {
+            return track.id === state.trackId;
+        })) return;
+
+        restoringMusicState = true;
+        try {
+            if (!loadTrack(state.trackId)) return;
+
+            const restorePosition = function () {
+                try {
+                    if (Number.isFinite(state.currentTime) && state.currentTime > 0) {
+                        const target = Number.isFinite(audio.duration)
+                            ? Math.min(state.currentTime, Math.max(0, audio.duration - 0.25))
+                            : state.currentTime;
+                        audio.currentTime = Math.max(0, target);
+                    }
+                } catch (error) {}
+            };
+
+            if (audio.readyState >= 1) {
+                restorePosition();
+            } else {
+                audio.addEventListener("loadedmetadata", restorePosition, { once: true });
+            }
+
+            updatePlayButton(false);
+            updateMediaSessionPlaybackState();
+
+            // Try to resume automatically after a reload. Mobile browsers may
+            // require a user tap; in that case the saved song and position remain.
+            try {
+                await audio.play();
+                clearMusicResumeState();
+                updatePlayButton(true);
+                updateMediaSessionPlaybackState();
+                updatePlayingSongIndicator();
+                if (!introMusicAppLocked) await requestIntroMusicWakeLock();
+            } catch (error) {
+                // Keep the saved position so the visible Play button can resume it.
+                if (libraryStatus) {
+                    libraryStatus.textContent = "Your song is ready to resume. Tap Play if your phone requires it.";
+                }
+                updatePlayButton(false);
+            }
+        } finally {
+            restoringMusicState = false;
+        }
     }
 
     async function playCurrentTrack() {
@@ -19852,6 +19984,7 @@ function setupIntroMusicPlayer() {
         event.stopPropagation();
 
         if (!audio.paused) {
+            clearMusicResumeState();
             audio.pause();
             updatePlayButton(false);
             updateMediaSessionPlaybackState();
@@ -19938,7 +20071,11 @@ function setupIntroMusicPlayer() {
         await playNextUnusedTrack();
     });
 
+    audio.addEventListener("timeupdate", function () {
+        if (!audio.paused && !audio.ended) saveMusicResumeState(false);
+    });
     audio.addEventListener("play", function () {
+        saveMusicResumeState(true);
         updatePlayingSongIndicator();
         updateMediaSessionPlaybackState();
         if ("mediaSession" in navigator) {
@@ -19970,6 +20107,7 @@ function setupIntroMusicPlayer() {
                 }
             },
             pause: function () {
+                clearMusicResumeState();
                 audio.pause();
                 updatePlayButton(false);
                 updateMediaSessionPlaybackState();
@@ -20019,19 +20157,104 @@ function setupIntroMusicPlayer() {
     }
 
     window.addEventListener("pagehide", function () {
+        if (audio && !audio.paused && !audio.ended) saveMusicResumeState(true);
+        // Save the startup-screen marker from the last known playback state,
+        // even if the phone call already paused the audio before pagehide fired.
+        try {
+            const resumeState = readMusicResumeState();
+            if (resumeState) {
+                localStorage.setItem("holyBibleMusicInterruption", JSON.stringify({
+                    timestamp: Date.now(),
+                    trackId: resumeState.trackId,
+                    currentTime: resumeState.currentTime || 0,
+                    page: resumeState.page || sessionStorage.getItem("page") || "home"
+                }));
+            }
+        } catch (error) {
+            // Storage may be unavailable; playback itself must remain unaffected.
+        }
         releaseIntroMusicWakeLock();
     });
 
-    document.addEventListener("visibilitychange", function () {
-        if (!document.hidden && !audio.paused && !introMusicAppLocked) {
-            requestIntroMusicWakeLock();
+    // Some phones return from a call through focus/pageshow rather than a
+    // visibilitychange event. These events provide another safe resume attempt.
+    async function resumeAfterSystemInterruption() {
+        if (document.hidden || !audio.paused || audio.ended) return;
+        const state = readMusicResumeState();
+        if (!state || !state.trackId) return;
+
+        if (currentTrackId === state.trackId && tracks.some(function (track) {
+            return track.id === state.trackId;
+        })) {
+            try {
+                if (Number.isFinite(state.currentTime) && state.currentTime >= 0) {
+                    audio.currentTime = state.currentTime;
+                }
+                await playCurrentTrack();
+            } catch (error) {}
         } else {
+            try {
+                await refreshTracks();
+                await restoreInterruptedMusic();
+            } catch (error) {}
+        }
+    }
+
+    window.addEventListener("focus", resumeAfterSystemInterruption);
+    window.addEventListener("pageshow", resumeAfterSystemInterruption);
+
+    document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+            // Use the last saved playback position even if the call already
+            // caused the browser to pause audio before this event was delivered.
+            try {
+                if (audio && !audio.paused && !audio.ended) saveMusicResumeState(true);
+                const resumeState = readMusicResumeState();
+                if (resumeState) {
+                    localStorage.setItem("holyBibleMusicInterruption", JSON.stringify({
+                        timestamp: Date.now(),
+                        trackId: resumeState.trackId,
+                        currentTime: resumeState.currentTime || 0,
+                        page: resumeState.page || sessionStorage.getItem("page") || "home"
+                    }));
+                }
+            } catch (error) {}
             releaseIntroMusicWakeLock();
+            return;
+        }
+
+        if (!audio.paused && !audio.ended) {
+            // Playback survived the interruption; keep its position current.
+            saveMusicResumeState(true);
+            try { localStorage.removeItem("holyBibleMusicInterruption"); } catch (error) {}
+            if (!introMusicAppLocked) requestIntroMusicWakeLock();
+        } else {
+            // A call may have paused the audio while the page was backgrounded.
+            // Resume the same track and position when the page returns.
+            releaseIntroMusicWakeLock();
+            const state = readMusicResumeState();
+            if (state && state.trackId) {
+                if (currentTrackId === state.trackId && tracks.some(function (track) {
+                    return track.id === state.trackId;
+                })) {
+                    try {
+                        if (Number.isFinite(state.currentTime) && state.currentTime >= 0) {
+                            audio.currentTime = state.currentTime;
+                        }
+                        playCurrentTrack();
+                    } catch (error) {}
+                } else {
+                    refreshTracks().then(restoreInterruptedMusic).catch(function () {});
+                }
+            }
         }
     });
 
     refreshTracks()
-        .then(renderSongLibrary)
+        .then(async function () {
+            await renderSongLibrary();
+            await restoreInterruptedMusic();
+        })
         .catch(function (error) {
             console.error("Could not initialize local songs:", error);
             if (libraryStatus) {
