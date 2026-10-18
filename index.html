@@ -8303,6 +8303,25 @@ body.dark-mode #introMusicPlayer .ipod-track-row[aria-selected="true"] {
     color: #ffffff !important;
 }
 
+
+
+/* Remove the global animated gold-ring effect ONLY from track buttons
+   inside the iPod display. Keep the playlist selection and equalizer. */
+#introMusicPlayer .ipod-display .ipod-track-row::before,
+#introMusicPlayer .ipod-display .ipod-track-row::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+    transition: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+#introMusicPlayer .ipod-display .ipod-track-row,
+#introMusicPlayer .ipod-display .ipod-track-row:active {
+    box-shadow: none !important;
+}
+
 </style>
 </head>
 
@@ -23497,7 +23516,8 @@ document.addEventListener("visibilitychange", function () {
 const galileeBackgrounds = [
     "./images/galilee-background.png",
     "./images/galilee-background-2.png",
-    "./images/galilee-background-3.png"
+    "./images/galilee-background-3.png",
+    "./images/crucifixion.png"
 ];
 
 // Preload the Galilee collection while the app is running so the next image
