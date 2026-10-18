@@ -8455,6 +8455,14 @@ body.dark-mode #songsPage .songs-header-back-button {
   #songsPage .songs-header-back-button { width: 29px; height: 30px; flex-basis: 29px; font-size: 24px; }
   #songsPage .songs-page-header #addLocalSongsButton { padding: 7px 5px; font-size: 10px; }
 }
+
+/* Mobile: lift the song category watermark away from the player */
+@media (max-width: 700px) {
+    #songsPage #songCategoryPlayerPanel .song-category-heading {
+        top: 45%;
+    }
+}
+
 </style>
 </head>
 
