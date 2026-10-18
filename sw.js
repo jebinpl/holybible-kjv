@@ -4,7 +4,7 @@
    Daily Promise, backgrounds, and fonts
 ===================================================== */
 
-const CACHE_NAME = "holy-bible-v117";
+const CACHE_NAME = "holy-bible-v118";
 
 /* =====================================================
    APP FILES
@@ -324,7 +324,7 @@ self.addEventListener("fetch", function (event) {
     
 if (
     requestURL.origin === self.location.origin &&
-    /\/songs\/[^/]+\.mp3$/i.test(requestURL.pathname)
+    /\/songs\/.*\.mp3$/i.test(requestURL.pathname)
 ) {
 
 
