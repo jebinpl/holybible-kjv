@@ -8309,7 +8309,7 @@ body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-heading::befor
     }
 
     #songsPage #songCategoryPlayerPanel .song-category-heading {
-        top: 50%;
+        top: calc(50% - 2mm);
         width: calc(100% - 20px);
         font-size: clamp(20px, 5vw, 30px);
         line-height: 1.35;
@@ -8329,7 +8329,7 @@ body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-heading::befor
     }
 
     #songsPage #songCategoryPlayerPanel .song-category-heading {
-        top: 48%;
+        top: calc(48% - 2mm);
         font-size: clamp(18px, 5.2vw, 24px);
         line-height: 1.4;
     }
@@ -8338,6 +8338,11 @@ body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-heading::befor
         font-size: clamp(64px, 20vw, 88px);
         margin-bottom: 12px;
     }
+}
+
+/* Hide the album/song filename; keep the flying notes during playback */
+#songsPage #songCategoryPlayerPanel .song-category-now-playing {
+    display: none !important;
 }
 
 /* Current album/song name and flying music notes appear only during playback */
@@ -22076,17 +22081,96 @@ function backToTreasureMenu() {
     updateTestamentNavigation();
 }
 
-// Block Android system back navigation
+/* =========================================================
+   ANDROID DEVICE BACK NAVIGATION
+   - Return through the app's previous pages.
+   - On Home, allow the Android/TWA host to handle Back normally
+     (so the app can go to the background instead of being trapped).
+========================================================= */
 (function () {
+    const PAGE_KEY = "page";
+    let currentPage = sessionStorage.getItem(PAGE_KEY) || "home";
+    let handlingPopState = false;
 
-    history.pushState(null, "", location.href);
+    // Keep browser history aligned with in-app page changes.
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+        if (this === sessionStorage && key === PAGE_KEY) {
+            const nextPage = String(value);
+            if (!handlingPopState && nextPage !== currentPage) {
+                history.pushState({ holyBiblePage: nextPage }, "", location.href);
+                currentPage = nextPage;
+            }
+        }
+        return originalSetItem.apply(this, arguments);
+    };
 
-    window.addEventListener("popstate", function () {
+    // Seed the current page without trapping Back on Home.
+    history.replaceState({ holyBiblePage: currentPage }, "", location.href);
 
-        history.pushState(null, "", location.href);
+    function returnToPreviousPage(page) {
+        // Use existing app navigation functions so each page is restored normally.
+        switch (page) {
+            case "chapters": {
+                const book = sessionStorage.getItem("book");
+                const testament = sessionStorage.getItem("testament");
+                if (book) {
+                    if (typeof showBooks === "function") showBooks(testament || "old");
+                } else if (typeof goHome === "function") goHome();
+                break;
+            }
+            case "books":
+                if (typeof goHome === "function") goHome();
+                break;
+            case "songs":
+                if (typeof goHome === "function") goHome();
+                break;
+            case "favorites":
+            case "verseTreasure":
+                if (typeof showFavorites === "function") showFavorites();
+                break;
+            case "treasureList":
+                if (typeof goHome === "function") goHome();
+                break;
+            case "videos":
+                if (typeof showChapters === "function") {
+                    const book = sessionStorage.getItem("book");
+                    const count = Number(sessionStorage.getItem("chapterCount") || 1);
+                    if (book) showChapters(book, count); else goHome();
+                }
+                break;
+            case "search":
+            case "searchGroup":
+            case "bibleGroup":
+            case "settings":
+            case "offerings":
+            case "gregorianCalendar":
+                if (typeof goHome === "function") goHome();
+                break;
+            default:
+                if (typeof goHome === "function") goHome();
+        }
+    }
 
+    window.addEventListener("popstate", function (event) {
+        const previousPage = event.state && event.state.holyBiblePage;
+        const visiblePage = sessionStorage.getItem(PAGE_KEY) || currentPage;
+
+        // At Home, do not push another history entry: let Android minimize/background
+        // the app normally, preserving the running task instead of restarting it.
+        if (visiblePage === "home" || (!previousPage && currentPage === "home")) {
+            currentPage = "home";
+            return;
+        }
+
+        handlingPopState = true;
+        try {
+            returnToPreviousPage(visiblePage);
+            currentPage = sessionStorage.getItem(PAGE_KEY) || "home";
+        } finally {
+            handlingPopState = false;
+        }
     });
-
 })();
 
 function chapterHeartClick() { 
