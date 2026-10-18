@@ -8099,6 +8099,210 @@ body.dark-mode .song-library-kind {
     }
 }
 
+
+/* =========================================================
+   iPOD CLASSIC BODY + PLAYLIST DISPLAY
+   Screen sits above the existing click-wheel. Track selection
+   uses the existing audio engine and respects the app lock.
+========================================================= */
+#introMusicPlayer.ipod-song-player {
+    width: 264px !important;
+    height: auto !important;
+    min-width: 264px !important;
+    max-width: 264px !important;
+    padding: 9px !important;
+    border-radius: 22px !important;
+    background: linear-gradient(145deg, #f9f9f7, #c9c9c5 48%, #eeeeeb) !important;
+    border: 1px solid #888985 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.32), inset 0 1px 2px #fff !important;
+    display: none;
+    flex-direction: column;
+    gap: 9px;
+    overflow: visible !important;
+}
+#introMusicPlayer .ipod-display {
+    width: 100%;
+    height: 128px;
+    min-height: 128px;
+    overflow: hidden;
+    border: 2px solid #44483e;
+    border-radius: 7px;
+    background: linear-gradient(180deg,#e8f0d7,#cbd8b4);
+    color: #17251a;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,.32);
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+}
+#introMusicPlayer .ipod-display-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 5px 7px 4px;
+    font: 800 9px/1 Arial,sans-serif;
+    letter-spacing: .45px;
+    background: rgba(65,88,52,.13);
+    border-bottom: 1px solid rgba(40,60,35,.25);
+}
+#introMusicPlayer .ipod-track-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding: 2px 3px;
+}
+#introMusicPlayer .ipod-track-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    min-height: 23px;
+    padding: 3px 5px;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: #24321f;
+    text-align: left;
+    font: 600 10px/1.2 Arial,sans-serif;
+    cursor: pointer;
+}
+#introMusicPlayer .ipod-track-row .ipod-track-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#introMusicPlayer .ipod-track-row.is-current {
+    color: #fff;
+    background: #405b35;
+}
+#introMusicPlayer .ipod-track-row:focus-visible {
+    outline: 2px solid #263f22;
+    outline-offset: -2px;
+}
+#introMusicPlayer .ipod-equalizer {
+    display: inline-flex;
+    align-items: end;
+    justify-content: center;
+    gap: 2px;
+    width: 14px;
+    height: 13px;
+    flex: 0 0 14px;
+    opacity: 0;
+}
+#introMusicPlayer .ipod-equalizer i {
+    display: block;
+    width: 3px;
+    height: 3px;
+    border-radius: 1px;
+    background: currentColor;
+}
+#introMusicPlayer .ipod-track-row.is-playing .ipod-equalizer { opacity: 1; }
+#introMusicPlayer .ipod-track-row.is-playing .ipod-equalizer i {
+    animation: ipodEq .55s ease-in-out infinite alternate;
+}
+#introMusicPlayer .ipod-track-row.is-playing .ipod-equalizer i:nth-child(2) { animation-delay: -.3s; }
+#introMusicPlayer .ipod-track-row.is-playing .ipod-equalizer i:nth-child(3) { animation-delay: -.15s; }
+@keyframes ipodEq {
+    from { height: 3px; }
+    to { height: 12px; }
+}
+#introMusicPlayer .ipod-now-playing {
+    min-height: 18px;
+    padding: 3px 7px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font: 700 9px/1.2 Arial,sans-serif;
+    border-top: 1px solid rgba(40,60,35,.22);
+}
+#introMusicPlayer .ipod-wheel {
+    width: 154px !important;
+    height: 154px !important;
+    flex: 0 0 154px;
+    align-self: center;
+}
+@media (max-width: 450px) {
+    #introMusicPlayer.ipod-song-player {
+        width: 244px !important;
+        min-width: 244px !important;
+        max-width: 244px !important;
+        padding: 8px !important;
+        bottom: 8px !important;
+    }
+    #introMusicPlayer .ipod-display { height: 116px; min-height: 116px; }
+    #introMusicPlayer .ipod-wheel {
+        width: 144px !important;
+        height: 144px !important;
+        flex-basis: 144px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    #introMusicPlayer .ipod-track-row.is-playing .ipod-equalizer i { animation: none; height: 7px; }
+}
+
+
+
+/* =========================================================
+   iPOD PLAYER — DARK MODE SPACE-GREY SKIN
+   Keeps the display dark while changing the wheel/body to
+   the metallic grey finish shown in the reference image.
+   Playback controls and JavaScript are unchanged.
+========================================================= */
+body.dark-mode #introMusicPlayer .ipod-wheel {
+    background:
+        linear-gradient(145deg, #858489 0%, #69686d 28%, #4b4a4f 62%, #68676c 100%) !important;
+    border-color: #99989d !important;
+    box-shadow:
+        inset 0 2px 5px rgba(255,255,255,.22),
+        inset 0 -3px 8px rgba(0,0,0,.24),
+        0 5px 16px rgba(0,0,0,.48) !important;
+}
+
+body.dark-mode #introMusicPlayer .ipod-button {
+    color: #f0f0f2 !important;
+}
+
+body.dark-mode #introMusicPlayer .ipod-center {
+    background: linear-gradient(145deg, #77767b 0%, #55545a 55%, #3e3d42 100%) !important;
+    border-color: rgba(220,220,225,.42) !important;
+    color: #f3f3f5 !important;
+    box-shadow:
+        inset 0 1px 4px rgba(255,255,255,.16),
+        0 1px 3px rgba(0,0,0,.22) !important;
+}
+
+body.dark-mode #introMusicPlayer .ipod-swipe-instruction {
+    color: #f5f5f6 !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,.35) !important;
+}
+
+/* Retain the black, glossy playlist display in Dark Mode. */
+body.dark-mode #introMusicPlayer .ipod-display {
+    background: linear-gradient(160deg, #252528 0%, #101012 72%, #050505 100%) !important;
+    border-color: #77767a !important;
+    color: #f3f3f4 !important;
+}
+
+body.dark-mode #introMusicPlayer .ipod-display-header,
+body.dark-mode #introMusicPlayer .ipod-now-playing {
+    color: #ededf0 !important;
+    border-color: rgba(220,220,225,.28) !important;
+}
+
+body.dark-mode #introMusicPlayer .ipod-track-row {
+    color: #ededf0 !important;
+}
+
+body.dark-mode #introMusicPlayer .ipod-track-row.active,
+body.dark-mode #introMusicPlayer .ipod-track-row[aria-selected="true"] {
+    background: #245f9f !important;
+    color: #ffffff !important;
+}
+
 </style>
 </head>
 
@@ -8591,6 +8795,11 @@ body.dark-mode .song-library-kind {
 
 <!-- FRESH INTRO SONG PLAYER: iPOD WHEEL -->
 <div id="introMusicPlayer" class="ipod-song-player" style="display:none;">
+    <div class="ipod-display" aria-label="Music playlist display">
+        <div class="ipod-display-header"><span>HOLY BIBLE - KJV</span><span id="ipodTrackCount">SONGS</span></div>
+        <div id="ipodTrackList" class="ipod-track-list" role="listbox" aria-label="Select a song"></div>
+        <div id="ipodNowPlaying" class="ipod-now-playing" aria-live="polite">Select a song to play</div>
+    </div>
     <div class="ipod-wheel" role="group" aria-label="Intro music controls">
         <div class="ipod-swipe-instruction" aria-hidden="true">Swipe<br>up</div>
         <button id="introMusicPreviousButton" class="ipod-button ipod-previous"
@@ -19608,6 +19817,7 @@ function setupIntroMusicPlayer() {
                 audio.load();
             }
         }
+        renderIpodDisplay();
     }
 
     // Publish the current song to the phone's native lock-screen media controls.
@@ -19793,13 +20003,77 @@ function setupIntroMusicPlayer() {
     }
 
     function updatePlayingSongIndicator() {
-        if (!libraryList) return;
         const isPlaying = !audio.paused && !audio.ended;
-        libraryList.querySelectorAll(".song-library-row").forEach(function (row) {
-            const active = isPlaying && row.dataset.songId === currentTrackId;
-            row.classList.toggle("is-playing", active);
-            row.setAttribute("aria-current", active ? "true" : "false");
+        if (libraryList) {
+            libraryList.querySelectorAll(".song-library-row").forEach(function (row) {
+                const active = isPlaying && row.dataset.songId === currentTrackId;
+                row.classList.toggle("is-playing", active);
+                row.setAttribute("aria-current", active ? "true" : "false");
+            });
+        }
+        renderIpodDisplay();
+    }
+
+    function renderIpodDisplay() {
+        const list = document.getElementById("ipodTrackList");
+        const count = document.getElementById("ipodTrackCount");
+        const nowPlaying = document.getElementById("ipodNowPlaying");
+        if (!list) return;
+
+        const wasAtBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 8;
+        list.innerHTML = "";
+        if (count) count.textContent = tracks.length + (tracks.length === 1 ? " SONG" : " SONGS");
+
+        if (!tracks.length) {
+            const empty = document.createElement("div");
+            empty.className = "ipod-track-row";
+            empty.textContent = "No songs in this playlist";
+            list.appendChild(empty);
+            if (nowPlaying) nowPlaying.textContent = "Add songs or choose Default Songs";
+            return;
+        }
+
+        tracks.forEach(function (track, index) {
+            const row = document.createElement("button");
+            row.type = "button";
+            row.className = "ipod-track-row";
+            row.setAttribute("role", "option");
+            row.dataset.trackId = track.id;
+            row.setAttribute("aria-selected", track.id === currentTrackId ? "true" : "false");
+            if (track.id === currentTrackId) row.classList.add("is-current");
+            if (track.id === currentTrackId && !audio.paused && !audio.ended) {
+                row.classList.add("is-playing");
+            }
+
+            const title = document.createElement("span");
+            title.className = "ipod-track-name";
+            title.textContent = (index + 1) + ". " + String(track.name || "Untitled song")
+                .replace(/\.(mp3|mpeg|mp4|m4a|wav|ogg|webm)$/i, "");
+            const eq = document.createElement("span");
+            eq.className = "ipod-equalizer";
+            eq.setAttribute("aria-hidden", "true");
+            for (let i = 0; i < 3; i++) eq.appendChild(document.createElement("i"));
+            row.append(title, eq);
+            row.addEventListener("click", function (event) {
+                event.stopPropagation();
+                if (introMusicAppLocked) return;
+                playTrackById(track.id);
+            });
+            list.appendChild(row);
         });
+
+        if (wasAtBottom) list.scrollTop = list.scrollHeight;
+        const current = tracks.find(function (track) { return track.id === currentTrackId; });
+        if (nowPlaying) {
+            nowPlaying.textContent = current
+                ? ((!audio.paused && !audio.ended ? "▶ PLAYING: " : "Ⅱ SELECTED: ") +
+                    String(current.name || "").replace(/\.(mp3|mpeg|mp4|m4a|wav|ogg|webm)$/i, ""))
+                : "Select a song to play";
+        }
+        const active = list.querySelector(".ipod-track-row.is-current");
+        if (active && active.scrollIntoView && !wasAtBottom) {
+            active.scrollIntoView({ block: "nearest" });
+        }
     }
 
     function clearLongPressSeek() {
