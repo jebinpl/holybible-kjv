@@ -7840,9 +7840,10 @@ body.dark-mode #introMusicPlayer .ipod-swipe-instruction {
     cursor: pointer;
     white-space: nowrap;
 }
-#songsPage .songs-container {
-    margin-top: 0;
-}
+#songsPage .songs-category-grid { margin: 0 auto 18px; max-width: 760px; }
+#songsPage .songs-category-grid .treasure-menu-button { min-height: 92px; }
+body.dark-mode #songsPage .songs-category-grid .treasure-menu-button { background: #292722; color: #f5e7bd; border-color: #8f7333; }
+#songsPage .songs-container { margin-top: 0; }
 #songsPage .songs-library-status {
     margin-top: 0;
 }
@@ -8246,82 +8247,214 @@ body.dark-mode .song-library-kind {
 
 
 
-/* =========================================================
-   iPOD PLAYER — DARK MODE SPACE-GREY SKIN
-   Keeps the display dark while changing the wheel/body to
-   the metallic grey finish shown in the reference image.
-   Playback controls and JavaScript are unchanged.
-========================================================= */
-body.dark-mode #introMusicPlayer .ipod-wheel {
-    background:
-        linear-gradient(145deg, #858489 0%, #69686d 28%, #4b4a4f 62%, #68676c 100%) !important;
-    border-color: #99989d !important;
-    box-shadow:
-        inset 0 2px 5px rgba(255,255,255,.22),
-        inset 0 -3px 8px rgba(0,0,0,.24),
-        0 5px 16px rgba(0,0,0,.48) !important;
+/* Song category watermark and centered Back to Songs controls */
+/* Center the category name as a bold, subtle watermark. */
+#songsPage #songCategoryPlayerPanel {
+  position: relative;
+  min-height: 390px;
+  overflow: hidden;
+}
+#songsPage #songCategoryPlayerPanel .song-category-heading {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 24px);
+  margin: 0;
+  z-index: 0;
+  text-align: center;
+  font-size: clamp(28px, 6vw, 48px);
+  line-height: 1.15;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(139, 105, 31, 0.16);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.12);
+  pointer-events: none;
+  overflow-wrap: anywhere;
+}
+body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-heading {
+  color: rgba(238, 198, 91, 0.16);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+}
+/* Large, subtle music note behind the centered category watermark. */
+#songsPage #songCategoryPlayerPanel .song-category-heading::before {
+  content: "♫";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(120px, 28vw, 230px);
+  line-height: 1;
+  font-weight: 900;
+  color: rgba(139, 105, 31, 0.13);
+  white-space: nowrap;
+  pointer-events: none;
+}
+body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-heading::before {
+  color: rgba(238, 198, 91, 0.13);
 }
 
-body.dark-mode #introMusicPlayer .ipod-button {
-    color: #f0f0f2 !important;
+/* Remove the traveling gold-ring animation from the music player and its track list only. */
+#introMusicPlayer .ipod-wheel::after,
+#introMusicPlayer button::after,
+#introMusicPlayer [role="button"]::after,
+#introMusicPlayer .ipod-track-row::after,
+#introMusicPlayer .ipod-track-row button::after {
+  content: none !important;
+  display: none !important;
+  animation: none !important;
+  background: none !important;
+  filter: none !important;
+  box-shadow: none !important;
 }
-
-body.dark-mode #introMusicPlayer .ipod-center {
-    background: linear-gradient(145deg, #77767b 0%, #55545a 55%, #3e3d42 100%) !important;
-    border-color: rgba(220,220,225,.42) !important;
-    color: #f3f3f5 !important;
-    box-shadow:
-        inset 0 1px 4px rgba(255,255,255,.16),
-        0 1px 3px rgba(0,0,0,.22) !important;
+/* Back to Songs sits at the top center on both category and user-song pages. */
+#songsPage #songCategoryPlayerPanel > .songs-back-button {
+  display: block;
+  position: relative;
+  z-index: 2;
+  margin: 0 auto 14px;
 }
-
-body.dark-mode #introMusicPlayer .ipod-swipe-instruction {
-    color: #f5f5f6 !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,.35) !important;
+#songsPage .users-songs-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
 }
-
-/* Retain the black, glossy playlist display in Dark Mode. */
-body.dark-mode #introMusicPlayer .ipod-display {
-    background: linear-gradient(160deg, #252528 0%, #101012 72%, #050505 100%) !important;
-    border-color: #77767a !important;
-    color: #f3f3f4 !important;
+#songsPage .users-songs-toolbar .songs-back-button {
+  order: 0;
+  align-self: center;
+  margin: 0 auto;
 }
-
-body.dark-mode #introMusicPlayer .ipod-display-header,
-body.dark-mode #introMusicPlayer .ipod-now-playing {
-    color: #ededf0 !important;
-    border-color: rgba(220,220,225,.28) !important;
+#songsPage .users-songs-toolbar .songs-library-status {
+  order: 1;
+  width: 100%;
+  text-align: center;
+  margin: 0;
 }
+</style>
 
-body.dark-mode #introMusicPlayer .ipod-track-row {
-    color: #ededf0 !important;
+
+<style id="songs-page-layout-refinement">
+#songsPage .songs-page-header { top: 105px; }
+#songsPage .songs-category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 0 16px;
+    box-sizing: border-box;
 }
-
-body.dark-mode #introMusicPlayer .ipod-track-row.active,
-body.dark-mode #introMusicPlayer .ipod-track-row[aria-selected="true"] {
-    background: #245f9f !important;
-    color: #ffffff !important;
+#songsPage .songs-category-grid .treasure-menu-button {
+    min-height: 92px;
+    width: 100%;
+    box-sizing: border-box;
 }
-
-
-
-/* Remove the global animated gold-ring effect ONLY from track buttons
-   inside the iPod display. Keep the playlist selection and equalizer. */
-#introMusicPlayer .ipod-display .ipod-track-row::before,
-#introMusicPlayer .ipod-display .ipod-track-row::after {
-    content: none !important;
-    display: none !important;
-    animation: none !important;
-    transition: none !important;
-    background: none !important;
-    box-shadow: none !important;
-    filter: none !important;
+#songsPage .songs-category-grid .treasure-menu-button:last-child {
+    grid-column: 1 / -1;
 }
-#introMusicPlayer .ipod-display .ipod-track-row,
-#introMusicPlayer .ipod-display .ipod-track-row:active {
-    box-shadow: none !important;
+#songsPage .songs-container {
+    margin: 0 16px 190px;
+    padding: 14px;
+    border-radius: 12px;
 }
+#songsPage .songs-library-list { margin-top: 10px; }
+#songsPage .songs-page-header #addLocalSongsButton { grid-column: 3; justify-self: end; }
+#introMusicPlayer.ipod-song-player { z-index: 10001 !important; }
+@media (max-width: 450px) {
+    #songsPage .songs-page-header { grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); }
+    #songsPage .songs-action-button { font-size: 10px; padding: 7px 6px; }
+    #songsPage .songs-category-grid { gap: 10px; padding: 0 12px; }
+    #songsPage .songs-category-grid .treasure-menu-button { min-height: 86px; }
+}
+</style>
+<style id="song-category-player-navigation">
+#songsPage .songs-back-button{border:1px solid #bd8b18;border-radius:9px;background:#fff8e7;color:#35200e;padding:9px 13px;font-weight:700;cursor:pointer}
+body.dark-mode #songsPage .songs-back-button{background:#342719;color:#fff0c5;border-color:#a88739}
+#songsPage .song-category-heading{text-align:center;margin:12px 0 16px}
+#songsPage .users-songs-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+#songsPage #songCategoryPlayerPanel{margin-bottom:24px}
+#songsPage #songCategoryPlayerMount{min-height:280px;display:flex;justify-content:center;align-items:flex-start;overflow:visible}
+#songsPage #introMusicPlayer.ipod-song-player{position:fixed!important;left:50%!important;bottom:12px!important;top:auto!important;transform:translateX(-50%)!important;margin:0!important;z-index:10001!important}
+#songsPage #songCategoryPlayerMount{display:none!important}
+@media(max-width:450px){#songsPage #introMusicPlayer.ipod-song-player{bottom:max(12px,env(safe-area-inset-bottom))!important}}
+</style>
+<style id="song-player-fixed-footer-final">
+#introMusicPlayer.ipod-song-player,
+#songsPage #introMusicPlayer.ipod-song-player {
+ position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:max(12px,env(safe-area-inset-bottom))!important;
+ transform:translateX(-50%)!important;margin:0!important;z-index:10001!important;
+}
+#songsPage #songCategoryPlayerMount { display:none!important; }
 
+/* Header arrangement: [Default Song]       SONGS       [Back] [Add Song] */
+#songsPage .songs-page-header {
+  position: sticky;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 54px;
+}
+#songsPage .songs-page-header #defaultSongsButton {
+  flex: 0 0 auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 1;
+}
+#songsPage .songs-page-header #songsPageTitle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: max-content;
+  max-width: 34%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 0;
+}
+#songsPage .songs-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
+}
+#songsPage .songs-header-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  padding: 0;
+  border: 1px solid #bd8b18;
+  border-radius: 9px;
+  background: #fff8e7;
+  color: #35200e;
+  font: bold 27px/1 Georgia, serif;
+  cursor: pointer;
+}
+body.dark-mode #songsPage .songs-header-back-button {
+  background: #342719;
+  color: #fff0c5;
+  border-color: #a88739;
+}
+#songsPage #songCategoryPlayerPanel > .songs-back-button,
+#songsPage .users-songs-toolbar .songs-back-button { display: none !important; }
+#songsPage .users-songs-toolbar { align-items: center; }
+@media (max-width: 450px) {
+  #songsPage .songs-page-header { gap: 4px; padding-left: 4px; padding-right: 4px; }
+  #songsPage .songs-page-header #defaultSongsButton { padding: 7px 6px; font-size: 10px; }
+  #songsPage .songs-page-header #songsPageTitle { font-size: 15px; max-width: 29%; }
+  #songsPage .songs-header-actions { gap: 3px; }
+  #songsPage .songs-header-back-button { width: 29px; height: 30px; flex-basis: 29px; font-size: 24px; }
+  #songsPage .songs-page-header #addLocalSongsButton { padding: 7px 5px; font-size: 10px; }
+}
 </style>
 </head>
 
@@ -9209,28 +9342,35 @@ body.dark-mode #introMusicPlayer .ipod-track-row[aria-selected="true"] {
      SONGS PAGE
 ========================= -->
 <section id="songsPage" class="page">
-
     <div class="songs-page-header">
-        <button type="button" id="defaultSongsButton" class="songs-action-button"
-            onclick="openDefaultSongsIntro()">▶ Default Song</button>
-        <h2 class="page-title">SONGS</h2>
-        <button type="button" id="addLocalSongsButton" class="songs-action-button"
-            onclick="window.__holyBibleAddLocalSongs && window.__holyBibleAddLocalSongs()">＋ Add Songs</button>
-        <input id="localMp3FilesInput" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac,.opus"
-            multiple hidden>
+        <button type="button" id="defaultSongsButton" class="songs-action-button" onclick="playAllSongCategories()">▶ Default Song</button>
+        <h2 class="page-title" id="songsPageTitle">SONGS</h2>
+        <div class="songs-header-actions">
+            <button type="button" id="songsHeaderBackButton" class="songs-header-back-button" style="display:none" onclick="showSongCategories()" aria-label="Back to song categories" title="Back to Songs">‹</button>
+            <button type="button" id="addLocalSongsButton" class="songs-action-button" style="display:none" onclick="window.__holyBibleAddLocalSongs && window.__holyBibleAddLocalSongs()">＋ Add Song</button>
+        </div>
+        <input id="localMp3FilesInput" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac,.opus" multiple hidden>
     </div>
-
-    <div class="settings-container songs-container">
-        <p id="songsLibraryStatus" class="songs-library-status" role="status" aria-live="polite">
-            Loading your music library…
-        </p>
+    <div id="songCategoryMenu" class="treasure-menu-grid songs-category-grid">
+        <button type="button" class="treasure-menu-button" onclick="openSongCategory('tamil')"><span class="treasure-menu-icon">🎵</span><span class="treasure-menu-title">TPM Tamil</span></button>
+        <button type="button" class="treasure-menu-button" onclick="openSongCategory('malayalam')"><span class="treasure-menu-icon">🎶</span><span class="treasure-menu-title">TPM Malayalam</span></button>
+        <button type="button" class="treasure-menu-button" onclick="openSongCategory('english')"><span class="treasure-menu-icon">🎼</span><span class="treasure-menu-title">TPM English</span></button>
+        <button type="button" class="treasure-menu-button" onclick="openSongCategory('others')"><span class="treasure-menu-icon">🎧</span><span class="treasure-menu-title">Chores / Others</span></button>
+        <button type="button" class="treasure-menu-button" onclick="openSongCategory('users')"><span class="treasure-menu-icon">📂</span><span class="treasure-menu-title">Users songs</span></button>
+    </div>
+    <div id="songCategoryPlayerPanel" class="settings-container songs-container" style="display:none">
+        <button type="button" class="songs-back-button" onclick="showSongCategories()" aria-label="Back to song categories">← Back to Songs</button>
+        <h3 id="songCategoryHeading" class="song-category-heading">TPM Tamil</h3>
+        <div id="songCategoryPlayerMount"></div>
+    </div>
+    <div id="usersSongsPanel" class="settings-container songs-container" style="display:none">
+        <div class="users-songs-toolbar">
+            <button type="button" class="songs-back-button" onclick="showSongCategories()" aria-label="Back to song categories">← Back to Songs</button>
+            <p id="songsLibraryStatus" class="songs-library-status" role="status" aria-live="polite">Loading your music library…</p>
+        </div>
         <div id="songsLibraryList" class="songs-library-list"></div>
-        <p class="songs-storage-note">
-            IndexedDB stores only the file reference and small playlist details, never the audio file itself.
-            Other browsers may keep the selection only until the page is closed or reloaded. The original file must remain on your device.
-        </p>
+        <p class="songs-storage-note">Songs are linked from your device; the audio files are not uploaded to GitHub or copied into app storage. Keep the original files available on your device.</p>
     </div>
-
 </section>
 
 
@@ -14984,82 +15124,112 @@ function openSettingsPage() {
    SONGS BUTTON — RUN THE SAME INTRO AS CLOSING THE DAILY POPUP
 ========================================================= */
 
+function showSongCategories() {
+    const menu = document.getElementById("songCategoryMenu");
+    const usersPanel = document.getElementById("usersSongsPanel");
+    const categoryPanel = document.getElementById("songCategoryPlayerPanel");
+    const addButton = document.getElementById("addLocalSongsButton");
+    const title = document.getElementById("songsPageTitle");
+    const player = document.getElementById("introMusicPlayer");
+    const headerBack = document.getElementById("songsHeaderBackButton");
+    if (headerBack) headerBack.style.display = "none";
+    if (menu) menu.style.display = "grid";
+    if (usersPanel) usersPanel.style.display = "none";
+    if (categoryPanel) categoryPanel.style.display = "none";
+    if (addButton) addButton.style.display = "none";
+    if (title) title.textContent = "SONGS";
+    if (player) player.style.display = "none";
+    window.__holyBibleMusicMode = "personal";
+    if (typeof window.__holyBibleSetMusicMode === "function") window.__holyBibleSetMusicMode("personal");
+}
+
+function openSongCategory(category) {
+    const menu = document.getElementById("songCategoryMenu");
+    const usersPanel = document.getElementById("usersSongsPanel");
+    const categoryPanel = document.getElementById("songCategoryPlayerPanel");
+    const heading = document.getElementById("songCategoryHeading");
+    const addButton = document.getElementById("addLocalSongsButton");
+    const title = document.getElementById("songsPageTitle");
+    const player = document.getElementById("introMusicPlayer");
+    const headerBack = document.getElementById("songsHeaderBackButton");
+    const labels = { tamil:"TPM Tamil", malayalam:"TPM Malayalam", english:"TPM English", others:"Chores / Others", users:"Users songs" };
+    if (headerBack) headerBack.style.display = "inline-flex";
+    if (menu) menu.style.display = "none";
+    if (title) title.textContent = "SONGS";
+
+    if (category === "users") {
+        if (categoryPanel) categoryPanel.style.display = "none";
+        if (usersPanel) usersPanel.style.display = "block";
+        if (addButton) addButton.style.display = "inline-block";
+        if (player) player.style.display = "flex";
+        window.__holyBibleMusicMode = "personal";
+        if (typeof window.__holyBibleSetMusicMode === "function") window.__holyBibleSetMusicMode("personal");
+        if (typeof window.__holyBibleRenderSongLibrary === "function") window.__holyBibleRenderSongLibrary();
+        return;
+    }
+
+    if (usersPanel) usersPanel.style.display = "none";
+    if (categoryPanel) categoryPanel.style.display = "block";
+    if (addButton) addButton.style.display = "none";
+    if (heading) heading.textContent = labels[category] || "SONGS";
+    // Keep the player in its original DOM position so its fixed mobile-footer placement never changes.
+    if (player) player.style.display = "flex";
+    window.__holyBibleMusicMode = "category:" + category;
+    // Change the playlist only. Do not start playback just because a category was opened.
+    if (typeof window.__holyBibleSetMusicMode === "function") {
+        window.__holyBibleSetMusicMode(window.__holyBibleMusicMode);
+    }
+}
+
+async function playAllSongCategories() {
+    // Reuse the exact Jesus Time entrance used after the daily-reading popup closes.
+    const songsPage = document.getElementById("songsPage");
+    const homePage = document.getElementById("homePage");
+    if (songsPage) songsPage.style.display = "none";
+    if (homePage) homePage.style.display = "block";
+    hideGroupedPages();
+    ["bookPage", "chapterPage", "videoPage", "searchPage", "bibleTextSearchPage", "offeringsPage", "gregorianCalendarPage", "searchGroupPage", "bibleGroupPage", "settingsPage", "favoritesPage", "treasureListPage", "verseTreasurePage"].forEach(function (id) {
+        const page = document.getElementById(id);
+        if (page) page.style.display = "none";
+    });
+    updateHomeHeader("home");
+    sessionStorage.setItem("page", "home");
+    window.__holyBibleMusicMode = "default";
+    setupIntroMusicPlayer();
+    if (typeof window.__holyBibleSetMusicMode === "function") {
+        await window.__holyBibleSetMusicMode("default");
+    }
+    const popup = document.getElementById("dailyReadingPopup");
+    if (popup) popup.style.display = "none";
+    startJesusTimeIntro();
+    rotateGalileeBackground();
+}
+
 function openSongsPage() {
-    // The Songs page is the user's personal library only.
     window.__holyBibleMusicMode = "personal";
     updateHomeHeader("other");
-
     const homePage = document.getElementById("homePage");
     if (homePage) {
-        homePage.classList.remove(
-            "jesus-time-intro",
-            "jesus-intro-enter",
-            "jesus-swipe-finish"
-        );
+        homePage.classList.remove("jesus-time-intro", "jesus-intro-enter", "jesus-swipe-finish");
         homePage.style.removeProperty("--jesus-swipe-y");
         homePage.dataset.jesusIntroReady = "no";
         homePage.style.display = "none";
     }
-
     hideGroupedPages();
-
-    [
-        "bookPage", "chapterPage", "videoPage", "searchPage",
-        "bibleTextSearchPage", "offeringsPage", "gregorianCalendarPage",
-        "searchGroupPage", "bibleGroupPage", "settingsPage",
-        "favoritesPage", "treasureListPage", "verseTreasurePage"
-    ].forEach(function (id) {
+    ["bookPage", "chapterPage", "videoPage", "searchPage", "bibleTextSearchPage", "offeringsPage", "gregorianCalendarPage", "searchGroupPage", "bibleGroupPage", "settingsPage", "favoritesPage", "treasureListPage", "verseTreasurePage"].forEach(function (id) {
         const page = document.getElementById(id);
         if (page) page.style.display = "none";
     });
-
     const songsPage = document.getElementById("songsPage");
     if (songsPage) songsPage.style.display = "block";
-
+    showSongCategories();
     const player = document.getElementById("introMusicPlayer");
-    if (player) player.style.display = "flex";
-
+    if (player) player.style.display = "none";
     sessionStorage.setItem("page", "songs");
     setupIntroMusicPlayer();
-
-    if (typeof window.__holyBibleSetMusicMode === "function") {
-        window.__holyBibleSetMusicMode("personal");
-    }
-
-    if (typeof window.__holyBibleRenderSongLibrary === "function") {
-        window.__holyBibleRenderSongLibrary();
-    }
-
+    if (typeof window.__holyBibleSetMusicMode === "function") window.__holyBibleSetMusicMode("personal");
+    if (typeof window.__holyBibleRenderSongLibrary === "function") window.__holyBibleRenderSongLibrary();
     updateTestamentNavigation();
-}
-
-/* Open the existing Jesus Time image intro and play only the GitHub default songs. */
-function openDefaultSongsIntro() {
-    window.__holyBibleMusicMode = "default";
-
-    const songsPage = document.getElementById("songsPage");
-    if (songsPage) songsPage.style.display = "none";
-
-    hideGroupedPages();
-    [
-        "bookPage", "chapterPage", "videoPage", "searchPage",
-        "bibleTextSearchPage", "offeringsPage", "gregorianCalendarPage",
-        "searchGroupPage", "bibleGroupPage", "settingsPage",
-        "favoritesPage", "treasureListPage", "verseTreasurePage"
-    ].forEach(function (id) {
-        const page = document.getElementById(id);
-        if (page) page.style.display = "none";
-    });
-
-    const homePage = document.getElementById("homePage");
-    if (homePage) homePage.style.display = "block";
-    updateHomeHeader("home");
-    sessionStorage.setItem("page", "home");
-    updateTestamentNavigation();
-
-    setupIntroMusicPlayer();
-    startJesusTimeIntro();
-    rotateGalileeBackground();
 }
 
 /* =========================================================
@@ -19546,28 +19716,48 @@ function setupIntroMusicPlayer() {
     }
     player.dataset.handlersReady = "yes";
 
+    // Built-in songs are organized by language/category and matching folders in ./songs/.
+    const ENGLISH_TRACKS = [
+        { id: "default-e-098", name: "E-098.mp3", src: "./songs/english/E-098.mp3", kind: "default", category: "english" },
+        { id: "default-e267", name: "E267.mp3", src: "./songs/english/E267.mp3", kind: "default", category: "english" },
+        { id: "default-e344", name: "E344.mp3", src: "./songs/english/E344.mp3", kind: "default", category: "english" },
+        { id: "default-e405", name: "E405.mp3", src: "./songs/english/E405.mp3", kind: "default", category: "english" }
+    ];
+
+    const MALAYALAM_TRACKS = [
+        { id: "default-m248", name: "M248.mp3", src: "./songs/malayalam/M248.mp3", kind: "default", category: "malayalam" },
+        { id: "default-m360", name: "M360.mp3", src: "./songs/malayalam/M360.mp3", kind: "default", category: "malayalam" },
+        { id: "default-m607", name: "M607.mp3", src: "./songs/malayalam/M607.mp3", kind: "default", category: "malayalam" },
+        { id: "default-m224", name: "M224.mp3", src: "./songs/malayalam/M224.mp3", kind: "default", category: "malayalam" },
+        { id: "default-421", name: "421.mp3", src: "./songs/malayalam/421.mp3", kind: "default", category: "malayalam" },
+        { id: "default-620", name: "620.mp3", src: "./songs/malayalam/620.mp3", kind: "default", category: "malayalam" },
+        { id: "default-laksholaksham", name: "Laksholaksham.mp3", src: "./songs/malayalam/Laksholaksham.mp3", kind: "default", category: "malayalam" }   
+    ];
+
+    const TAMIL_TRACKS = [
+        { id: "default-t100", name: "T100.mp3", src: "./songs/tamil/T100.mp3", kind: "default", category: "tamil" },
+        { id: "default-t101", name: "T101.mp3", src: "./songs/tamil/T101.mp3", kind: "default", category: "tamil" },
+        { id: "default-t384", name: "T384.mp3", src: "./songs/tamil/T384.mp3", kind: "default", category: "tamil" },
+        { id: "default-110", name: "110.mp3", src: "./songs/tamil/110.mp3", kind: "default", category: "tamil" },
+        { id: "default-011", name: "011.mp3", src: "./songs/tamil/011.mp3", kind: "default", category: "tamil" },
+        { id: "default-045", name: "045.mp3", src: "./songs/tamil/045.mp3", kind: "default", category: "tamil" },
+        { id: "default-t433", name: "T433.mp3", src: "./songs/tamil/T433.mp3", kind: "default", category: "tamil" }
+    ];
+
+    const OTHERS_TRACKS = [
+        { id: "default-vana", name: "Vana.mp3", src: "./songs/others/Vana.mp3", kind: "default", category: "others" },
+        { id: "default-akkaraykku", name: "Akkaraykku.mp3", src: "./songs/others/Akkaraykku.mp3", kind: "default", category: "others" },
+        { id: "default-njan", name: "Njan.mp3", src: "./songs/others/Njan.mp3", kind: "default", category: "others" }
+        
+    ];
+
+    // Default Song combines every built-in category. The player shuffles this list
+    // for random playback; category buttons filter it using each track's category.
     const DEFAULT_TRACKS = [
-        { id: "default-045", name: "045.mp3", src: "./songs/045.mp3", kind: "default" },
-        { id: "default-421", name: "421.mp3", src: "./songs/421.mp3", kind: "default" },
-        { id: "default-620", name: "620.mp3", src: "./songs/620.mp3", kind: "default" },
-        { id: "default-011", name: "011.mp3", src: "./songs/011.mp3", kind: "default" },
-        { id: "default-e-098", name: "E-098.mp3", src: "./songs/E-098.mp3", kind: "default" },
-        { id: "default-110", name: "110.mp3", src: "./songs/110.mp3", kind: "default" },
-        { id: "default-e267", name: "E267.mp3", src: "./songs/E267.mp3", kind: "default" },
-        { id: "default-e344", name: "E344.mp3", src: "./songs/E344.mp3", kind: "default" },
-        { id: "default-e405", name: "E405.mp3", src: "./songs/E405.mp3", kind: "default" },
-        { id: "default-m248", name: "M248.mp3", src: "./songs/M248.mp3", kind: "default" },
-        { id: "default-m360", name: "M360.mp3", src: "./songs/M360.mp3", kind: "default" },
-        { id: "default-m607", name: "M607.mp3", src: "./songs/M607.mp3", kind: "default" },
-        { id: "default-njan", name: "Njan.mp3", src: "./songs/Njan.mp3", kind: "default" },
-        { id: "default-t100", name: "T100.mp3", src: "./songs/T100.mp3", kind: "default" },
-        { id: "default-t101", name: "T101.mp3", src: "./songs/T101.mp3", kind: "default" },
-        { id: "default-t384", name: "T384.mp3", src: "./songs/T384.mp3", kind: "default" },
-        { id: "default-t433", name: "T433.mp3", src: "./songs/T433.mp3", kind: "default" },
-        { id: "default-vana", name: "Vana.mp3", src: "./songs/Vana.mp3", kind: "default" },
-        { id: "default-m244", name: "M244.mp3", src: "./songs/M244.mp3", kind: "default" },
-        { id: "default-laksholaksham", name: "Laksholaksham.mp3", src: "./songs/Laksholaksham.mp3", kind: "default" },
-        { id: "default-akkaraykku", name: "Akkaraykku.mp3", src: "./songs/Akkaraykku.mp3", kind: "default" }
+        ...ENGLISH_TRACKS,
+        ...MALAYALAM_TRACKS,
+        ...TAMIL_TRACKS,
+        ...OTHERS_TRACKS
     ];
     const DB_NAME = "HolyBibleKJVUserSongs";
     const DB_STORE = "mp3Files";
@@ -19620,7 +19810,7 @@ function setupIntroMusicPlayer() {
                 trackId: currentTrackId,
                 currentTime: Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
                 resumeWanted: true,
-                mode: window.__holyBibleMusicMode === "default" ? "default" : "personal",
+                mode: window.__holyBibleMusicMode || "personal",
                 page: sessionStorage.getItem("page") || "home"
             }));
         } catch (error) {
@@ -19636,7 +19826,7 @@ function setupIntroMusicPlayer() {
     // refreshTracks() runs, including user-imported MP3s stored in IndexedDB.
     const initialResumeState = readMusicResumeState();
     if (initialResumeState) {
-        window.__holyBibleMusicMode = initialResumeState.mode === "default" ? "default" : "personal";
+        window.__holyBibleMusicMode = initialResumeState.mode || "personal";
     }
 
     function openSongsDatabase() {
@@ -19734,11 +19924,10 @@ function setupIntroMusicPlayer() {
     async function refreshTracks() {
         const oldCurrentId = currentTrackId;
         const savedSongs = await getSavedSongs();
-        const musicMode = window.__holyBibleMusicMode === "default" ? "default" : "personal";
-
-        tracks = musicMode === "default"
-            ? DEFAULT_TRACKS.map(function (track) { return { ...track }; })
-            : [];
+        const musicMode = window.__holyBibleMusicMode || "personal";
+        // Each built-in track already declares its category in its dedicated array.
+        const builtInTracks = DEFAULT_TRACKS.slice();
+        tracks = builtInTracks.slice();
 
         const allPersonalIds = new Set(
             savedSongs.map(function (song) { return song.id; })
@@ -19752,7 +19941,7 @@ function setupIntroMusicPlayer() {
             }
         });
 
-        if (musicMode === "personal") {
+        {
             for (const song of savedSongs) {
                 let file = null;
                 let missing = false;
@@ -19795,6 +19984,7 @@ function setupIntroMusicPlayer() {
                     name: song.name,
                     src: url || null,
                     kind: "personal",
+                    category: "users",
                     missing: missing,
                     permissionRequired: permissionRequired,
                     needsRelink: Boolean(song.needsRelink),
@@ -19813,9 +20003,19 @@ function setupIntroMusicPlayer() {
                     name: entry.name,
                     src: url,
                     kind: "session",
+                    category: "users",
                     sessionOnly: true
                 });
             });
+        }
+
+        if (musicMode === "users") {
+            tracks = tracks.filter(function (track) { return track.category === "users"; });
+        } else if (String(musicMode).indexOf("category:") === 0) {
+            const wantedCategory = String(musicMode).slice(9);
+            tracks = tracks.filter(function (track) { return track.category === wantedCategory; });
+        } else if (musicMode !== "default") {
+            tracks = [];
         }
 
         remainingTracks = remainingTracks.filter(function (id) {
@@ -20273,7 +20473,7 @@ function setupIntroMusicPlayer() {
     window.__holyBibleRenderSongLibrary = renderSongLibrary;
     window.__holyBiblePlaySong = playTrackById;
     window.__holyBibleSetMusicMode = async function (mode) {
-        window.__holyBibleMusicMode = mode === "default" ? "default" : "personal";
+        window.__holyBibleMusicMode = (mode === "default" || mode === "personal" || mode === "users" || String(mode).indexOf("category:") === 0) ? mode : "personal";
         await refreshTracks();
     };
     window.__holyBibleStartDefaultSongs = async function () {
@@ -20283,6 +20483,20 @@ function setupIntroMusicPlayer() {
         historyPosition = -1;
         remainingTracks = [];
         currentTrackId = null;
+        await playNextUnusedTrack();
+    };
+    window.__holyBibleStartCategorySongs = async function (category) {
+        window.__holyBibleMusicMode = "category:" + category;
+        await refreshTracks();
+        history = [];
+        historyPosition = -1;
+        remainingTracks = [];
+        currentTrackId = null;
+        if (!tracks.length) {
+            if (libraryStatus) libraryStatus.textContent = "No songs found in this category.";
+            renderIpodDisplay();
+            return;
+        }
         await playNextUnusedTrack();
     };
 
@@ -23516,8 +23730,8 @@ document.addEventListener("visibilitychange", function () {
 const galileeBackgrounds = [
     "./images/galilee-background.png",
     "./images/galilee-background-2.png",
-    "./images/galilee-background-3.png",
-    "./images/crucifixion.png"
+    "./images/crucifixion.png",
+    "./images/galilee-background-3.png"
 ];
 
 // Preload the Galilee collection while the app is running so the next image
