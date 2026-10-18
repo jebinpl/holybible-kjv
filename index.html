@@ -8340,6 +8340,65 @@ body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-heading::befor
     }
 }
 
+/* Current album/song name and flying music notes appear only during playback */
+#songsPage #songCategoryPlayerPanel .song-category-now-playing {
+    position: absolute;
+    left: 50%;
+    top: 76%;
+    transform: translateX(-50%);
+    z-index: 2;
+    width: calc(100% - 30px);
+    min-height: 1.4em;
+    text-align: center;
+    color: #70451e;
+    font: bold clamp(15px, 2.8vw, 22px)/1.35 Georgia, "Times New Roman", serif;
+    letter-spacing: .4px;
+    overflow-wrap: anywhere;
+    pointer-events: none;
+}
+body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-now-playing {
+    color: #f4d982;
+}
+#songsPage #songCategoryPlayerPanel .song-category-flying-notes {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+    display: none;
+}
+#songsPage #songCategoryPlayerPanel.is-song-playing .song-category-flying-notes {
+    display: block;
+}
+#songsPage #songCategoryPlayerPanel .song-category-flying-notes span {
+    position: absolute;
+    bottom: 8%;
+    left: var(--note-left, 20%);
+    color: rgba(184, 148, 61, .72);
+    font: bold clamp(22px, 4vw, 38px)/1 Georgia, serif;
+    opacity: 0;
+    animation: songCategoryNoteFly 4.8s ease-in-out infinite;
+}
+#songsPage #songCategoryPlayerPanel .song-category-flying-notes span:nth-child(1) { --note-left: 18%; animation-delay: 0s; }
+#songsPage #songCategoryPlayerPanel .song-category-flying-notes span:nth-child(2) { --note-left: 38%; animation-delay: 1.2s; font-size: clamp(18px, 3vw, 30px); }
+#songsPage #songCategoryPlayerPanel .song-category-flying-notes span:nth-child(3) { --note-left: 64%; animation-delay: 2.4s; }
+#songsPage #songCategoryPlayerPanel .song-category-flying-notes span:nth-child(4) { --note-left: 80%; animation-delay: 3.3s; font-size: clamp(18px, 3vw, 30px); }
+@keyframes songCategoryNoteFly {
+    0% { transform: translate3d(0, 0, 0) rotate(-12deg) scale(.7); opacity: 0; }
+    15% { opacity: .75; }
+    70% { opacity: .55; }
+    100% { transform: translate3d(18px, -210px, 0) rotate(18deg) scale(1.15); opacity: 0; }
+}
+@media (max-width: 700px) {
+    #songsPage #songCategoryPlayerPanel .song-category-now-playing { top: 74%; font-size: clamp(14px, 4vw, 18px); }
+}
+@media (max-width: 450px) {
+    #songsPage #songCategoryPlayerPanel .song-category-now-playing { top: 73%; font-size: clamp(13px, 4.2vw, 16px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    #songsPage #songCategoryPlayerPanel .song-category-flying-notes span { animation: none; opacity: .45; }
+}
+
 /* Remove the traveling gold-ring animation from the music player and its track list only. */
 #introMusicPlayer .ipod-wheel::after,
 #introMusicPlayer button::after,
@@ -8490,6 +8549,53 @@ body.dark-mode #songsPage .songs-header-back-button {
 #songsPage #songCategoryPlayerPanel > .songs-back-button,
 #songsPage .users-songs-toolbar .songs-back-button { display: none !important; }
 #songsPage .users-songs-toolbar { align-items: center; }
+
+/* Match Songs header with Bible, Search, Treasure and Settings headers */
+#songsPage .songs-page-header {
+  background: linear-gradient(180deg, #fffdf5, #f5ecd5) !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: 0 0 12px rgba(255, 253, 245, 0.9);
+  padding: 8px 12px 10px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+#songsPage .songs-page-header #songsPageTitle {
+  color: #70451e !important; /* Match the Search page header title */
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.4px;
+  text-align: center;
+}
+body.dark-mode #songsPage .songs-page-header {
+  background: linear-gradient(180deg, #303030, #222222) !important;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+}
+body.dark-mode #songsPage .songs-page-header #songsPageTitle {
+  color: #eeeeee !important;
+}
+@media (max-width: 700px) {
+  #songsPage .songs-page-header {
+    top: 95px;
+    padding: 8px 8px 10px;
+  }
+  #songsPage .songs-page-header #songsPageTitle {
+    font-size: 21px;
+  }
+}
+@media (max-width: 450px) {
+  #songsPage .songs-page-header {
+    top: 90px;
+    gap: 4px;
+    padding: 7px 4px 9px;
+  }
+  #songsPage .songs-page-header #songsPageTitle {
+    font-size: 17px;
+    max-width: 29%;
+    letter-spacing: 0;
+  }
+}
 @media (max-width: 450px) {
   #songsPage .songs-page-header { gap: 4px; padding-left: 4px; padding-right: 4px; }
   #songsPage .songs-page-header #defaultSongsButton { padding: 7px 6px; font-size: 10px; }
@@ -9406,6 +9512,10 @@ body.dark-mode #songsPage .songs-header-back-button {
     <div id="songCategoryPlayerPanel" class="settings-container songs-container" style="display:none">
         <button type="button" class="songs-back-button" onclick="showSongCategories()" aria-label="Back to song categories">← Back to Songs</button>
         <h3 id="songCategoryHeading" class="song-category-heading">TPM Tamil</h3>
+        <div id="songCategoryNowPlaying" class="song-category-now-playing" aria-live="polite"></div>
+        <div id="songCategoryFlyingNotes" class="song-category-flying-notes" aria-hidden="true">
+            <span>♫</span><span>♪</span><span>♫</span><span>♪</span>
+        </div>
         <div id="songCategoryPlayerMount"></div>
     </div>
     <div id="usersSongsPanel" class="settings-container songs-container" style="display:none">
@@ -15180,7 +15290,12 @@ function showSongCategories() {
     if (headerBack) headerBack.style.display = "none";
     if (menu) menu.style.display = "grid";
     if (usersPanel) usersPanel.style.display = "none";
-    if (categoryPanel) categoryPanel.style.display = "none";
+    if (categoryPanel) {
+        categoryPanel.style.display = "none";
+        categoryPanel.classList.remove("is-song-playing");
+    }
+    const nowPlayingLabel = document.getElementById("songCategoryNowPlaying");
+    if (nowPlayingLabel) nowPlayingLabel.textContent = "";
     if (addButton) addButton.style.display = "none";
     if (title) title.textContent = "SONGS";
     if (player) player.style.display = "none";
@@ -15223,6 +15338,9 @@ function openSongCategory(category) {
     // Change the playlist only. Do not start playback just because a category was opened.
     if (typeof window.__holyBibleSetMusicMode === "function") {
         window.__holyBibleSetMusicMode(window.__holyBibleMusicMode);
+    }
+    if (typeof window.__holyBibleUpdateCategoryNowPlaying === "function") {
+        window.__holyBibleUpdateCategoryNowPlaying();
     }
 }
 
@@ -20267,8 +20385,27 @@ function setupIntroMusicPlayer() {
         await playCurrentTrack();
     }
 
+    function updateCategoryNowPlaying() {
+        const panel = document.getElementById("songCategoryPlayerPanel");
+        const albumLabel = document.getElementById("songCategoryNowPlaying");
+        const isPlaying = !audio.paused && !audio.ended;
+        const mode = String(window.__holyBibleMusicMode || "");
+        const categoryMode = mode.indexOf("category:") === 0 && mode !== "category:users";
+        const current = tracks.find(function (track) { return track.id === currentTrackId; });
+        const belongsToCategory = current && categoryMode && current.category === mode.slice("category:".length);
+        const show = !!(panel && panel.style.display !== "none" && isPlaying && belongsToCategory);
+        if (panel) panel.classList.toggle("is-song-playing", show);
+        if (albumLabel) {
+            albumLabel.textContent = show
+                ? String(current.name || "").replace(/\.(mp3|mpeg|mp4|m4a|wav|ogg|webm)$/i, "")
+                : "";
+        }
+    }
+    window.__holyBibleUpdateCategoryNowPlaying = updateCategoryNowPlaying;
+
     function updatePlayingSongIndicator() {
         const isPlaying = !audio.paused && !audio.ended;
+        updateCategoryNowPlaying();
         if (libraryList) {
             libraryList.querySelectorAll(".song-library-row").forEach(function (row) {
                 const active = isPlaying && row.dataset.songId === currentTrackId;
