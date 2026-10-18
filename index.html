@@ -8249,52 +8249,64 @@ body.dark-mode .song-library-kind {
 
 /* Song category watermark and centered Back to Songs controls */
 /* Center the category name as a bold, subtle watermark. */
+/* Song category watermark */
 #songsPage #songCategoryPlayerPanel {
-  position: relative;
-  min-height: 390px;
-  overflow: hidden;
+    position: relative;
+    min-height: 390px;
+    overflow: hidden;
 }
+
 #songsPage #songCategoryPlayerPanel .song-category-heading {
-  position: absolute;
-  left: 50%;
-  top: 52%;
-  transform: translate(-50%, -50%);
-  width: calc(100% - 24px);
-  margin: 0;
-  z-index: 0;
-  text-align: center;
-  font-size: clamp(28px, 6vw, 48px);
-  line-height: 1.15;
-  font-weight: 900;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: rgba(139, 105, 31, 0.16);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.12);
-  pointer-events: none;
-  overflow-wrap: anywhere;
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 24px);
+    margin: 0;
+    z-index: 0;
+    text-align: center;
+    font-size: clamp(28px, 6vw, 48px);
+    line-height: 1.15;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(139, 105, 31, 0.16);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.12);
+    pointer-events: none;
+    overflow-wrap: anywhere;
 }
+
 body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-heading {
-  color: rgba(238, 198, 91, 0.16);
-  text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+    color: rgba(238, 198, 91, 0.16);
+    text-shadow: 0 1px 0 rgba(0,0,0,0.15);
 }
-/* Large, subtle music note behind the centered category watermark. */
+
+/* Music symbol behind the category text */
 #songsPage #songCategoryPlayerPanel .song-category-heading::before {
-  content: "♫";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(120px, 28vw, 230px);
-  line-height: 1;
-  font-weight: 900;
-  color: rgba(139, 105, 31, 0.13);
-  white-space: nowrap;
-  pointer-events: none;
+    content: "♫";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(120px, 28vw, 230px);
+    line-height: 1;
+    font-weight: 900;
+    color: rgba(139, 105, 31, 0.13);
+    white-space: nowrap;
+    pointer-events: none;
 }
+
 body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-heading::before {
-  color: rgba(238, 198, 91, 0.13);
+    color: rgba(238, 198, 91, 0.13);
+}
+
+/* Mobile: move both the text and its music symbol upward */
+@media (max-width: 700px) {
+    #songsPage #songCategoryPlayerPanel .song-category-heading {
+        top: 42%;
+    }
 }
 
 /* Remove the traveling gold-ring animation from the music player and its track list only. */
@@ -8456,12 +8468,6 @@ body.dark-mode #songsPage .songs-header-back-button {
   #songsPage .songs-page-header #addLocalSongsButton { padding: 7px 5px; font-size: 10px; }
 }
 
-/* Mobile: lift the song category watermark away from the player */
-@media (max-width: 700px) {
-    #songsPage #songCategoryPlayerPanel .song-category-heading {
-        top: 45%;
-    }
-}
 
 </style>
 </head>
