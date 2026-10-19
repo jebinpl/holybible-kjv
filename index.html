@@ -8442,6 +8442,33 @@ body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-now-playing {
   text-align: center;
   margin: 0;
 }
+
+
+/* =========================================================
+   iPHONE / iOS SAFARI — CENTER THE CUSTOM YOUTUBE CONTROL
+   Keep it aligned with the center of the 16:9 video frame.
+   The iframe remains non-interactive; this custom button handles taps.
+========================================================= */
+@supports (-webkit-touch-callout: none) {
+    #videoPlayerContainer .video-player {
+        position: relative !important;
+        overflow: hidden !important;
+        isolation: isolate;
+    }
+
+    #videoPlayerContainer .video-player > #youtubeCenterToggle {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        right: auto !important;
+        bottom: auto !important;
+        margin: 0 !important;
+        transform: translate3d(-50%, -50%, 0) !important;
+        z-index: 30 !important;
+        flex: none !important;
+    }
+}
+
 </style>
 
 
