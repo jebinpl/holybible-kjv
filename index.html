@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
-<title>Holy Bible - KJV</title>
-<meta name="application-name" content="Holy Bible - KJV">
-<meta name="apple-mobile-web-app-title" content="Holy Bible - KJV">
-<link rel="manifest" href="https://jebinpl.github.io/holybible-kjv/manifest.json">
-<meta name="theme-color" content="#fffdf5">
-<link rel="icon" type="image/png" href="logo.png">
-<style>
-
-* {
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title>
+   Holy Bible - KJV
+  </title>
+  <meta content="Holy Bible - KJV" name="application-name"/>
+  <meta content="Holy Bible - KJV" name="apple-mobile-web-app-title"/>
+  <link href="https://jebinpl.github.io/holybible-kjv/manifest.json" rel="manifest"/>
+  <meta content="#fffdf5" name="theme-color"/>
+  <link href="logo.png" rel="icon" type="image/png"/>
+  <style>
+   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -8469,11 +8469,71 @@ body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-now-playing {
     }
 }
 
-</style>
 
+/* GOLD STAR BURST AROUND CHAPTER HEART */
+.heart-star-burst {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 20;
+}
 
-<style id="songs-page-layout-refinement">
-#songsPage .songs-page-header { top: 105px; }
+.heart-star-particle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: block;
+    color: #FFD700;
+    font-size: 18px;
+    line-height: 1;
+    pointer-events: none;
+    text-shadow:
+        0 0 5px rgba(255, 215, 0, 1),
+        0 0 12px rgba(255, 180, 0, 0.9);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+    animation: goldStarDisperse 900ms ease-out forwards;
+    will-change: transform, opacity;
+}
+
+@keyframes goldStarDisperse {
+    0% {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            translate(0, 0)
+            scale(0.3)
+            rotate(0deg);
+    }
+
+    15% {
+        opacity: 1;
+        transform:
+            translate(-50%, -50%)
+            translate(0, 0)
+            scale(1.2)
+            rotate(45deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            translate(var(--star-x), var(--star-y))
+            scale(0.1)
+            rotate(220deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .heart-star-particle {
+        animation-duration: 400ms;
+    }
+}
+  </style>
+  <style id="songs-page-layout-refinement">
+   #songsPage .songs-page-header { top: 105px; }
 #songsPage .songs-category-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -8503,9 +8563,9 @@ body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-now-playing {
     #songsPage .songs-category-grid { gap: 10px; padding: 0 12px; }
     #songsPage .songs-category-grid .treasure-menu-button { min-height: 86px; }
 }
-</style>
-<style id="song-category-player-navigation">
-#songsPage .songs-back-button{border:1px solid #bd8b18;border-radius:9px;background:#fff8e7;color:#35200e;padding:9px 13px;font-weight:700;cursor:pointer}
+  </style>
+  <style id="song-category-player-navigation">
+   #songsPage .songs-back-button{border:1px solid #bd8b18;border-radius:9px;background:#fff8e7;color:#35200e;padding:9px 13px;font-weight:700;cursor:pointer}
 body.dark-mode #songsPage .songs-back-button{background:#342719;color:#fff0c5;border-color:#a88739}
 #songsPage .song-category-heading{text-align:center;margin:12px 0 16px}
 #songsPage .users-songs-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px}
@@ -8514,9 +8574,9 @@ body.dark-mode #songsPage .songs-back-button{background:#342719;color:#fff0c5;bo
 #songsPage #introMusicPlayer.ipod-song-player{position:fixed!important;left:50%!important;bottom:12px!important;top:auto!important;transform:translateX(-50%)!important;margin:0!important;z-index:10001!important}
 #songsPage #songCategoryPlayerMount{display:none!important}
 @media(max-width:450px){#songsPage #introMusicPlayer.ipod-song-player{bottom:max(12px,env(safe-area-inset-bottom))!important}}
-</style>
-<style id="song-player-fixed-footer-final">
-#introMusicPlayer.ipod-song-player,
+  </style>
+  <style id="song-player-fixed-footer-final">
+   #introMusicPlayer.ipod-song-player,
 #songsPage #introMusicPlayer.ipod-song-player {
  position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:max(12px,env(safe-area-inset-bottom))!important;
  transform:translateX(-50%)!important;margin:0!important;z-index:10001!important;
@@ -8637,1398 +8697,1028 @@ body.dark-mode #songsPage .songs-page-header #songsPageTitle {
   #songsPage .songs-page-header #addLocalSongsButton { padding: 7px 5px; font-size: 10px; }
 }
 
+.favorite-chapter-button {
+    position: relative;
+    overflow: visible;
+}
 
-</style>
-</head>
 
+/* FIX: POSITION STAR BURST RELATIVE TO THE HEART */
+.chapter-heading-actions .favorite-chapter-button {
+    position: relative !important;
+    overflow: visible !important;
+    z-index: 2;
+}
 
-<body>
-
-<div id="startupSplash">
-    <div class="splash-content">
-
-        <div class="splash-cross">
-    <img src="cross.png" alt="Cross">
-</div>
-
-        <div class="splash-title">
-            HOLY BIBLE
-        </div>
-
-        <div class="splash-subtitle">
-            KING JAMES VERSION
-        </div>
-
+.heart-star-burst {
+    position: absolute !important;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 100;
+}
+  </style>
+ </head>
+ <body>
+  <div id="startupSplash">
+   <div class="splash-content">
+    <div class="splash-cross">
+     <img alt="Cross" src="cross.png"/>
     </div>
-</div>
-
-<!-- =========================================================
+    <div class="splash-title">
+     HOLY BIBLE
+    </div>
+    <div class="splash-subtitle">
+     KING JAMES VERSION
+    </div>
+   </div>
+  </div>
+  <!-- =========================================================
      365 DAY BIBLE READING POPUP
 ========================================================= -->
-
-<div id="dailyReadingPopup">
-
-    <div class="daily-reading-box">
-
-        
-<button
-    type="button"
-    class="daily-reading-close"
-    onclick="closeDailyReadingPopup(true)"
-    aria-label="Close"
-    title="Close">
-    ✕
-</button>
-
-
-        <div class="daily-reading-icon">
-            📖
-        </div>
-
-        <div class="daily-reading-title">
-            TODAY'S BIBLE READING
-        </div>
-
-        <div
-    id="dailyReadingDay"
-    class="daily-reading-day">
-</div>
-
-<div
-    id="dailyReadingDate"
-    class="daily-reading-date">
-</div>
-
-        <div class="daily-reading-label">
-            Reading
-        </div>
-
-        <div
-            id="dailyReadingReference"
-            class="daily-reading-reference">
-        </div>
-
-        <div
-            id="dailyReadingChapterCount"
-            class="daily-reading-chapters">
-        </div>
-
-        <div
-            id="dailyReadingTime"
-            class="daily-reading-time">
-        </div>
-
-        <button
-            class="daily-reading-read"
-            onclick="readDailyBible()">
-
-            📖 READ
-
-        </button>
-
+  <div id="dailyReadingPopup">
+   <div class="daily-reading-box">
+    <button aria-label="Close" class="daily-reading-close" onclick="closeDailyReadingPopup(true)" title="Close" type="button">
+     ✕
+    </button>
+    <div class="daily-reading-icon">
+     📖
     </div>
-
-</div>
-
-<!-- =========================
+    <div class="daily-reading-title">
+     TODAY'S BIBLE READING
+    </div>
+    <div class="daily-reading-day" id="dailyReadingDay">
+    </div>
+    <div class="daily-reading-date" id="dailyReadingDate">
+    </div>
+    <div class="daily-reading-label">
+     Reading
+    </div>
+    <div class="daily-reading-reference" id="dailyReadingReference">
+    </div>
+    <div class="daily-reading-chapters" id="dailyReadingChapterCount">
+    </div>
+    <div class="daily-reading-time" id="dailyReadingTime">
+    </div>
+    <button class="daily-reading-read" onclick="readDailyBible()">
+     📖 READ
+    </button>
+   </div>
+  </div>
+  <!-- =========================
      HEADER
 ========================= -->
-
-<header class="header">
-
-    <img
-        src="logo.png"
-        alt="Holy Bible Logo"
-        class="header-logo"
-    >
-
-    <!-- CENTER HEADER TEXT -->
-    <div class="header-title">
-
-        <h1>HOLY BIBLE</h1>
-
-        <div class="header-subtitle">
-            KING JAMES VERSION
-        </div>
-
+  <header class="header">
+   <img alt="Holy Bible Logo" class="header-logo" src="logo.png"/>
+   <!-- CENTER HEADER TEXT -->
+   <div class="header-title">
+    <h1>
+     HOLY BIBLE
+    </h1>
+    <div class="header-subtitle">
+     KING JAMES VERSION
     </div>
-
-    <!-- RIGHT HEADER CONTROLS -->
-    <div class="header-controls">
-
-        <div class="audio-version">
-            Multilingual
-        </div>
-
-        <div class="home-toggle">
-
-    <button 
-        id="homeButton"
-        class="home-header-button" 
-        onclick="goHome()"> 
-
-        HOME 
-
-    </button>
-
-
-    <img 
-        id="crossLogo"
-        src="cross.png"
-        class="cross-header-logo">
-
-</div>
-
+   </div>
+   <!-- RIGHT HEADER CONTROLS -->
+   <div class="header-controls">
+    <div class="audio-version">
+     Multilingual
     </div>
-
-</header>
-
-<div class="testament-navigation">
-    <button class="nav-back-button" onclick="headerBack()">←</button>
-
-    <button class="testament-nav-button" onclick="showBooks('old')">
-        OLD TESTAMENT
-    </button>
-
-    <button class="testament-nav-button" onclick="showBooks('new')">
-        NEW TESTAMENT
-    </button>
-</div>
-
-<main class="main">
-
-    <!-- =========================
+    <div class="home-toggle">
+     <button class="home-header-button" id="homeButton" onclick="goHome()">
+      HOME
+     </button>
+     <img class="cross-header-logo" id="crossLogo" src="cross.png"/>
+    </div>
+   </div>
+  </header>
+  <div class="testament-navigation">
+   <button class="nav-back-button" onclick="headerBack()">
+    ←
+   </button>
+   <button class="testament-nav-button" onclick="showBooks('old')">
+    OLD TESTAMENT
+   </button>
+   <button class="testament-nav-button" onclick="showBooks('new')">
+    NEW TESTAMENT
+   </button>
+  </div>
+  <main class="main">
+   <!-- =========================
          COMMON VIDEO PLAYER
     ========================= -->
-
-    <div
-        id="videoPlayerContainer"
-        class="video-player-container">
-
-        <div class="video-player">
-
-            <iframe
-                id="youtubePlayer"
-                src="https://www.youtube.com/embed/?enablejsapi=1&controls=0&disablekb=1&fs=0"
-                title="Bible Video"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen>
-            </iframe>
-
-            <button
-    type="button"
-    id="youtubeCenterToggle"
-    class="youtube-center-toggle"
-    onclick="toggleBibleVideo()"
-    aria-label="Play video">
-    <span id="youtubeCenterIcon" class="youtube-icon-play"></span>
-    </button>
-
-            
-<div class="video-player-actions">
-    <button
-        type="button"
-        onclick="maximizeBibleVideo()"
-        title="Maximize">
-        ⛶
-    </button>
-</div>
-        </div>
-
-        <button
-            class="close-video"
-            onclick="closeBibleVideo()">
-
-            ✕ Close Video
-
-        </button>
-
+   <div class="video-player-container" id="videoPlayerContainer">
+    <div class="video-player">
+     <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" id="youtubePlayer" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/?enablejsapi=1&controls=0&disablekb=1&fs=0" title="Bible Video">
+     </iframe>
+     <button aria-label="Play video" class="youtube-center-toggle" id="youtubeCenterToggle" onclick="toggleBibleVideo()" type="button">
+      <span class="youtube-icon-play" id="youtubeCenterIcon">
+      </span>
+     </button>
+     <div class="video-player-actions">
+      <button onclick="maximizeBibleVideo()" title="Maximize" type="button">
+       ⛶
+      </button>
+     </div>
     </div>
-
-<!-- =========================
+    <button class="close-video" onclick="closeBibleVideo()">
+     ✕ Close Video
+    </button>
+   </div>
+   <!-- =========================
      BIBLE READER
 ========================= -->
-
-<div class="bible-reader-wrapper">
-
-
+   <div class="bible-reader-wrapper">
     <!-- Controls OUTSIDE the box -->
     <div class="bible-reader-top-controls">
-
-        <div class="bible-reader-controls">
-            <button type="button"
-                    onclick="changeBibleFontSize(-1)"
-                    title="Zoom Out">A−</button>
-
-            <button type="button"
-                    onclick="resetBibleFontSize()"
-                    title="Reset Text Size">A</button>
-
-            <button type="button"
-                    onclick="changeBibleFontSize(1)"
-                    title="Zoom In">A+</button>
-        </div>
-
-                <!-- LANGUAGE SELECTOR -->
-<div id="bibleLanguageSelect" class="bible-language-select">
-
-    <button
-        type="button"
-        class="bible-language-button"
-        onclick="toggleBibleLanguageMenu()">
-        LANGUAGE ▼
-    </button>
-
-    <div
-        id="bibleLanguageMenu"
-        class="bible-language-menu">
-
-        <label>
-            <input
-                type="checkbox"
-                value="english"
-                checked
-                onchange="changeBibleLanguages()">
-            ENGLISH
-        </label>
-
-        <label>
-            <input
-                type="checkbox"
-                value="tamil"
-                onchange="changeBibleLanguages()">
-            TAMIL
-        </label>
-
-        <label>
-            <input
-                type="checkbox"
-                value="malayalam"
-                onchange="changeBibleLanguages()">
-            MALAYALAM
-        </label>
-
-        <label>
-            <input
-                type="checkbox"
-                value="hindi"
-                onchange="changeBibleLanguages()">
-            HINDI
-        </label>
-
+     <div class="bible-reader-controls">
+      <button onclick="changeBibleFontSize(-1)" title="Zoom Out" type="button">
+       A−
+      </button>
+      <button onclick="resetBibleFontSize()" title="Reset Text Size" type="button">
+       A
+      </button>
+      <button onclick="changeBibleFontSize(1)" title="Zoom In" type="button">
+       A+
+      </button>
+     </div>
+     <!-- LANGUAGE SELECTOR -->
+     <div class="bible-language-select" id="bibleLanguageSelect">
+      <button class="bible-language-button" onclick="toggleBibleLanguageMenu()" type="button">
+       LANGUAGE ▼
+      </button>
+      <div class="bible-language-menu" id="bibleLanguageMenu">
+       <label>
+        <input checked="" onchange="changeBibleLanguages()" type="checkbox" value="english"/>
+        ENGLISH
+       </label>
+       <label>
+        <input onchange="changeBibleLanguages()" type="checkbox" value="tamil"/>
+        TAMIL
+       </label>
+       <label>
+        <input onchange="changeBibleLanguages()" type="checkbox" value="malayalam"/>
+        MALAYALAM
+       </label>
+       <label>
+        <input onchange="changeBibleLanguages()" type="checkbox" value="hindi"/>
+        HINDI
+       </label>
+      </div>
+     </div>
     </div>
-
-</div>
-
-
-    </div>
-
     <!-- Bible reading box -->
-    <div id="bibleReaderContainer"
-         class="bible-reader-container">
-
-        <!-- Chapter title INSIDE the box -->
-        <div id="bibleReaderTitle"
-             class="bible-reader-title">
-        </div>
-
-        <!-- Bible text -->
-        <div id="bibleText"
-             class="bible-text">
-        </div>
-
+    <div class="bible-reader-container" id="bibleReaderContainer">
+     <!-- Chapter title INSIDE the box -->
+     <div class="bible-reader-title" id="bibleReaderTitle">
+     </div>
+     <!-- Bible text -->
+     <div class="bible-text" id="bibleText">
+     </div>
     </div>
-
     <!-- BIBLE SPEECH PLAYER -->
     <!-- =====================================
      BIBLE AUDIO PLAYER
 ===================================== -->
-
-<div id="speechPlayer" class="speech-player">
-
-
-    <div class="speech-player-controls">
-
-
-        <button
-            id="speechPreviousButton"
-            title="Previous Verse">
-
-            ◀◀
-
-        </button>
-
-
-        <button
-            id="speechPlayButton"
-            title="Play">
-
-            ▶
-        </button>
-
-
-
-        <button
-            id="speechNextButton"
-            title="Next Verse">
-
-            ▶▶
-
-        </button>
-
-
+    <div class="speech-player" id="speechPlayer">
+     <div class="speech-player-controls">
+      <button id="speechPreviousButton" title="Previous Verse">
+       ◀◀
+      </button>
+      <button id="speechPlayButton" title="Play">
+       ▶
+      </button>
+      <button id="speechNextButton" title="Next Verse">
+       ▶▶
+      </button>
+     </div>
     </div>
-
-
-</div>
-
-</div>
-
-<!-- =========================
+   </div>
+   <!-- =========================
      HOME PAGE
 ========================= -->
-
-<section
-    id="homePage"
-    class="page"
-    style="display:block;">
-
-
-<!-- DAILY PROMISE CARD -->
-    <article class="daily-promise-card" aria-live="polite" aria-atomic="true">
-        <h2 class="daily-promise-heading">✦ DAILY PROMISE ✦</h2>
-        <div id="dailyPromiseContent" class="daily-promise-content">
-            <div id="dailyPromiseVerse" class="daily-promise-verse">Loading today's promise...</div>
-            <div id="dailyPromiseReference" class="daily-promise-reference"></div>
-            <div id="dailyPromiseLanguage" class="daily-promise-language">ENGLISH</div>
-        </div>
-
-  
-<button
-    type="button"
-    id="dailyPromiseReadBtn"
-    title="Read this verse in the Bible"
-    aria-label="Read this verse in the Bible"
-    onclick="readDailyPromiseVerse()">
-
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-
-        <path d="M12 7v14"/>
-        <path d="M3 18V5a2 2 0 0 1 2-2h4a3 3 0 0 1 3 3 3 3 0 0 1 3-3h4a2 2 0 0 1 2 2v13"/>
-        <path d="M3 18h6a3 3 0 0 1 3 3"/>
-        <path d="M21 18h-6a3 3 0 0 0-3 3"/>
-    </svg>
-</button>
-
-        
-<button
-    type="button"
-    id="dailyPromiseShareBtn"
-    class="video-share-icon"
-    title="Share Daily Promise"
-    aria-label="Share Daily Promise"
-    onclick="shareDailyPromise()">
-
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-
-        <circle cx="18" cy="5" r="3"/>
-        <circle cx="6" cy="12" r="3"/>
-        <circle cx="18" cy="19" r="3"/>
-
-        <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/>
-        <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
-    </svg>
-</button>
-
-
+   <section class="page" id="homePage" style="display:block;">
+    <!-- DAILY PROMISE CARD -->
+    <article aria-atomic="true" aria-live="polite" class="daily-promise-card">
+     <h2 class="daily-promise-heading">
+      ✦ DAILY PROMISE ✦
+     </h2>
+     <div class="daily-promise-content" id="dailyPromiseContent">
+      <div class="daily-promise-verse" id="dailyPromiseVerse">
+       Loading today's promise...
+      </div>
+      <div class="daily-promise-reference" id="dailyPromiseReference">
+      </div>
+      <div class="daily-promise-language" id="dailyPromiseLanguage">
+       ENGLISH
+      </div>
+     </div>
+     <button aria-label="Read this verse in the Bible" id="dailyPromiseReadBtn" onclick="readDailyPromiseVerse()" title="Read this verse in the Bible" type="button">
+      <svg fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg">
+       <path d="M12 7v14">
+       </path>
+       <path d="M3 18V5a2 2 0 0 1 2-2h4a3 3 0 0 1 3 3 3 3 0 0 1 3-3h4a2 2 0 0 1 2 2v13">
+       </path>
+       <path d="M3 18h6a3 3 0 0 1 3 3">
+       </path>
+       <path d="M21 18h-6a3 3 0 0 0-3 3">
+       </path>
+      </svg>
+     </button>
+     <button aria-label="Share Daily Promise" class="video-share-icon" id="dailyPromiseShareBtn" onclick="shareDailyPromise()" title="Share Daily Promise" type="button">
+      <svg fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg">
+       <circle cx="18" cy="5" r="3">
+       </circle>
+       <circle cx="6" cy="12" r="3">
+       </circle>
+       <circle cx="18" cy="19" r="3">
+       </circle>
+       <line x1="8.6" x2="15.4" y1="10.5" y2="6.5">
+       </line>
+       <line x1="8.6" x2="15.4" y1="13.5" y2="17.5">
+       </line>
+      </svg>
+     </button>
     </article>
-
-
-
     <div class="home-main-buttons">
-
-        <!-- Row 1: Search | Bible -->
-        <button
-            class="home-main-button"
-            onclick="openSearchGroup()">
-            <div class="home-main-icon">🔍</div>
-            <div class="home-main-title">SEARCH</div>
-        </button>
-
-        <button
-            class="home-main-button"
-            onclick="openBibleGroup()">
-            <div class="home-main-icon">📖</div>
-            <div class="home-main-title">BIBLE</div>
-        </button>
-
-        <!-- Row 2: Treasure | Calendar -->
-        <button
-            class="home-main-button"
-            onclick="showFavorites()">
-            <div class="home-main-icon">♥</div>
-            <div class="home-main-title">TREASURE</div>
-        </button>
-
-        <button
-            class="home-main-button"
-            onclick="openGregorianCalendar()">
-            <div class="home-main-icon">
-                <div class="custom-calendar-icon">
-                    <div id="calendarMonth"></div>
-                    <div id="calendarDay"></div>
-                </div>
-            </div>
-            <div class="home-main-title">CALENDAR</div>
-        </button>
-
-        <!-- Row 3: Settings | Songs -->
-        <button
-            class="home-main-button"
-            onclick="openSettingsPage()">
-            <div class="home-main-icon">⚙️</div>
-            <div class="home-main-title">SETTINGS</div>
-        </button>
-
-        <button
-            class="home-main-button"
-            onclick="openSongsPage()">
-            <div class="home-main-icon">🎵</div>
-            <div class="home-main-title">SONGS</div>
-        </button>
-
-        <!-- Row 4: Offering across both columns -->
-        <button
-            class="home-main-button home-offering-button"
-            onclick="openOfferings()">
-            <div class="home-main-icon">❤️</div>
-            <div class="home-main-title">OFFERING</div>
-        </button>
-
+     <!-- Row 1: Search | Bible -->
+     <button class="home-main-button" onclick="openSearchGroup()">
+      <div class="home-main-icon">
+       🔍
+      </div>
+      <div class="home-main-title">
+       SEARCH
+      </div>
+     </button>
+     <button class="home-main-button" onclick="openBibleGroup()">
+      <div class="home-main-icon">
+       📖
+      </div>
+      <div class="home-main-title">
+       BIBLE
+      </div>
+     </button>
+     <!-- Row 2: Treasure | Calendar -->
+     <button class="home-main-button" onclick="showFavorites()">
+      <div class="home-main-icon">
+       ♥
+      </div>
+      <div class="home-main-title">
+       TREASURE
+      </div>
+     </button>
+     <button class="home-main-button" onclick="openGregorianCalendar()">
+      <div class="home-main-icon">
+       <div class="custom-calendar-icon">
+        <div id="calendarMonth">
+        </div>
+        <div id="calendarDay">
+        </div>
+       </div>
+      </div>
+      <div class="home-main-title">
+       CALENDAR
+      </div>
+     </button>
+     <!-- Row 3: Settings | Songs -->
+     <button class="home-main-button" onclick="openSettingsPage()">
+      <div class="home-main-icon">
+       ⚙️
+      </div>
+      <div class="home-main-title">
+       SETTINGS
+      </div>
+     </button>
+     <button class="home-main-button" onclick="openSongsPage()">
+      <div class="home-main-icon">
+       🎵
+      </div>
+      <div class="home-main-title">
+       SONGS
+      </div>
+     </button>
+     <!-- Row 4: Offering across both columns -->
+     <button class="home-main-button home-offering-button" onclick="openOfferings()">
+      <div class="home-main-icon">
+       ❤️
+      </div>
+      <div class="home-main-title">
+       OFFERING
+      </div>
+     </button>
     </div>
-
-</section>
-
-<!-- FRESH INTRO SONG PLAYER: iPOD WHEEL -->
-<div id="introMusicPlayer" class="ipod-song-player" style="display:none;">
-    <div class="ipod-display" aria-label="Music playlist display">
-        <div class="ipod-display-header"><span>HOLY BIBLE - KJV</span><span id="ipodTrackCount">SONGS</span></div>
-        <div id="ipodTrackList" class="ipod-track-list" role="listbox" aria-label="Select a song"></div>
-        <div id="ipodNowPlaying" class="ipod-now-playing" aria-live="polite">Select a song to play</div>
+   </section>
+   <!-- FRESH INTRO SONG PLAYER: iPOD WHEEL -->
+   <div class="ipod-song-player" id="introMusicPlayer" style="display:none;">
+    <div aria-label="Music playlist display" class="ipod-display">
+     <div class="ipod-display-header">
+      <span>
+       HOLY BIBLE - KJV
+      </span>
+      <span id="ipodTrackCount">
+       SONGS
+      </span>
+     </div>
+     <div aria-label="Select a song" class="ipod-track-list" id="ipodTrackList" role="listbox">
+     </div>
+     <div aria-live="polite" class="ipod-now-playing" id="ipodNowPlaying">
+      Select a song to play
+     </div>
     </div>
-    <div class="ipod-wheel" role="group" aria-label="Intro music controls">
-        <div class="ipod-swipe-instruction" aria-hidden="true">Swipe<br>up</div>
-        <button id="introMusicPreviousButton" class="ipod-button ipod-previous"
-            type="button" title="Previous track" aria-label="Previous track"><span class="ipod-skip-icon" aria-hidden="true"><span class="skip-bar"></span><span class="skip-triangle"></span></span></button>
-        <button id="introMusicPlayButton" class="ipod-button ipod-play"
-            type="button" title="Play" aria-label="Play intro music"><span class="youtube-icon-play" aria-hidden="true"></span></button>
-        <button id="introMusicNextButton" class="ipod-button ipod-next"
-            type="button" title="Next track" aria-label="Next track"><span class="ipod-skip-icon" aria-hidden="true"><span class="skip-triangle"></span><span class="skip-bar"></span></span></button>
-        <button id="introMusicLockButton" class="ipod-center" type="button"
-            title="Lock app" aria-label="Lock app" aria-pressed="false">
-            <svg class="ipod-lock-open-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="5" y="10" width="14" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-                <path d="M9 10V7a4 4 0 0 1 7.6-1.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="12" cy="15" r="1.2" fill="currentColor"/>
-                <path d="M12 16v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-            <svg class="ipod-lock-closed-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="5" y="10" width="14" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-                <path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="12" cy="15" r="1.2" fill="currentColor"/>
-                <path d="M12 16v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-        </button>
-        <div id="introMusicLockHint" role="status" aria-live="polite">Tap the lock to unlock the app</div>
+    <div aria-label="Intro music controls" class="ipod-wheel" role="group">
+     <div aria-hidden="true" class="ipod-swipe-instruction">
+      Swipe
+      <br/>
+      up
+     </div>
+     <button aria-label="Previous track" class="ipod-button ipod-previous" id="introMusicPreviousButton" title="Previous track" type="button">
+      <span aria-hidden="true" class="ipod-skip-icon">
+       <span class="skip-bar">
+       </span>
+       <span class="skip-triangle">
+       </span>
+      </span>
+     </button>
+     <button aria-label="Play intro music" class="ipod-button ipod-play" id="introMusicPlayButton" title="Play" type="button">
+      <span aria-hidden="true" class="youtube-icon-play">
+      </span>
+     </button>
+     <button aria-label="Next track" class="ipod-button ipod-next" id="introMusicNextButton" title="Next track" type="button">
+      <span aria-hidden="true" class="ipod-skip-icon">
+       <span class="skip-triangle">
+       </span>
+       <span class="skip-bar">
+       </span>
+      </span>
+     </button>
+     <button aria-label="Lock app" aria-pressed="false" class="ipod-center" id="introMusicLockButton" title="Lock app" type="button">
+      <svg aria-hidden="true" class="ipod-lock-open-icon" viewbox="0 0 24 24">
+       <rect fill="none" height="11" rx="2" stroke="currentColor" stroke-width="2" width="14" x="5" y="10">
+       </rect>
+       <path d="M9 10V7a4 4 0 0 1 7.6-1.7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2">
+       </path>
+       <circle cx="12" cy="15" fill="currentColor" r="1.2">
+       </circle>
+       <path d="M12 16v2" stroke="currentColor" stroke-linecap="round" stroke-width="1.8">
+       </path>
+      </svg>
+      <svg aria-hidden="true" class="ipod-lock-closed-icon" viewbox="0 0 24 24">
+       <rect fill="none" height="11" rx="2" stroke="currentColor" stroke-width="2" width="14" x="5" y="10">
+       </rect>
+       <path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2">
+       </path>
+       <circle cx="12" cy="15" fill="currentColor" r="1.2">
+       </circle>
+       <path d="M12 16v2" stroke="currentColor" stroke-linecap="round" stroke-width="1.8">
+       </path>
+      </svg>
+     </button>
+     <div aria-live="polite" id="introMusicLockHint" role="status">
+      Tap the lock to unlock the app
+     </div>
     </div>
-    <audio id="introMusicAudio" preload="none"></audio>
-</div>
-
-
-
-<!-- =========================
+    <audio id="introMusicAudio" preload="none">
+    </audio>
+   </div>
+   <!-- =========================
      OFFERINGS PAGE
 ========================= -->
-
-<section
-    id="offeringsPage"
-    class="page">
-
+   <section class="page" id="offeringsPage">
     <div class="sticky-page-header">
-
-        <h2 class="page-title">
-            OFFERINGS
-        </h2>
-
-        <p class="page-subtitle">
-            Support the Bible App
-        </p>
-
+     <h2 class="page-title">
+      OFFERINGS
+     </h2>
+     <p class="page-subtitle">
+      Support the Bible App
+     </p>
     </div>
-
-
     <div class="offerings-container">
-
-        <p class="offerings-message">
-
-            If you are truly blessed by this,
+     <p class="offerings-message">
+      If you are truly blessed by this,
             you can send your offerings which will
             benefit the App development and for
             the church ministries.
-
-            <br><br>
-
-            God Bless you and your family.
-
-        </p>
-
-
-        <div class="offerings-upi">
-
-            <p>
-                <strong>UPI ID</strong>
-            </p>
-
-            <p class="upi-id">
-                jebinzmail-2@okicici
-            </p>
-
-
-            <button
-                class="offerings-pay-button"
-                onclick="openUPIPayment()">
-
-                ❤️ SEND OFFERING
-
-            </button>
-
-        </div>
-
+      <br/>
+      <br/>
+      God Bless you and your family.
+     </p>
+     <div class="offerings-upi">
+      <p>
+       <strong>
+        UPI ID
+       </strong>
+      </p>
+      <p class="upi-id">
+       jebinzmail-2@okicici
+      </p>
+      <button class="offerings-pay-button" onclick="openUPIPayment()">
+       ❤️ SEND OFFERING
+      </button>
+     </div>
     </div>
-
-</section>
-
-
-
-<!-- =========================
+   </section>
+   <!-- =========================
      TREASURE LIST PAGE
 ========================= -->
-
-    <section
-    id="treasureListPage"
-    class="page">
-
+   <section class="page" id="treasureListPage">
     <div class="sticky-page-header">
-
-
-        <h2 class="page-title">
-            TREASURES
-        </h2>
-
-        <!-- Keeps the title centered -->
-        <div class="treasure-header-spacer"></div>
-
+     <h2 class="page-title">
+      TREASURES
+     </h2>
+     <!-- Keeps the title centered -->
+     <div class="treasure-header-spacer">
+     </div>
     </div>
-
     <p class="page-subtitle">
-        Treasure List
+     Treasure List
     </p>
-
-    </div>
-
     <div class="treasure-menu">
-
-        <button
-            class="treasure-menu-button"
-            onclick="openChapterTreasure()">
-
-            <div class="treasure-menu-icon">📖</div>
-
-            <div class="treasure-menu-title">
-                CHAPTER 
-            </div>
-
-        </button>
-
-        <button
-            class="treasure-menu-button"
-            onclick="openVerseTreasure()">
-
-            <div class="treasure-menu-icon">♥</div>
-
-            <div class="treasure-menu-title">
-                VERSE 
-            </div>
-
-        </button>
-
+     <button class="treasure-menu-button" onclick="openChapterTreasure()">
+      <div class="treasure-menu-icon">
+       📖
+      </div>
+      <div class="treasure-menu-title">
+       CHAPTER
+      </div>
+     </button>
+     <button class="treasure-menu-button" onclick="openVerseTreasure()">
+      <div class="treasure-menu-icon">
+       ♥
+      </div>
+      <div class="treasure-menu-title">
+       VERSE
+      </div>
+     </button>
     </div>
-
-</section>
-
-
-<!-- =========================
+   </section>
+   <!-- =========================
      SEARCH GROUP PAGE
 ========================= -->
-
-<section
-    id="searchGroupPage"
-    class="page">
-
+   <section class="page" id="searchGroupPage">
     <div class="sticky-page-header">
-
-        <h2 class="page-title">
-            SEARCH
-        </h2>
-
-        <p class="page-subtitle">
-            Search Bible Videos or Bible Text
-        </p>
-
+     <h2 class="page-title">
+      SEARCH
+     </h2>
+     <p class="page-subtitle">
+      Search Bible Videos or Bible Text
+     </p>
     </div>
-
-
     <div class="group-page-buttons">
-
-        <button
-            class="group-page-button"
-            onclick="openSearchPage()">
-
-            SEARCH VIDEOS
-
-        </button>
-
-
-        <button
-            class="group-page-button"
-            onclick="openBibleTextSearchPage()">
-
-            SEARCH BIBLE
-
-        </button>
-
+     <button class="group-page-button" onclick="openSearchPage()">
+      SEARCH VIDEOS
+     </button>
+     <button class="group-page-button" onclick="openBibleTextSearchPage()">
+      SEARCH BIBLE
+     </button>
     </div>
-
-</section>
-
-
-<!-- =========================
+   </section>
+   <!-- =========================
      BIBLE GROUP PAGE
 ========================= -->
-
-<section
-    id="bibleGroupPage"
-    class="page">
-
+   <section class="page" id="bibleGroupPage">
     <div class="sticky-page-header">
-
-        <h2 class="page-title">
-            BIBLE
-        </h2>
-
-        <p class="page-subtitle">
-            Select Testament
-        </p>
-
+     <h2 class="page-title">
+      BIBLE
+     </h2>
+     <p class="page-subtitle">
+      Select Testament
+     </p>
     </div>
-
-
-<div class="testaments">
-
-    <button
-        class="testament-button old-testament"
-        onclick="showBooks('old')">
-
-        <div class="book-icon">
-            📜
-        </div>
-
-        <h2>
-            OLD
-        </h2>
-
-        <h2>
-            TESTAMENT
-        </h2>
-
-        <div class="book-count">
-            39 BOOKS
-        </div>
-
-    </button>
-
-
-    <button
-        class="testament-button new-testament"
-        onclick="showBooks('new')">
-
-        <div class="book-icon">
-            ✝️
-        </div>
-
-        <h2>
-            NEW
-        </h2>
-
-        <h2>
-            TESTAMENT
-        </h2>
-
-        <div class="book-count">
-            27 BOOKS
-        </div>
-
-    </button>
-
-</div>
-
-</section>
-
-
-<!-- =========================
+    <div class="testaments">
+     <button class="testament-button old-testament" onclick="showBooks('old')">
+      <div class="book-icon">
+       📜
+      </div>
+      <h2>
+       OLD
+      </h2>
+      <h2>
+       TESTAMENT
+      </h2>
+      <div class="book-count">
+       39 BOOKS
+      </div>
+     </button>
+     <button class="testament-button new-testament" onclick="showBooks('new')">
+      <div class="book-icon">
+       ✝️
+      </div>
+      <h2>
+       NEW
+      </h2>
+      <h2>
+       TESTAMENT
+      </h2>
+      <div class="book-count">
+       27 BOOKS
+      </div>
+     </button>
+    </div>
+   </section>
+   <!-- =========================
      SETTINGS PAGE
 ========================= -->
-<section
-    id="settingsPage"
-    class="page">
-
+   <section class="page" id="settingsPage">
     <div class="sticky-page-header">
-        <h2 class="page-title">SETTINGS</h2>
-        <p class="page-subtitle">Customize your Bible app</p>
+     <h2 class="page-title">
+      SETTINGS
+     </h2>
+     <p class="page-subtitle">
+      Customize your Bible app
+     </p>
     </div>
-
     <div class="settings-container">
-
-        <!-- DARK MODE -->
-        <div class="setting-item">
-            <div class="setting-info">
-                <div class="setting-title">Dark Mode</div>
-                <div class="setting-description">
-                    Use dark appearance throughout the app
-                </div>
-            </div>
-
-            <label class="settings-switch">
-                <input
-                    type="checkbox"
-                    id="settingsDarkMode"
-                    onchange="changeSettingsDarkMode()">
-                <span class="settings-slider"></span>
-            </label>
-        </div>
-
-        <!-- ABOUT INFORMATION, NOW INSIDE SETTINGS -->
-        <div class="settings-about-heading">
-            <h3>ABOUT</h3>
-            <p>Holy Bible – King James Version</p>
-        </div>
-
-        <div class="about-container">
-            <article class="about-card">
-            <h3>About This App</h3>
-            <p>
-                Welcome to Holy Bible – King James Version.
+     <!-- DARK MODE -->
+     <div class="setting-item">
+      <div class="setting-info">
+       <div class="setting-title">
+        Dark Mode
+       </div>
+       <div class="setting-description">
+        Use dark appearance throughout the app
+       </div>
+      </div>
+      <label class="settings-switch">
+       <input id="settingsDarkMode" onchange="changeSettingsDarkMode()" type="checkbox"/>
+       <span class="settings-slider">
+       </span>
+      </label>
+     </div>
+     <!-- ABOUT INFORMATION, NOW INSIDE SETTINGS -->
+     <div class="settings-about-heading">
+      <h3>
+       ABOUT
+      </h3>
+      <p>
+       Holy Bible – King James Version
+      </p>
+     </div>
+     <div class="about-container">
+      <article class="about-card">
+       <h3>
+        About This App
+       </h3>
+       <p>
+        Welcome to Holy Bible – King James Version.
                 This app is designed to help you read, study,
                 and meditate on God's Word every day.
-            </p>
-        </article>
-
-        <article class="about-card">
-            <h3>Features</h3>
-            <ul>
-                <li>Bible reading in English, Tamil, Malayalam and Hindi</li>
-                <li>Daily Promise verses</li>
-                <li>Bible reading plan</li>
-                <li>Save and share favorite verses</li>
-                <li>Audio Bible reading on supported devices</li>
-                <li>Offline reading of cached Bible content</li>
-                <li>Light and dark modes</li>
-            </ul>
-        </article>
-
-        <article class="about-card">
-            <h3>Our Mission</h3>
-            <p>
-                Our mission is to help people discover the hope,
+       </p>
+      </article>
+      <article class="about-card">
+       <h3>
+        Features
+       </h3>
+       <ul>
+        <li>
+         Bible reading in English, Tamil, Malayalam and Hindi
+        </li>
+        <li>
+         Daily Promise verses
+        </li>
+        <li>
+         Bible reading plan
+        </li>
+        <li>
+         Save and share favorite verses
+        </li>
+        <li>
+         Audio Bible reading on supported devices
+        </li>
+        <li>
+         Offline reading of cached Bible content
+        </li>
+        <li>
+         Light and dark modes
+        </li>
+       </ul>
+      </article>
+      <article class="about-card">
+       <h3>
+        Our Mission
+       </h3>
+       <p>
+        Our mission is to help people discover the hope,
                 peace, truth and wisdom found in God's Word.
-            </p>
-            <blockquote>
-                “Thy word is a lamp unto my feet, and a light unto my path.”
-                <strong>Psalm 119:105 (KJV)</strong>
-            </blockquote>
-        </article>
-
-     
-<article class="about-card about-developer">
-    <h3>
-        <span style="color: #b8943d;">★</span>
+       </p>
+       <blockquote>
+        “Thy word is a lamp unto my feet, and a light unto my path.”
+        <strong>
+         Psalm 119:105 (KJV)
+        </strong>
+       </blockquote>
+      </article>
+      <article class="about-card about-developer">
+       <h3>
+        <span style="color: #b8943d;">
+         ★
+        </span>
         Developers
-        <span style="color: #b8943d;">★</span>
-    </h3>
-
-    <p class="about-developer-name">
+        <span style="color: #b8943d;">
+         ★
+        </span>
+       </h3>
+       <p class="about-developer-name">
         Jebin P. L.
-        <span class="about-developer-qualification">(B.Tech, M.E.)</span>
-    </p>
-
-    <p class="about-developer-name">
+        <span class="about-developer-qualification">
+         (B.Tech, M.E.)
+        </span>
+       </p>
+       <p class="about-developer-name">
         Evelin Gnana Prissy
-        <span class="about-developer-qualification">(M.Sc - IT)</span>
-    </p>
-
-    <hr style="border: 0; border-top: 1px solid #b8943d; margin: 18px 0;">
-
-    <h3 class="junior-tester-heading">
-        <span style="color: #b8943d;">★</span>
+        <span class="about-developer-qualification">
+         (M.Sc - IT)
+        </span>
+       </p>
+       <hr style="border: 0; border-top: 1px solid #b8943d; margin: 18px 0;"/>
+       <h3 class="junior-tester-heading">
+        <span style="color: #b8943d;">
+         ★
+        </span>
         Junior App Tester
-        <span style="color: #b8943d;">★</span>
-    </h3>
-
-    <p class="about-developer-name junior-tester-name">
+        <span style="color: #b8943d;">
+         ★
+        </span>
+       </h3>
+       <p class="about-developer-name junior-tester-name">
         Jelin Tirshatha
-        <span class="about-developer-qualification">(4th Grade)</span>
-    </p>
-
-    <p>
+        <span class="about-developer-qualification">
+         (4th Grade)
+        </span>
+       </p>
+       <p>
         Created with faith and dedication to make God's Word
         accessible to everyone.
-    </p>
-</article>
-
-        </div>
-
+       </p>
+      </article>
+     </div>
     </div>
-
-</section>
-
-
-<!-- =========================
+   </section>
+   <!-- =========================
      SONGS PAGE
 ========================= -->
-<section id="songsPage" class="page">
+   <section class="page" id="songsPage">
     <div class="songs-page-header">
-        <button type="button" id="defaultSongsButton" class="songs-action-button" onclick="playAllSongCategories()">▶ Default Song</button>
-        <h2 class="page-title" id="songsPageTitle">SONGS</h2>
-        <div class="songs-header-actions">
-            <button type="button" id="songsHeaderBackButton" class="songs-header-back-button" style="display:none" onclick="showSongCategories()" aria-label="Back to song categories" title="Back to Songs">‹</button>
-            <button type="button" id="addLocalSongsButton" class="songs-action-button" style="display:none" onclick="window.__holyBibleAddLocalSongs && window.__holyBibleAddLocalSongs()">＋ Add Song</button>
-        </div>
-        <input id="localMp3FilesInput" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac,.opus" multiple hidden>
+     <button class="songs-action-button" id="defaultSongsButton" onclick="playAllSongCategories()" type="button">
+      ▶ Default Song
+     </button>
+     <h2 class="page-title" id="songsPageTitle">
+      SONGS
+     </h2>
+     <div class="songs-header-actions">
+      <button aria-label="Back to song categories" class="songs-header-back-button" id="songsHeaderBackButton" onclick="showSongCategories()" style="display:none" title="Back to Songs" type="button">
+       ‹
+      </button>
+      <button class="songs-action-button" id="addLocalSongsButton" onclick="window.__holyBibleAddLocalSongs && window.__holyBibleAddLocalSongs()" style="display:none" type="button">
+       ＋ Add Song
+      </button>
+     </div>
+     <input accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac,.opus" hidden="" id="localMp3FilesInput" multiple="" type="file"/>
     </div>
-    <div id="songCategoryMenu" class="treasure-menu-grid songs-category-grid">
-        <button type="button" class="treasure-menu-button" onclick="openSongCategory('tamil')"><span class="treasure-menu-icon">🎵</span><span class="treasure-menu-title">TPM Tamil</span></button>
-        <button type="button" class="treasure-menu-button" onclick="openSongCategory('malayalam')"><span class="treasure-menu-icon">🎶</span><span class="treasure-menu-title">TPM Malayalam</span></button>
-        <button type="button" class="treasure-menu-button" onclick="openSongCategory('english')"><span class="treasure-menu-icon">🎼</span><span class="treasure-menu-title">TPM English</span></button>
-        <button type="button" class="treasure-menu-button" onclick="openSongCategory('others')"><span class="treasure-menu-icon">🎧</span><span class="treasure-menu-title">Chores / Others</span></button>
-        <button type="button" class="treasure-menu-button" onclick="openSongCategory('users')"><span class="treasure-menu-icon">📂</span><span class="treasure-menu-title">Users songs</span></button>
+    <div class="treasure-menu-grid songs-category-grid" id="songCategoryMenu">
+     <button class="treasure-menu-button" onclick="openSongCategory('tamil')" type="button">
+      <span class="treasure-menu-icon">
+       🎵
+      </span>
+      <span class="treasure-menu-title">
+       TPM Tamil
+      </span>
+     </button>
+     <button class="treasure-menu-button" onclick="openSongCategory('malayalam')" type="button">
+      <span class="treasure-menu-icon">
+       🎶
+      </span>
+      <span class="treasure-menu-title">
+       TPM Malayalam
+      </span>
+     </button>
+     <button class="treasure-menu-button" onclick="openSongCategory('english')" type="button">
+      <span class="treasure-menu-icon">
+       🎼
+      </span>
+      <span class="treasure-menu-title">
+       TPM English
+      </span>
+     </button>
+     <button class="treasure-menu-button" onclick="openSongCategory('others')" type="button">
+      <span class="treasure-menu-icon">
+       🎧
+      </span>
+      <span class="treasure-menu-title">
+       Chores / Others
+      </span>
+     </button>
+     <button class="treasure-menu-button" onclick="openSongCategory('users')" type="button">
+      <span class="treasure-menu-icon">
+       📂
+      </span>
+      <span class="treasure-menu-title">
+       Users songs
+      </span>
+     </button>
     </div>
-    <div id="songCategoryPlayerPanel" class="settings-container songs-container" style="display:none">
-        <button type="button" class="songs-back-button" onclick="showSongCategories()" aria-label="Back to song categories">← Back to Songs</button>
-        <h3 id="songCategoryHeading" class="song-category-heading">TPM Tamil</h3>
-        <div id="songCategoryNowPlaying" class="song-category-now-playing" aria-live="polite"></div>
-        <div id="songCategoryFlyingNotes" class="song-category-flying-notes" aria-hidden="true">
-            <span>♫</span><span>♪</span><span>♫</span><span>♪</span>
-        </div>
-        <div id="songCategoryPlayerMount"></div>
+    <div class="settings-container songs-container" id="songCategoryPlayerPanel" style="display:none">
+     <button aria-label="Back to song categories" class="songs-back-button" onclick="showSongCategories()" type="button">
+      ← Back to Songs
+     </button>
+     <h3 class="song-category-heading" id="songCategoryHeading">
+      TPM Tamil
+     </h3>
+     <div aria-live="polite" class="song-category-now-playing" id="songCategoryNowPlaying">
+     </div>
+     <div aria-hidden="true" class="song-category-flying-notes" id="songCategoryFlyingNotes">
+      <span>
+       ♫
+      </span>
+      <span>
+       ♪
+      </span>
+      <span>
+       ♫
+      </span>
+      <span>
+       ♪
+      </span>
+     </div>
+     <div id="songCategoryPlayerMount">
+     </div>
     </div>
-    <div id="usersSongsPanel" class="settings-container songs-container" style="display:none">
-        <div class="users-songs-toolbar">
-            <button type="button" class="songs-back-button" onclick="showSongCategories()" aria-label="Back to song categories">← Back to Songs</button>
-            <p id="songsLibraryStatus" class="songs-library-status" role="status" aria-live="polite">Loading your music library…</p>
-        </div>
-        <div id="songsLibraryList" class="songs-library-list"></div>
-        <p class="songs-storage-note">Songs are linked from your device; the audio files are not uploaded to GitHub or copied into app storage. Keep the original files available on your device.</p>
+    <div class="settings-container songs-container" id="usersSongsPanel" style="display:none">
+     <div class="users-songs-toolbar">
+      <button aria-label="Back to song categories" class="songs-back-button" onclick="showSongCategories()" type="button">
+       ← Back to Songs
+      </button>
+      <p aria-live="polite" class="songs-library-status" id="songsLibraryStatus" role="status">
+       Loading your music library…
+      </p>
+     </div>
+     <div class="songs-library-list" id="songsLibraryList">
+     </div>
+     <p class="songs-storage-note">
+      Songs are linked from your device; the audio files are not uploaded to GitHub or copied into app storage. Keep the original files available on your device.
+     </p>
     </div>
-</section>
-
-
-<!-- =========================
+   </section>
+   <!-- =========================
      BIBLE TEXT SEARCH PAGE
 ========================= -->
-
-<section id="bibleTextSearchPage" class="page">
-
+   <section class="page" id="bibleTextSearchPage">
     <div class="search-sticky-header">
-
-        <div class="search-header-title">
-
-            <h2>
-                Search Bible Text
-            </h2>
-
-            <p>
-                Search the King James Version Bible
-            </p>
-
-        </div>
-
-        <div class="search-box-container">
-
-            
-    <input
-    type="text"
-    id="bibleTextSearchInput"
-    placeholder="Type a word or phrase..."
-    oninput="clearTimeout(window.bibleSearchTimer); window.bibleSearchTimer = setTimeout(searchBibleText, 200)">
-
-        </div>
-
+     <div class="search-header-title">
+      <h2>
+       Search Bible Text
+      </h2>
+      <p>
+       Search the King James Version Bible
+      </p>
+     </div>
+     <div class="search-box-container">
+      <input id="bibleTextSearchInput" oninput="clearTimeout(window.bibleSearchTimer); window.bibleSearchTimer = setTimeout(searchBibleText, 200)" placeholder="Type a word or phrase..." type="text"/>
+     </div>
     </div>
-
     <div id="bibleTextSearchResults">
     </div>
-
-</section>
-<!-- =========================
+   </section>
+   <!-- =========================
      SEARCH PAGE
 ========================= -->
-
-<section
-    id="searchPage"
-    class="page">
-
-<div class="search-sticky-header">
-
-    <h2 class="page-title">
-        Search Bible Videos
-    </h2>
-
-    <p class="page-subtitle">
-        Search Old & New Testament Videos
-    </p>
-
-    <div class="search-box-container">
-
-        <input
-            type="text"
-            id="videoSearchInput"
-            placeholder="Type a video title or keyword..."
-            oninput="searchBibleVideos()">
-
+   <section class="page" id="searchPage">
+    <div class="search-sticky-header">
+     <h2 class="page-title">
+      Search Bible Videos
+     </h2>
+     <p class="page-subtitle">
+      Search Old & New Testament Videos
+     </p>
+     <div class="search-box-container">
+      <input id="videoSearchInput" oninput="searchBibleVideos()" placeholder="Type a video title or keyword..." type="text"/>
+     </div>
     </div>
-
-</div>
-
-
     <div id="searchResults">
     </div>
-
-</section>
-
-<!-- =========================
+   </section>
+   <!-- =========================
      BOOK PAGE
 ========================= -->
-
-<section 
-    id="bookPage" 
-    class="page"> 
-
+   <section class="page" id="bookPage">
     <div class="sticky-page-header">
-
-        <h2 
-            id="bookPageTitle" 
-            class="page-title"> 
-        </h2> 
-
-        <p 
-            id="bookPageSubtitle" 
-            class="page-subtitle"> 
-        </p> 
-
+     <h2 class="page-title" id="bookPageTitle">
+     </h2>
+     <p class="page-subtitle" id="bookPageSubtitle">
+     </p>
     </div>
-
-    <div 
-        id="bookGrid" 
-        class="book-grid"> 
+    <div class="book-grid" id="bookGrid">
     </div>
-
-
-
-</section>
-
-
-<!-- =========================
+   </section>
+   <!-- =========================
      CHAPTER PAGE
 ========================= -->
-
-<section
-    id="chapterPage"
-    class="page">
-
-<div class="sticky-page-header">
-
-    <h2 
-        id="chapterPageTitle" 
-        class="page-title"> 
-    </h2> 
-
-    <p 
-        id="chapterPageSubtitle" 
-        class="page-subtitle"> 
-    </p>
-
-</div>
-
-    <div
-        id="chapterGrid"
-        class="chapter-grid">
+   <section class="page" id="chapterPage">
+    <div class="sticky-page-header">
+     <h2 class="page-title" id="chapterPageTitle">
+     </h2>
+     <p class="page-subtitle" id="chapterPageSubtitle">
+     </p>
     </div>
-
-
-
-</section>
-
-<!-- =========================
+    <div class="chapter-grid" id="chapterGrid">
+    </div>
+   </section>
+   <!-- =========================
      VIDEO PAGE
 ========================= -->
-
-<section id="videoPage" class="page">
-
-<div class="chapter-heading-row">
-
-    <h2
-        id="videoPageTitle"
-        class="page-title">
-    </h2>
-
-
-    <div class="chapter-heading-actions">
-
-        <button
-            id="favoriteChapterButton"
-            class="favorite-chapter-button"
-            onclick="chapterHeartClick()"
-            title="Add to Favorites">
-            ♡
-        </button>
-
-
-        <button
-            id="readBibleButton"
-            class="read-bible-button"
-            onclick="toggleBibleReader()">
-
-            READ
-
-        </button>
-
+   <section class="page" id="videoPage">
+    <div class="chapter-heading-row">
+     <h2 class="page-title" id="videoPageTitle">
+     </h2>
+     <div class="chapter-heading-actions">
+      <button class="favorite-chapter-button" id="favoriteChapterButton" onclick="chapterHeartClick()" title="Add to Favorites">
+       ♡
+      </button>
+      <button class="read-bible-button" id="readBibleButton" onclick="toggleBibleReader()">
+       READ
+      </button>
+     </div>
     </div>
-
-</div>
-
-    <p class="page-subtitle">Bible Videos</p>
-
-
+    <p class="page-subtitle">
+     Bible Videos
+    </p>
     <!-- =========================
          VIDEO LIST
     ========================= -->
-
-    <div
-        id="videoList"
-        class="video-list">
+    <div class="video-list" id="videoList">
     </div>
-
-
-
-
-</section>
-
-
-<!-- =========================
+   </section>
+   <!-- =========================
      FAVORITES PAGE
 ========================= -->
-
-<section 
-    id="favoritesPage" 
-    class="page"> 
-
+   <section class="page" id="favoritesPage">
     <div class="sticky-page-header">
-
-        <div class="treasure-header">
-<button
-    class="nav-back-button"
-    onclick="backToTreasureMenu()">
-    ←
-    </button>
-
-        <h2 class="page-title">
-            CHAPTERS         </h2>
-
-        
-
+     <div class="treasure-header">
+      <button class="nav-back-button" onclick="backToTreasureMenu()">
+       ←
+      </button>
+      <h2 class="page-title">
+       CHAPTERS
+      </h2>
+     </div>
+     <p class="page-subtitle">
+      Saved Treasures
+     </p>
     </div>
-
-    <p class="page-subtitle">
-        Saved Treasures
-    </p>
-
-</div>
-
-
     <!-- ============================= -->
-<!-- CHAPTER TREASURE -->
-<!-- ============================= -->
-
-<div class="treasure-section">
-
-    <div
-        id="favoritesList"
-        class="favorites-list">
+    <!-- CHAPTER TREASURE -->
+    <!-- ============================= -->
+    <div class="treasure-section">
+     <div class="favorites-list" id="favoritesList">
+     </div>
     </div>
-
-</div>
-
-</section>
-
-<!-- =========================
+   </section>
+   <!-- =========================
      VERSE TREASURE PAGE
 ========================= -->
-
-<section
-    id="verseTreasurePage"
-    class="page">
-
+   <section class="page" id="verseTreasurePage">
     <div class="sticky-page-header">
-
-        <div class="treasure-header">
-
-    <button 
-        class="nav-back-button"
-        onclick="backToTreasureMenu()">
-        ←
-    </button>
-    <h2 class="page-title">
-        VERSES
-    </h2>
-<div class="verse-header-actions">
-
-        <button 
-    id="shareSelectedVersesBtn"
-    class="header-icon-button"
-    disabled
-    title="Share Selected Verses">
-
-    <svg 
-        width="22" 
-        height="22" 
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg">
-
-        <path 
-        d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z"
-        stroke="currentColor"
-        stroke-width="2"/>
-
-        <path 
-        d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z"
-        stroke="currentColor"
-        stroke-width="2"/>
-
-        <path 
-        d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z"
-        stroke="currentColor"
-        stroke-width="2"/>
-
-        <path 
-        d="M8.7 10.8L15.3 7.2M8.7 13.2L15.3 16.8"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"/>
-
-    </svg>
-
-</button>
-
- <button
-    id="pdfSelectedVersesBtn"
-    class="header-icon-button"
-    disabled
-    title="Download PDF">
-
-<svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg">
-
-    <!-- PDF file shape -->
-    <path
-    d="M6 2H14L20 8V21C20 21.5523 19.5523 22 19 22H6C4.89543 22 4 21.1046 4 20V4C4 2.89543 4.89543 2 6 2Z"
-    stroke="currentColor"
-    stroke-width="1.8"
-    stroke-linejoin="round"/>
-
-
-    <!-- Fold corner -->
-    <path
-    d="M14 2V8H20"
-    stroke="currentColor"
-    stroke-width="1.8"
-    stroke-linejoin="round"/>
-
-
-    <!-- PDF text -->
-    <text
-    x="5.2"
-    y="17"
-    font-size="6"
-    font-family="Arial"
-    font-weight="bold"
-    fill="currentColor">
-        PDF
-    </text>
-
-
-</svg>
-
-</button> 
- </div>
-</div>
-
-        <p class="page-subtitle">
-            Saved Treasures 
-        </p>
-
+     <div class="treasure-header">
+      <button class="nav-back-button" onclick="backToTreasureMenu()">
+       ←
+      </button>
+      <h2 class="page-title">
+       VERSES
+      </h2>
+      <div class="verse-header-actions">
+       <button class="header-icon-button" disabled="" id="shareSelectedVersesBtn" title="Share Selected Verses">
+        <svg fill="none" height="22" viewbox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+         <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" stroke-width="2">
+         </path>
+         <path d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z" stroke="currentColor" stroke-width="2">
+         </path>
+         <path d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z" stroke="currentColor" stroke-width="2">
+         </path>
+         <path d="M8.7 10.8L15.3 7.2M8.7 13.2L15.3 16.8" stroke="currentColor" stroke-linecap="round" stroke-width="2">
+         </path>
+        </svg>
+       </button>
+       <button class="header-icon-button" disabled="" id="pdfSelectedVersesBtn" title="Download PDF">
+        <svg fill="none" height="24" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+         <!-- PDF file shape -->
+         <path d="M6 2H14L20 8V21C20 21.5523 19.5523 22 19 22H6C4.89543 22 4 21.1046 4 20V4C4 2.89543 4.89543 2 6 2Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8">
+         </path>
+         <!-- Fold corner -->
+         <path d="M14 2V8H20" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8">
+         </path>
+         <!-- PDF text -->
+         <text fill="currentColor" font-family="Arial" font-size="6" font-weight="bold" x="5.2" y="17">
+          PDF
+         </text>
+        </svg>
+       </button>
+      </div>
+     </div>
+     <p class="page-subtitle">
+      Saved Treasures
+     </p>
     </div>
-
-    <div
-        id="verseFavoritesList"
-        class="favorites-list">
+    <div class="favorites-list" id="verseFavoritesList">
     </div>
-
-</section>
-
-<!-- GREGORIAN CALENDAR PAGE -->
-<section id="gregorianCalendarPage" class="page" style="display:none;">
-
+   </section>
+   <!-- GREGORIAN CALENDAR PAGE -->
+   <section class="page" id="gregorianCalendarPage" style="display:none;">
     <div class="gregorian-calendar-page">
-
-        <div class="gregorian-calendar-heading">
-            <h2>📅 Gregorian Calendar</h2>
-            <p>Bible Reading Plan &amp; Important Days</p>
+     <div class="gregorian-calendar-heading">
+      <h2>
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="24" height="24"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="1.8"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         style="vertical-align: middle; margin-right: 6px;">
+        <rect x="3" y="5" width="18" height="16" rx="2"/>
+        <line x1="16" y1="3" x2="16" y2="7"/>
+        <line x1="8" y1="3" x2="8" y2="7"/>
+        <line x1="3" y1="11" x2="21" y2="11"/>
+        <line x1="8" y1="15" x2="8" y2="15"/>
+        <line x1="12" y1="15" x2="12" y2="15"/>
+        <line x1="16" y1="15" x2="16" y2="15"/>
+    </svg>
+    Gregorian Calendar
+</h2>
+      <p>
+       Bible Reading Plan & Important Days
+      </p>
+     </div>
+     <div class="gregorian-calendar-toolbar">
+      <button aria-label="Previous year" onclick="changeGregorianYear(-1)" type="button">
+       ‹
+      </button>
+      <input aria-label="Enter year" class="gregorian-picker-state" id="gregorianYearSelect" inputmode="numeric" max="3000" min="0" onchange="changeGregorianYearTo(this.value)" step="1" type="number"/>
+      <div class="gregorian-picker-anchor">
+       <button aria-expanded="false" aria-label="Choose year" class="gregorian-picker-button" id="gregorianYearPickerButton" onclick="toggleGregorianPicker('year')" type="button">
+        2026 ▾
+       </button>
+       <div class="gregorian-picker-popover" hidden="" id="gregorianYearPicker">
+        <div class="gregorian-picker-heading">
+         Choose year
         </div>
-
-        <div class="gregorian-calendar-toolbar">
-
-            <button type="button" onclick="changeGregorianYear(-1)"
-                    aria-label="Previous year">‹</button>
-
-            <input
-    type="number"
-    id="gregorianYearSelect"
-    aria-label="Enter year"
-    min="0"
-    max="3000"
-    step="1"
-    inputmode="numeric"
-    onchange="changeGregorianYearTo(this.value)"
-    class="gregorian-picker-state"
->
-            <div class="gregorian-picker-anchor">
-                <button
-                    type="button"
-                    id="gregorianYearPickerButton"
-                    class="gregorian-picker-button"
-                    aria-label="Choose year"
-                    aria-expanded="false"
-                    onclick="toggleGregorianPicker('year')">2026 ▾</button>
-                <div id="gregorianYearPicker" class="gregorian-picker-popover" hidden>
-                    <div class="gregorian-picker-heading">Choose year</div>
-                    <div id="gregorianYearWheel" class="gregorian-picker-wheel" role="listbox" aria-label="Years"></div>
-                </div>
-            </div>
-
-            <button type="button" onclick="changeGregorianYear(1)"
-                    aria-label="Next year">›</button>
-
+        <div aria-label="Years" class="gregorian-picker-wheel" id="gregorianYearWheel" role="listbox">
         </div>
-
-        <div class="gregorian-calendar-view-switch">
-            <button id="gregorianMonthViewBtn"
-                    type="button"
-                    class="active"
-                    onclick="setGregorianCalendarView('month')">
-                Month View
-            </button>
-
-            <button id="gregorianYearViewBtn"
-                    type="button"
-                    onclick="setGregorianCalendarView('year')">
-                12 Months
-            </button>
+       </div>
+      </div>
+      <button aria-label="Next year" onclick="changeGregorianYear(1)" type="button">
+       ›
+      </button>
+     </div>
+     <div class="gregorian-calendar-view-switch">
+      <button class="active" id="gregorianMonthViewBtn" onclick="setGregorianCalendarView('month')" type="button">
+       Month View
+      </button>
+      <button id="gregorianYearViewBtn" onclick="setGregorianCalendarView('year')" type="button">
+       12 Months
+      </button>
+     </div>
+     <div class="gregorian-month-controls" id="gregorianMonthControls">
+      <button onclick="changeGregorianMonth(-1)" type="button">
+       ‹
+      </button>
+      <select aria-label="Select month" class="gregorian-picker-state" id="gregorianMonthSelect" onchange="changeGregorianMonthTo(this.value)">
+      </select>
+      <div class="gregorian-picker-anchor">
+       <button aria-expanded="false" aria-label="Choose month" class="gregorian-picker-button gregorian-month-picker-button" id="gregorianMonthPickerButton" onclick="toggleGregorianPicker('month')" type="button">
+        January ▾
+       </button>
+       <div class="gregorian-picker-popover" hidden="" id="gregorianMonthPicker">
+        <div class="gregorian-picker-heading">
+         Choose month
         </div>
-
-        <div id="gregorianMonthControls"
-             class="gregorian-month-controls">
-
-            <button type="button" onclick="changeGregorianMonth(-1)">‹</button>
-
-            <select
-                id="gregorianMonthSelect"
-                aria-label="Select month"
-                onchange="changeGregorianMonthTo(this.value)"
-                class="gregorian-picker-state">
-            </select>
-            <div class="gregorian-picker-anchor">
-                <button
-                    type="button"
-                    id="gregorianMonthPickerButton"
-                    class="gregorian-picker-button gregorian-month-picker-button"
-                    aria-label="Choose month"
-                    aria-expanded="false"
-                    onclick="toggleGregorianPicker('month')">January ▾</button>
-                <div id="gregorianMonthPicker" class="gregorian-picker-popover" hidden>
-                    <div class="gregorian-picker-heading">Choose month</div>
-                    <div id="gregorianMonthWheel" class="gregorian-picker-wheel" role="listbox" aria-label="Months"></div>
-                </div>
-            </div>
-
-            <button type="button" onclick="changeGregorianMonth(1)">›</button>
-
+        <div aria-label="Months" class="gregorian-picker-wheel" id="gregorianMonthWheel" role="listbox">
         </div>
-
-        <div id="gregorianCalendarGrid"
-             class="gregorian-calendar-grid"></div>
-
-        <div class="gregorian-calendar-legend">
-            <button type="button" class="gregorian-today-legend" onclick="goToGregorianToday()" aria-label="Return to today's month and date">Today</button>
-            
-        </div>
-
+       </div>
+      </div>
+      <button onclick="changeGregorianMonth(1)" type="button">
+       ›
+      </button>
+     </div>
+     <div class="gregorian-calendar-grid" id="gregorianCalendarGrid">
+     </div>
+     <div class="gregorian-calendar-legend">
+      <button aria-label="Return to today's month and date" class="gregorian-today-legend" onclick="goToGregorianToday()" type="button">
+       Today
+      </button>
+     </div>
     </div>
-
-</section>
-
-</main>
-
-<script src="https://www.youtube.com/iframe_api"></script> 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
- 
-<script> 
-
-    let currentReaderLanguage = "en";    
+   </section>
+  </main>
+  <script src="https://www.youtube.com/iframe_api">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+  </script>
+  <script>
+   let currentReaderLanguage = "en";    
 /* ========================================================= 
    BIBLE BOOKS 
 ========================================================= */ 
@@ -17315,6 +17005,9 @@ function toggleVerseTreasure(
 
         button.textContent = "♥";
         button.classList.add("active");
+
+        // Gold star burst only when adding a verse, never when removing it.
+        showGoldStarBurst(button);
     }
 
     // Save changes
@@ -19955,6 +19648,281 @@ function setupIntroMusicPlayer() {
         ...TAMIL_TRACKS,
         ...OTHERS_TRACKS
     ];
+
+    // Maximum number of built-in songs retained for offline playback.
+    // Change this one value to 20 if you later want a larger cache.
+    const MAX_CACHED_SONGS = 10;
+
+    const MUSIC_CACHE_PREFIX = "holy-bible-music-";
+    const SHARED_MUSIC_CACHE_NAME = "holy-bible-music-shared-v1";
+    const MUSIC_PLAYLISTS = ["default", "english", "tamil", "malayalam", "others"];
+    let musicCacheSyncInProgress = false;
+    let musicCacheSyncAgain = false;
+    let sharedMusicCacheInitPromise = null;
+
+    // Playlist membership is stored separately from MP3 bytes. The same URL can
+    // belong to several playlists while its audio response exists only once.
+    function getMusicCacheNameForMode(musicMode) {
+        const mode = String(musicMode || "default");
+        if (mode.indexOf("category:") === 0) {
+            const category = mode.slice("category:".length).toLowerCase();
+            if (["english", "tamil", "malayalam", "others"].includes(category)) {
+                return MUSIC_CACHE_PREFIX + category + "-v1";
+            }
+        }
+        return MUSIC_CACHE_PREFIX + "default-v1";
+    }
+
+    function getMembershipStorageKey(playlistCacheName) {
+        return "holyBibleMusicMembership:" + playlistCacheName;
+    }
+
+    function readPlaylistMembership(playlistCacheName) {
+        try {
+            const value = JSON.parse(localStorage.getItem(getMembershipStorageKey(playlistCacheName)) || "[]");
+            return Array.isArray(value) ? Array.from(new Set(value.filter(function (url) {
+                return typeof url === "string" && /^https?:\/\//i.test(url);
+            }))) : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function savePlaylistMembership(playlistCacheName, urls) {
+        try {
+            localStorage.setItem(getMembershipStorageKey(playlistCacheName), JSON.stringify(Array.from(new Set(urls))));
+            return true;
+        } catch (error) {
+            console.warn("Could not save music playlist membership:", error);
+            return false;
+        }
+    }
+
+    function getAllPlaylistCacheNames() {
+        return MUSIC_PLAYLISTS.map(function (name) {
+            return MUSIC_CACHE_PREFIX + name + "-v1";
+        });
+    }
+
+    function categoryFromSongUrl(url) {
+        try {
+            const path = new URL(url, document.baseURI).pathname.toLowerCase();
+            if (path.includes("/songs/english/")) return "english";
+            if (path.includes("/songs/tamil/")) return "tamil";
+            if (path.includes("/songs/malayalam/")) return "malayalam";
+            if (path.includes("/songs/others/")) return "others";
+        } catch (error) {}
+        return "";
+    }
+
+    async function initializeSharedMusicCache() {
+        if (sharedMusicCacheInitPromise) return sharedMusicCacheInitPromise;
+        sharedMusicCacheInitPromise = (async function () {
+            const sharedCache = await caches.open(SHARED_MUSIC_CACHE_NAME);
+            const oldCacheNames = [
+                "holy-bible-music-v1",
+                ...getAllPlaylistCacheNames()
+            ];
+            const membership = {};
+            MUSIC_PLAYLISTS.forEach(function (name) {
+                const cacheName = MUSIC_CACHE_PREFIX + name + "-v1";
+                membership[cacheName] = readPlaylistMembership(cacheName);
+            });
+
+            for (const oldName of oldCacheNames) {
+                let oldCache;
+                try { oldCache = await caches.open(oldName); } catch (error) { continue; }
+                const requests = await oldCache.keys();
+                for (const request of requests) {
+                    const url = request.url;
+                    const response = await oldCache.match(request);
+                    if (!response) continue;
+                    if (!(await sharedCache.match(url))) {
+                        await sharedCache.put(url, response.clone());
+                    }
+
+                    // Import membership only when this playlist has not yet been
+                    // initialized. Legacy mixed cache entries are assigned to the
+                    // Default Song playlist and their matching category.
+                    if (oldName === "holy-bible-music-v1") {
+                        membership[MUSIC_CACHE_PREFIX + "default-v1"].push(url);
+                        const category = categoryFromSongUrl(url);
+                        if (category) membership[MUSIC_CACHE_PREFIX + category + "-v1"].push(url);
+                    } else {
+                        const playlistName = oldName.replace(MUSIC_CACHE_PREFIX, "").replace(/-v1$/, "");
+                        if (MUSIC_PLAYLISTS.includes(playlistName)) membership[oldName].push(url);
+                    }
+                }
+            }
+
+            for (const playlistCacheName of getAllPlaylistCacheNames()) {
+                const urls = Array.from(new Set(membership[playlistCacheName] || [])).slice(-MAX_CACHED_SONGS);
+                if (!savePlaylistMembership(playlistCacheName, urls)) {
+                    throw new Error("Could not save cached music playlist information.");
+                }
+            }
+
+            // Remove old per-playlist byte copies only after the shared copy and
+            // playlist membership have been migrated successfully.
+            for (const oldName of oldCacheNames) {
+                await caches.delete(oldName);
+            }
+            return true;
+        })().catch(function (error) {
+            sharedMusicCacheInitPromise = null;
+            console.warn("Shared music cache initialization failed:", error);
+            return false;
+        });
+        return sharedMusicCacheInitPromise;
+    }
+
+    async function syncBuiltInMusicCache(urlsToCache, urlsToRemove, cacheName) {
+        if (!navigator.onLine || !("serviceWorker" in navigator)) return false;
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            const worker = navigator.serviceWorker.controller || registration.active;
+            if (!worker) return false;
+            return await new Promise(function (resolve) {
+                const channel = new MessageChannel();
+                const timeout = setTimeout(function () {
+                    channel.port1.close();
+                    resolve(false);
+                }, 60000);
+                channel.port1.onmessage = function (event) {
+                    clearTimeout(timeout);
+                    channel.port1.close();
+                    resolve(Boolean(event.data && event.data.success));
+                };
+                worker.postMessage({
+                    type: "MUSIC_CACHE_SYNC",
+                    cacheName: cacheName || getMusicCacheNameForMode("default"),
+                    urlsToCache: urlsToCache || [],
+                    urlsToRemove: urlsToRemove || []
+                }, [channel.port2]);
+            });
+        } catch (error) {
+            console.warn("Music cache sync failed:", error);
+            return false;
+        }
+    }
+
+    async function isBuiltInSongCached(songUrl, musicMode) {
+        try {
+            if (!await initializeSharedMusicCache()) return false;
+            const absoluteUrl = new URL(songUrl, document.baseURI).href;
+            const playlistCacheName = getMusicCacheNameForMode(musicMode);
+            if (!readPlaylistMembership(playlistCacheName).includes(absoluteUrl)) return false;
+            const cache = await caches.open(SHARED_MUSIC_CACHE_NAME);
+            return Boolean(await cache.match(absoluteUrl));
+        } catch (error) {
+            console.warn("Could not check cached music:", error);
+            return false;
+        }
+    }
+
+    async function getOfflineBuiltInSongs(songList, musicMode) {
+        const mode = String(musicMode || "default");
+        if (!await initializeSharedMusicCache()) return [];
+        let candidates = songList.filter(function (song) {
+            return song.kind === "default" && song.src;
+        });
+        if (mode.indexOf("category:") === 0) {
+            const wantedCategory = mode.slice("category:".length);
+            candidates = candidates.filter(function (song) { return song.category === wantedCategory; });
+        } else if (mode === "users") {
+            return [];
+        }
+        const cachedSongs = [];
+        for (const song of candidates) {
+            if (await isBuiltInSongCached(song.src, mode)) cachedSongs.push(song);
+        }
+        return cachedSongs.slice(-MAX_CACHED_SONGS);
+    }
+
+    function getBuiltInCandidatesForMode(songList, musicMode) {
+        const mode = String(musicMode || "default");
+        let candidates = songList.filter(function (song) { return song.kind === "default" && song.src; });
+        if (mode.indexOf("category:") === 0) {
+            const wantedCategory = mode.slice("category:".length);
+            candidates = candidates.filter(function (song) { return song.category === wantedCategory; });
+        }
+        return candidates;
+    }
+
+    // Maintain at most 10 playlist memberships while keeping each MP3 response
+    // once in the shared cache. A song is deleted only when no playlist references it.
+    async function maintainActiveBuiltInCache(songList, musicMode, rotate) {
+        if (!navigator.onLine || musicCacheSyncInProgress) {
+            if (musicCacheSyncInProgress) musicCacheSyncAgain = true;
+            return false;
+        }
+        const mode = String(musicMode || "default");
+        if (mode === "users" || mode === "personal") return false;
+        if (!await initializeSharedMusicCache()) return false;
+
+        const candidates = getBuiltInCandidatesForMode(songList, mode);
+        if (!candidates.length) return false;
+        const playlistCacheName = getMusicCacheNameForMode(mode);
+        const sharedCache = await caches.open(SHARED_MUSIC_CACHE_NAME);
+        const candidateUrls = candidates.map(function (song) { return new URL(song.src, document.baseURI).href; });
+        const oldMembership = readPlaylistMembership(playlistCacheName);
+        const activeMembership = [];
+        for (const url of oldMembership) {
+            if (candidateUrls.includes(url) && await sharedCache.match(url)) activeMembership.push(url);
+        }
+        const uncachedForPlaylist = candidateUrls.filter(function (url) { return !activeMembership.includes(url); });
+        let nextMembership = activeMembership.slice();
+
+        if (rotate && uncachedForPlaylist.length) {
+            if (nextMembership.length >= MAX_CACHED_SONGS) nextMembership.shift();
+            nextMembership.push(uncachedForPlaylist[0]);
+        } else {
+            for (const url of uncachedForPlaylist) {
+                if (nextMembership.length >= MAX_CACHED_SONGS) break;
+                nextMembership.push(url);
+            }
+        }
+        nextMembership = Array.from(new Set(nextMembership)).slice(-MAX_CACHED_SONGS);
+
+        const urlsToCache = [];
+        for (const url of nextMembership) {
+            if (!(await sharedCache.match(url))) urlsToCache.push(url);
+        }
+
+        musicCacheSyncInProgress = true;
+        try {
+            // First download every needed file. Failure leaves old membership intact.
+            const cacheSuccess = await syncBuiltInMusicCache(urlsToCache, [], playlistCacheName);
+            if (!cacheSuccess) return false;
+            if (!savePlaylistMembership(playlistCacheName, nextMembership)) return false;
+
+            // Remove only files no longer referenced by any playlist.
+            const referenced = new Set();
+            for (const name of getAllPlaylistCacheNames()) {
+                const urls = name === playlistCacheName ? nextMembership : readPlaylistMembership(name);
+                urls.forEach(function (url) { referenced.add(url); });
+            }
+            const urlsToRemove = oldMembership.filter(function (url) {
+                return !referenced.has(url) && !nextMembership.includes(url);
+            });
+            if (urlsToRemove.length) {
+                await syncBuiltInMusicCache([], urlsToRemove, playlistCacheName);
+            }
+            return true;
+        } catch (error) {
+            console.warn("Could not maintain offline music cache:", error);
+            return false;
+        } finally {
+            musicCacheSyncInProgress = false;
+            if (musicCacheSyncAgain) {
+                musicCacheSyncAgain = false;
+                setTimeout(function () {
+                    maintainActiveBuiltInCache(DEFAULT_TRACKS, window.__holyBibleMusicMode || "default", false);
+                }, 0);
+            }
+        }
+    }
+
     const DB_NAME = "HolyBibleKJVUserSongs";
     const DB_STORE = "mp3Files";
     let databasePromise = null;
@@ -20205,14 +20173,53 @@ function setupIntroMusicPlayer() {
             });
         }
 
-        if (musicMode === "users") {
-            tracks = tracks.filter(function (track) { return track.category === "users"; });
-        } else if (String(musicMode).indexOf("category:") === 0) {
-            const wantedCategory = String(musicMode).slice(9);
-            tracks = tracks.filter(function (track) { return track.category === wantedCategory; });
-        } else if (musicMode !== "default") {
-            tracks = [];
+        
+if (musicMode === "users") {
+    tracks = tracks.filter(function (track) {
+        return track.category === "users";
+    });
+} else if (String(musicMode).indexOf("category:") === 0) {
+    const wantedCategory = String(musicMode).slice(9);
+
+    tracks = tracks.filter(function (track) {
+        return track.category === wantedCategory;
+    });
+} else if (musicMode === "default") {
+    // Keep all built-in songs and user-added songs in the online playlist.
+    tracks = tracks.filter(function (track) {
+        return track.kind === "default" || track.category === "users";
+    });
+} else {
+    tracks = [];
+}
+
+// Offline: display only built-in songs saved in the music cache.
+// Category playlists retain their own language/category filter.
+if (!navigator.onLine && musicMode !== "users") {
+    const offlineBuiltIns = await getOfflineBuiltInSongs(
+        tracks,
+        musicMode
+    );
+
+    const cachedIds = new Set(
+        offlineBuiltIns.map(function (song) {
+            return song.id;
+        })
+    );
+
+    tracks = tracks.filter(function (track) {
+        if (track.kind === "default") {
+            return cachedIds.has(track.id);
         }
+
+        // Keep accessible user-added songs available offline.
+        return track.category === "users" &&
+            Boolean(track.src) &&
+            !track.missing &&
+            !track.permissionRequired;
+    });
+}
+
 
         remainingTracks = remainingTracks.filter(function (id) {
             return tracks.some(function (track) { return track.id === id; });
@@ -20690,9 +20697,16 @@ function setupIntroMusicPlayer() {
     window.__holyBibleSetMusicMode = async function (mode) {
         window.__holyBibleMusicMode = (mode === "default" || mode === "personal" || mode === "users" || String(mode).indexOf("category:") === 0) ? mode : "personal";
         await refreshTracks();
+        if (navigator.onLine) {
+            await maintainActiveBuiltInCache(DEFAULT_TRACKS, window.__holyBibleMusicMode, false);
+            await refreshTracks();
+        }
     };
     window.__holyBibleStartDefaultSongs = async function () {
         window.__holyBibleMusicMode = "default";
+        if (navigator.onLine) {
+            await maintainActiveBuiltInCache(DEFAULT_TRACKS, "default", false);
+        }
         await refreshTracks();
         history = [];
         historyPosition = -1;
@@ -20702,6 +20716,9 @@ function setupIntroMusicPlayer() {
     };
     window.__holyBibleStartCategorySongs = async function (category) {
         window.__holyBibleMusicMode = "category:" + category;
+        if (navigator.onLine) {
+            await maintainActiveBuiltInCache(DEFAULT_TRACKS, window.__holyBibleMusicMode, false);
+        }
         await refreshTracks();
         history = [];
         historyPosition = -1;
@@ -20996,6 +21013,14 @@ function setupIntroMusicPlayer() {
     });
 
     audio.addEventListener("ended", async function () {
+        // Replenish the active playlist first. The service worker downloads a
+        // replacement successfully before removing an older cached song.
+        await maintainActiveBuiltInCache(
+            DEFAULT_TRACKS,
+            window.__holyBibleMusicMode || "default",
+            true
+        );
+        await refreshTracks();
         await playNextUnusedTrack();
     });
 
@@ -21180,6 +21205,14 @@ function setupIntroMusicPlayer() {
 
     refreshTracks()
         .then(async function () {
+            if (navigator.onLine) {
+                await maintainActiveBuiltInCache(
+                    DEFAULT_TRACKS,
+                    window.__holyBibleMusicMode || "default",
+                    false
+                );
+                await refreshTracks();
+            }
             await renderSongLibrary();
             await restoreInterruptedMusic();
         })
@@ -22200,15 +22233,88 @@ function backToTreasureMenu() {
     });
 })();
 
-function chapterHeartClick() { 
 
-    if (navigator.vibrate) { 
-        navigator.vibrate(300); 
-    } 
 
-    toggleFavoriteCurrentChapter(); 
+function showGoldStarBurst(button) {
+    if (!button) return;
 
+    const rect = button.getBoundingClientRect();
+    const burst = document.createElement("span");
+
+    burst.className = "heart-star-burst";
+
+    burst.style.cssText = `
+        position: fixed;
+        left: ${rect.left + rect.width / 2}px;
+        top: ${rect.top + rect.height / 2}px;
+        width: 1px;
+        height: 1px;
+        overflow: visible;
+        pointer-events: none;
+        z-index: 999999;
+    `;
+
+    const starCount = 12;
+
+    for (let i = 0; i < starCount; i++) {
+        const star = document.createElement("span");
+
+        star.className = "heart-star-particle";
+        star.textContent = "★";
+
+        const angle = (Math.PI * 2 * i) / starCount;
+        const distance = 35 + Math.random() * 35;
+
+        star.style.setProperty(
+            "--star-x",
+            `${Math.cos(angle) * distance}px`
+        );
+
+        star.style.setProperty(
+            "--star-y",
+            `${Math.sin(angle) * distance}px`
+        );
+
+        star.style.animationDelay = `${Math.random() * 80}ms`;
+
+        burst.appendChild(star);
+    }
+
+    document.body.appendChild(burst);
+
+    setTimeout(() => {
+        burst.remove();
+    }, 1200);
 }
+
+
+
+function chapterHeartClick() {
+    const button = document.getElementById("favoriteChapterButton");
+    const book = sessionStorage.getItem("book");
+    const chapter = sessionStorage.getItem("chapter");
+
+    // Read the saved state before toggling so stars appear only when adding.
+    const isAlreadyTreasured = !!(
+        book && chapter &&
+        getFavorites().some(function(item) {
+            return item.book === book &&
+                String(item.chapter) === String(chapter);
+        })
+    );
+
+    if (!isAlreadyTreasured) {
+        showGoldStarBurst(button);
+    }
+
+    if (navigator.vibrate) {
+        navigator.vibrate(300);
+    }
+
+    toggleFavoriteCurrentChapter();
+}
+
+
 
 function updateHomeHeader(page){
 
@@ -24705,6 +24811,34 @@ function updateCalendarIcon() {
 }
 
 updateCalendarIcon();
-</script>
-</body>
+
+/* Refresh playlist when internet connectivity changes. */
+window.addEventListener("online", async function () {
+    await maintainActiveBuiltInCache(
+        DEFAULT_TRACKS,
+        window.__holyBibleMusicMode || "default",
+        false
+    );
+    await refreshTracks();
+});
+
+window.addEventListener("offline", async function () {
+    await refreshTracks();
+});
+
+/* Refresh playlist when returning to the app. */
+document.addEventListener("visibilitychange", async function () {
+    if (!document.hidden) {
+        if (navigator.onLine) {
+            await maintainActiveBuiltInCache(
+                DEFAULT_TRACKS,
+                window.__holyBibleMusicMode || "default",
+                false
+            );
+        }
+        await refreshTracks();
+    }
+});
+  </script>
+ </body>
 </html>
