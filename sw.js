@@ -1,10 +1,11 @@
+
 /* =====================================================
    HOLY BIBLE KJV - SERVICE WORKER
    Offline support for app shell, Bible JSON,
    Daily Promise, backgrounds, and fonts
 ===================================================== */
 
-const CACHE_NAME = "holy-bible-v124";
+const CACHE_NAME = "holy-bible-v127";
 
 /* =====================================================
    APP FILES
@@ -120,9 +121,7 @@ const BIBLE_LANGUAGES = [
 const BIBLE_FILES = [];
 
 BIBLE_LANGUAGES.forEach(function (language) {
-
     BIBLE_BOOKS.forEach(function (book) {
-
         BIBLE_FILES.push(
             "./bible/" +
             language +
@@ -130,9 +129,7 @@ BIBLE_LANGUAGES.forEach(function (language) {
             encodeURIComponent(book) +
             ".json"
         );
-
     });
-
 });
 
 /* =====================================================
@@ -140,11 +137,8 @@ BIBLE_LANGUAGES.forEach(function (language) {
 ===================================================== */
 
 self.addEventListener("install", function (event) {
-
     event.waitUntil(
-
         (async function () {
-
             const cache = await caches.open(CACHE_NAME);
 
             const allFiles = [
@@ -152,58 +146,42 @@ self.addEventListener("install", function (event) {
                 ...BIBLE_FILES
             ];
 
-            /* Cache files individually.
-               A missing file will not stop the
-               remaining files from being cached. */
+            /*
+             Cache files individually.
+             A missing file will not stop the
+             remaining files from being cached.
+            */
 
             await Promise.allSettled(
-
                 allFiles.map(async function (file) {
-
                     try {
-
                         const response = await fetch(
                             file,
                             { cache: "reload" }
                         );
 
                         if (response.ok) {
-
-                            await cache.put(
-                                file,
-                                response
-                            );
-
+                            await cache.put(file, response);
                         } else {
-
                             console.warn(
                                 "Offline cache skipped:",
                                 file,
                                 response.status
                             );
-
                         }
-
                     } catch (error) {
-
                         console.warn(
                             "Could not cache:",
                             file,
                             error
                         );
-
                     }
-
                 })
-
             );
 
             await self.skipWaiting();
-
         })()
-
     );
-
 });
 
 /* =====================================================
@@ -211,36 +189,121 @@ self.addEventListener("install", function (event) {
 ===================================================== */
 
 self.addEventListener("activate", function (event) {
-
     event.waitUntil(
-
         (async function () {
-
             const cacheNames = await caches.keys();
 
+            /*
+             Keep old music caches until index.html safely
+             migrates their song responses and playlist
+             membership into the shared music cache.
+            */
+
             await Promise.all(
-
                 cacheNames.map(function (cacheName) {
-
                     if (
                         cacheName.startsWith("holy-bible-") &&
-                        cacheName !== CACHE_NAME
+                        cacheName !== CACHE_NAME &&
+                        !cacheName.startsWith("holy-bible-music-")
                     ) {
-
                         return caches.delete(cacheName);
-
                     }
-
                 })
-
             );
 
             await self.clients.claim();
-
         })()
-
     );
+});
 
+/* =====================================================
+   MUSIC CACHE COORDINATOR
+
+   Cache replacements first. Only after every download
+   succeeds are old songs removed.
+===================================================== */
+
+self.addEventListener("message", function (event) {
+    const data = event.data;
+
+    if (!data || data.type !== "MUSIC_CACHE_SYNC") {
+        return;
+    }
+
+    const task = (async function () {
+        // All playlists share one physical MP3 cache.
+        const cache = await caches.open(
+            "holy-bible-music-shared-v1"
+        );
+
+        const urlsToCache = Array.isArray(data.urlsToCache)
+            ? data.urlsToCache
+            : [];
+
+        const urlsToRemove = Array.isArray(data.urlsToRemove)
+            ? data.urlsToRemove
+            : [];
+
+        /*
+         Finish every required download before deleting
+         any cached song.
+        */
+
+        for (const item of urlsToCache) {
+            const url = new URL(
+                item,
+                self.location.href
+            ).href;
+
+            if (await cache.match(url)) {
+                continue;
+            }
+
+            const response = await fetch(url, {
+                cache: "no-store"
+            });
+
+            if (!response.ok || response.status !== 200) {
+                throw new Error(
+                    "Song download failed: " + url
+                );
+            }
+
+            await cache.put(url, response.clone());
+        }
+
+        // Remove songs only after all downloads succeed.
+        for (const item of urlsToRemove) {
+            const url = new URL(
+                item,
+                self.location.href
+            ).href;
+
+            await cache.delete(url);
+        }
+
+        return { success: true };
+    })();
+
+    event.waitUntil(
+        task.then(function (result) {
+            if (event.ports && event.ports[0]) {
+                event.ports[0].postMessage(result);
+            }
+        }).catch(function (error) {
+            console.warn(
+                "Music cache sync failed:",
+                error
+            );
+
+            if (event.ports && event.ports[0]) {
+                event.ports[0].postMessage({
+                    success: false,
+                    error: error.message
+                });
+            }
+        })
+    );
 });
 
 /* =====================================================
@@ -248,7 +311,6 @@ self.addEventListener("activate", function (event) {
 ===================================================== */
 
 self.addEventListener("fetch", function (event) {
-
     const request = event.request;
 
     // Only handle GET requests.
@@ -264,19 +326,14 @@ self.addEventListener("fetch", function (event) {
     ================================================= */
 
     if (requestURL.origin !== self.location.origin) {
-
         event.respondWith(
-
             (async function () {
-
                 const cache = await caches.open(CACHE_NAME);
 
                 try {
-
                     const response = await fetch(request);
 
                     if (response && response.ok) {
-
                         try {
                             await cache.put(
                                 request,
@@ -285,14 +342,13 @@ self.addEventListener("fetch", function (event) {
                         } catch (error) {
                             // Some external responses cannot be cached.
                         }
-
                     }
 
                     return response;
-
                 } catch (error) {
-
-                    const cachedResponse = await cache.match(request);
+                    const cachedResponse = await cache.match(
+                        request
+                    );
 
                     if (cachedResponse) {
                         return cachedResponse;
@@ -305,73 +361,197 @@ self.addEventListener("fetch", function (event) {
                             statusText: "Offline"
                         }
                     );
-
                 }
-
             })()
-
         );
 
         return;
     }
 
-    
     /* =================================================
-       INTRO MUSIC
-       Network first; preserve media Range requests
+       BUILT-IN MUSIC
+
+       Network first; uncached songs stream online.
+       Cached MP3 files play offline.
+       Preserve byte-range playback for media players.
     ================================================= */
 
-    
-if (
-    requestURL.origin === self.location.origin &&
-    /\/songs\/.*\.mp3$/i.test(requestURL.pathname)
-) {
-
-
+    if (
+        requestURL.origin === self.location.origin &&
+        /\/songs\/.*\.mp3$/i.test(requestURL.pathname)
+    ) {
         event.respondWith(
-
             (async function () {
+                const rangeHeader = request.headers.get("Range");
 
                 try {
+                    /*
+                     Stream uncached songs online without
+                     automatically caching them.
+                     The playlist coordinator downloads
+                     replacements to maintain cache limits.
+                    */
 
-                    // Request the song directly from GitHub Pages.
-                    // Preserve the original request, including Range headers.
-                    return await fetch(request);
-
+                    const response = await fetch(request);
+                    return response;
                 } catch (error) {
+                    let cached = null;
 
-                    // If offline, try a previously cached full song.
-                    if (!request.headers.has("Range")) {
-
-                        const cache = await caches.open(CACHE_NAME);
-                        const cachedResponse = await cache.match(request);
-
-                        if (cachedResponse) {
-                            return cachedResponse;
-                        }
-
-                    }
-
-                    return new Response(
-                        "Intro music is unavailable. Please check your connection and try again.",
-                        {
-                            status: 503,
-                            statusText: "Music Unavailable",
-                            headers: {
-                                "Content-Type": "text/plain; charset=utf-8"
-                            }
-                        }
+                    const sharedCache = await caches.open(
+                        "holy-bible-music-shared-v1"
                     );
 
+                    cached = await sharedCache.match(
+                        request.url
+                    );
+
+                    /*
+                     Fallback to old music caches while
+                     index.html migrates existing songs.
+                    */
+
+                    if (!cached) {
+                        const musicCacheNames = (
+                            await caches.keys()
+                        ).filter(function (name) {
+                            return (
+                                name.startsWith("holy-bible-music-") &&
+                                name !== "holy-bible-music-shared-v1"
+                            );
+                        });
+
+                        for (const name of musicCacheNames) {
+                            const musicCache = await caches.open(name);
+
+                            cached = await musicCache.match(
+                                request.url
+                            );
+
+                            if (cached) {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!cached) {
+                        return new Response(
+                            "This song is not available offline.",
+                            {
+                                status: 503,
+                                statusText: "Music Unavailable",
+                                headers: {
+                                    "Content-Type":
+                                        "text/plain; charset=utf-8"
+                                }
+                            }
+                        );
+                    }
+
+                    /*
+                     A cached full response can satisfy
+                     a single byte-range request.
+                    */
+
+                    if (rangeHeader) {
+                        const match = /^bytes=(\d*)-(\d*)$/i.exec(
+                            rangeHeader.trim()
+                        );
+
+                        if (!match) {
+                            return new Response(null, {
+                                status: 416,
+                                statusText: "Range Not Satisfiable"
+                            });
+                        }
+
+                        const fullBuffer = await cached.arrayBuffer();
+                        const size = fullBuffer.byteLength;
+
+                        let startByte = match[1]
+                            ? Number(match[1])
+                            : null;
+
+                        let endByte = match[2]
+                            ? Number(match[2])
+                            : null;
+
+                        if (
+                            startByte === null &&
+                            endByte !== null
+                        ) {
+                            startByte = Math.max(
+                                0,
+                                size - endByte
+                            );
+
+                            endByte = size - 1;
+                        } else {
+                            if (startByte === null) {
+                                startByte = 0;
+                            }
+
+                            if (
+                                endByte === null ||
+                                endByte >= size
+                            ) {
+                                endByte = size - 1;
+                            }
+                        }
+
+                        if (
+                            startByte < 0 ||
+                            startByte >= size ||
+                            endByte < startByte
+                        ) {
+                            return new Response(null, {
+                                status: 416,
+                                statusText: "Range Not Satisfiable",
+                                headers: {
+                                    "Content-Range": "bytes */" + size
+                                }
+                            });
+                        }
+
+                        const body = fullBuffer.slice(
+                            startByte,
+                            endByte + 1
+                        );
+
+                        const headers = new Headers(
+                            cached.headers
+                        );
+
+                        headers.set("Accept-Ranges", "bytes");
+
+                        headers.set(
+                            "Content-Range",
+                            "bytes " +
+                            startByte +
+                            "-" +
+                            endByte +
+                            "/" +
+                            size
+                        );
+
+                        headers.set(
+                            "Content-Length",
+                            String(body.byteLength)
+                        );
+
+                        return new Response(body, {
+                            status: 206,
+                            statusText: "Partial Content",
+                            headers: headers
+                        });
+                    }
+
+                    return cached;
                 }
-
             })()
-
         );
 
         return;
     }
-
 
     /* =================================================
        SAME-ORIGIN RESOURCES
@@ -379,9 +559,7 @@ if (
     ================================================= */
 
     event.respondWith(
-
         (async function () {
-
             const cache = await caches.open(CACHE_NAME);
 
             /* Try the cache first. */
@@ -398,27 +576,23 @@ if (
             /* If not cached, try the network. */
 
             try {
-
                 const response = await fetch(request);
 
                 if (response && response.ok) {
-
                     await cache.put(
                         request,
                         response.clone()
                     );
-
                 }
 
                 return response;
-
             } catch (error) {
-
-                /* If offline, return the cached app shell
-                   for navigation requests. */
+                /*
+                 If offline, return the cached app shell
+                 for navigation requests.
+                */
 
                 if (request.mode === "navigate") {
-
                     const cachedIndex = await cache.match(
                         "./index.html"
                     );
@@ -426,27 +600,26 @@ if (
                     if (cachedIndex) {
                         return cachedIndex;
                     }
-
                 }
 
-                /* Return a clear offline response if
-                   the requested file is not cached. */
+                /*
+                 Return a clear offline response if
+                 the requested file is not cached.
+                */
 
                 return new Response(
-                    "This file is not available offline. Please open the app online once to cache it.",
+                    "This file is not available offline. " +
+                    "Please open the app online once to cache it.",
                     {
                         status: 503,
                         statusText: "Offline",
                         headers: {
-                            "Content-Type": "text/plain; charset=utf-8"
+                            "Content-Type":
+                                "text/plain; charset=utf-8"
                         }
                     }
                 );
-
             }
-
         })()
-
     );
-
 });
