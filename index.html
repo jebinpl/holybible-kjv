@@ -8642,6 +8642,57 @@ body.dark-mode #songsPage .songs-page-header #songsPageTitle {
 }
 
 
+
+/* =========================================================
+   GOLD STAR BURST — HEART ICON ONLY
+   Triggered only when a chapter or verse is added to Treasure.
+========================================================= */
+.heart-gold-burst-particle {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    z-index: 2147483647 !important;
+    pointer-events: none;
+    user-select: none;
+    color: #e0ad19;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1;
+    text-shadow: 0 0 5px rgba(255, 215, 80, 0.9);
+    transform: translate(-50%, -50%) scale(0.25);
+    opacity: 0;
+    animation: heartGoldStarBurst 650ms ease-out forwards;
+    will-change: transform, opacity;
+}
+
+
+/* High-contrast chapter stars remain visible against the gold active heart box. */
+.chapter-heart-gold-burst-particle {
+    color: #fffdf2 !important;
+    font-size: 17px !important;
+    font-weight: 900 !important;
+    -webkit-text-stroke: 0.65px #7a4a00;
+    text-shadow:
+        0 0 2px #4a2a00,
+        0 0 5px #ffffff,
+        0 0 9px rgba(255, 220, 90, 1) !important;
+}
+
+@keyframes heartGoldStarBurst {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate(0, 0) scale(0.25) rotate(0deg);
+    }
+    15% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translate(0, 0) scale(1) rotate(25deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate(var(--burst-x), var(--burst-y)) scale(0.15) rotate(180deg);
+    }
+}
+
 </style>
  </head>
  <body>
@@ -13122,7 +13173,48 @@ function removeFavorite(book, chapter) {
 }
 
 
-    /* =========================================================
+    
+/* =========================================================
+   GOLD STAR BURST FROM THE HEART ICON
+   Call only when saving a new chapter/verse treasure.
+========================================================= */
+function createHeartGoldBurst(heartButton) {
+    if (!heartButton || !heartButton.isConnected) return;
+
+    // Use the heart's viewport position. Append each star directly to BODY
+    // (not to the chapter header or a nested overlay) so no header/card
+    // stacking context can cover the chapter animation.
+    const rect = heartButton.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + rect.height / 2;
+    const particleCount = 9;
+
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement("span");
+        const angle = (Math.PI * 2 * i / particleCount) - Math.PI / 2;
+        const distance = 20 + (i % 3) * 5;
+
+        const isChapterHeart = !!heartButton.closest(".chapter-heading-row");
+        particle.className = "heart-gold-burst-particle" +
+            (isChapterHeart ? " chapter-heart-gold-burst-particle" : "");
+        particle.textContent = "★";
+        particle.style.setProperty("position", "fixed", "important");
+        particle.style.setProperty("left", originX + "px", "important");
+        particle.style.setProperty("top", originY + "px", "important");
+        particle.style.setProperty("z-index", "2147483647", "important");
+        particle.style.setProperty("pointer-events", "none", "important");
+        particle.style.setProperty("--burst-x", (Math.cos(angle) * distance) + "px");
+        particle.style.setProperty("--burst-y", (Math.sin(angle) * distance) + "px");
+        particle.style.animationDelay = (i % 3) * 18 + "ms";
+
+        document.body.appendChild(particle);
+        particle.addEventListener("animationend", function () {
+            particle.remove();
+        }, { once: true });
+    }
+}
+
+/* =========================================================
    TOGGLE CURRENT CHAPTER FAVORITE
 ========================================================= */
 
@@ -16928,6 +17020,9 @@ function toggleVerseTreasure(
 
         button.textContent = "♥";
         button.classList.add("active");
+
+        // Animate only when adding this verse to Treasure.
+        createHeartGoldBurst(button);
     }
 
     // Save changes
@@ -22158,6 +22253,21 @@ function backToTreasureMenu() {
 function chapterHeartClick() {
     if (navigator.vibrate) {
         navigator.vibrate(300);
+    }
+
+    const button = document.getElementById("favoriteChapterButton");
+    const book = sessionStorage.getItem("book");
+    const chapter = sessionStorage.getItem("chapter");
+
+    // Determine the state BEFORE toggling. Burst only when adding a chapter.
+    const alreadySaved = getFavorites().some(function(item) {
+        return item.book === book && String(item.chapter) === String(chapter);
+    });
+
+    // Fire from the heart's current on-screen position only when adding.
+    // The stars are appended directly to BODY, above the fixed header layer.
+    if (!alreadySaved && button) {
+        createHeartGoldBurst(button);
     }
 
     toggleFavoriteCurrentChapter();
