@@ -2531,6 +2531,161 @@ body.dark-mode .about-card blockquote {
 }
 
 
+
+/* BIBLE TILE WITH THE LAST-READ SLIDER INSIDE THE SAME BUTTON CARD */
+.home-bible-cell {
+    min-width: 0;
+    min-height: 120px;
+    display: block;
+}
+.home-main-button.home-bible-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 120px;
+    height: 100%;
+    padding: 9px 8px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border: 2px solid #b8943d;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #fffdf5, #f5ecd5);
+    color: #3b2817;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+.home-main-button.home-bible-button:hover {
+    background: linear-gradient(135deg, #fff8df, #f1dfaa);
+}
+.home-bible-open-area {
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.last-read-slider {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 7px;
+    border: 1px solid rgba(184,148,61,.8);
+    border-radius: 10px;
+    background: rgba(184,148,61,.10);
+    color: #3b2817;
+    overflow: hidden;
+}
+.last-read-slider-copy {
+    min-width: 0;
+    width: auto;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    text-align: left;
+    line-height: 1.1;
+}
+.last-read-slider-title {
+    font-size: clamp(8px, 1.4vw, 11px);
+    font-weight: bold;
+    letter-spacing: .3px;
+}
+.last-read-slider-subtitle {
+    max-width: 100%;
+    font-size: clamp(8px, 1.3vw, 10px);
+    overflow-wrap: anywhere;
+    opacity: .82;
+}
+.last-read-slider-track {
+    position: relative;
+    flex: 0 0 66px;
+    width: 66px;
+    max-width: 66px;
+    height: 34px;
+    border: 1px solid #b8943d;
+    border-radius: 20px;
+    background: rgba(184,148,61,.18);
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.last-read-slider-hint {
+    position: absolute;
+    right: 10px;
+    top: 2px;
+    font-size: 25px;
+    line-height: 26px;
+    color: #98752d;
+    pointer-events: none;
+}
+.last-read-slider-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid #8b6822;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f4d982, #c99b2e);
+    color: #3b210d;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,.2);
+    cursor: grab;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.last-read-slider.is-dragging .last-read-slider-handle { cursor: grabbing; }
+.last-read-slider.is-complete .last-read-slider-handle { background: linear-gradient(135deg, #ffe99a, #d4af37); }
+body.dark-mode .last-read-slider {
+    background: linear-gradient(135deg, #2c2c2c, #202020);
+    border-color: #8a7135;
+    color: #fff;
+}
+body.dark-mode .last-read-slider-track { background: rgba(212,175,55,.12); border-color: #8a7135; }
+body.dark-mode .last-read-slider-hint { color: #f4d982; }
+@media (max-width: 700px) {
+    .home-bible-cell { min-height: 105px; }
+    .home-main-button.home-bible-button { min-height: 105px; border-radius: 12px; padding: 5px 5px 6px; gap: 3px; }
+    .home-main-button.home-bible-button .home-main-icon { font-size: 25px; }
+    .home-main-button.home-bible-button .home-main-title { font-size: 16px; }
+    .last-read-slider { padding: 4px 5px; gap: 6px; border-radius: 9px; }
+    .last-read-slider-track { flex-basis: 58px; width: 58px; max-width: 58px; height: 27px; }
+    .last-read-slider-handle { width: 25px; height: 25px; }
+    .last-read-slider-hint { top: 0; right: 8px; }
+}
+@media (max-width: 360px) {
+    .home-bible-cell { min-height: 105px; }
+    .home-main-button.home-bible-button { padding: 5px 4px; }
+    .last-read-slider { padding: 4px 3px; gap: 4px; }
+    .last-read-slider-title { font-size: 8px; }
+    .last-read-slider-subtitle { font-size: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .last-read-slider-handle { transition: none !important; }
+}
+
 /* =========================
    GROUP PAGE BUTTONS
 ========================= */
@@ -9092,14 +9247,26 @@ body.dark-mode #introMusicPlayer .ipod-menu-button {
        SEARCH
       </div>
      </button>
-     <button class="home-main-button" onclick="openBibleGroup()">
-      <div class="home-main-icon">
-       📖
+     <div class="home-bible-cell">
+      <div class="home-main-button home-bible-button">
+       <button class="home-bible-open-area" onclick="openBibleGroup()" type="button" aria-label="Open Bible and choose a testament">
+        <div class="home-main-icon">📖</div>
+        <div class="home-main-title">BIBLE</div>
+       </button>
+       <div class="last-read-slider" id="lastReadSlider" aria-label="Slide right to open last-read chapter">
+        <div class="last-read-slider-copy">
+         <span class="last-read-slider-title">SLIDE TO OPEN</span>
+         <span class="last-read-slider-subtitle" id="lastReadSliderSubtitle">LAST READ</span>
+        </div>
+        <div class="last-read-slider-track" id="lastReadSliderTrack">
+         <span class="last-read-slider-hint" aria-hidden="true">›</span>
+         <button class="last-read-slider-handle" id="lastReadSliderHandle" type="button" aria-label="Slide right to open your last-read chapter" title="Slide right to open last-read chapter">
+          <span aria-hidden="true">»</span>
+         </button>
+        </div>
+       </div>
       </div>
-      <div class="home-main-title">
-       BIBLE
-      </div>
-     </button>
+     </div>
      <!-- Row 2: Treasure | Calendar -->
      <button class="home-main-button" onclick="showFavorites()">
       <div class="home-main-icon">
@@ -14177,6 +14344,15 @@ button.onclick = function() {
  
 function openChapter(book, chapter, verseNumber = null) {
 
+    // Persist the most recently opened chapter for the home-screen slider.
+    try {
+        localStorage.setItem("selectedBook", String(book));
+        localStorage.setItem("selectedChapter", String(chapter));
+        if (typeof updateLastReadSlider === "function") updateLastReadSlider();
+    } catch (error) {
+        console.warn("Could not save last-read chapter:", error);
+    }
+
       // Remember where the chapter was opened from
     if (
         document.getElementById("gregorianCalendarPage").style.display === "block"
@@ -15127,6 +15303,7 @@ function openSearchGroup() {
 ========================================================= */
 
 function openBibleGroup() {
+    sessionStorage.removeItem("openedFromLastReadSlider");
     updateHomeHeader("other");
 
     hideGroupedPages();
@@ -18788,6 +18965,13 @@ function openBibleSearchResult(book, chapter, verse) {
 ========================================================= */
 
 function goBackFromChapter() {
+
+    // A chapter opened with the home-screen slider returns directly to Home.
+    if (sessionStorage.getItem("openedFromLastReadSlider") === "true") {
+        sessionStorage.removeItem("openedFromLastReadSlider");
+        goHome();
+        return;
+    }
 
     // Return to Gregorian Calendar
 if (
@@ -25096,6 +25280,141 @@ document.addEventListener("visibilitychange", async function () {
         await refreshTracks();
     }
 });
-  </script>
+  
+/* =========================================================
+   HOME LAST-READ SLIDE CONTROL
+   A normal tap on BIBLE is unchanged. Dragging this slider
+   from left to right opens the last chapter directly.
+========================================================= */
+function updateLastReadSlider() {
+    const subtitle = document.getElementById("lastReadSliderSubtitle");
+    const slider = document.getElementById("lastReadSlider");
+    if (!subtitle || !slider) return;
+
+    let book = "";
+    let chapter = "";
+    try {
+        book = localStorage.getItem("selectedBook") || "";
+        chapter = localStorage.getItem("selectedChapter") || "";
+    } catch (error) {}
+
+    const hasLastRead = !!book && !!chapter && Number(chapter) > 0;
+    subtitle.textContent = hasLastRead ? `${book} ${chapter}` : "NO LAST CHAPTER YET";
+    slider.dataset.hasLastRead = hasLastRead ? "true" : "false";
+    slider.setAttribute("aria-label", hasLastRead
+        ? `Slide right to open ${book} chapter ${chapter}`
+        : "No last-read chapter saved yet. Open a Bible chapter first.");
+}
+
+(function initLastReadSlider() {
+    const slider = document.getElementById("lastReadSlider");
+    const track = document.getElementById("lastReadSliderTrack");
+    const handle = document.getElementById("lastReadSliderHandle");
+    if (!slider || !track || !handle) return;
+
+    let pointerId = null;
+    let startX = 0;
+    let startLeft = 0;
+    let maxLeft = 0;
+    let dragged = false;
+
+    function setHandleLeft(left, animate = false) {
+        handle.style.transition = animate ? "left 180ms ease" : "none";
+        handle.style.left = `${Math.max(0, Math.min(maxLeft, left))}px`;
+    }
+
+    function measure() {
+        maxLeft = Math.max(0, track.clientWidth - handle.offsetWidth);
+    }
+
+    function reset() {
+        measure();
+        setHandleLeft(0, true);
+        slider.classList.remove("is-dragging", "is-complete");
+    }
+
+    function openLastRead() {
+        let book = "";
+        let chapter = "";
+        try {
+            book = localStorage.getItem("selectedBook") || "";
+            chapter = localStorage.getItem("selectedChapter") || "";
+        } catch (error) {}
+        if (!book || !chapter || !(Number(chapter) > 0)) {
+            const subtitle = document.getElementById("lastReadSliderSubtitle");
+            if (subtitle) subtitle.textContent = "OPEN A CHAPTER FIRST";
+            reset();
+            return;
+        }
+
+        // Mark this navigation path so the chapter back control returns directly home.
+        sessionStorage.setItem("openedFromLastReadSlider", "true");
+        // Enter the normal chapter reader directly; do not alter BIBLE button behavior.
+        updateHomeHeader("other");
+        hideGroupedPages();
+        ["homePage", "bibleGroupPage", "bookPage", "chapterPage", "searchPage", "bibleTextSearchPage", "searchGroupPage"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = "none";
+        });
+        openChapter(book, Number(chapter));
+        reset();
+    }
+
+    handle.addEventListener("pointerdown", function (event) {
+        if (event.button !== undefined && event.button !== 0) return;
+        measure();
+        pointerId = event.pointerId;
+        startX = event.clientX;
+        startLeft = parseFloat(handle.style.left) || 0;
+        dragged = false;
+        slider.classList.add("is-dragging");
+        handle.setPointerCapture(pointerId);
+        event.preventDefault();
+    });
+
+    handle.addEventListener("pointermove", function (event) {
+        if (pointerId === null || event.pointerId !== pointerId) return;
+        const delta = event.clientX - startX;
+        if (Math.abs(delta) > 3) dragged = true;
+        const left = Math.max(0, Math.min(maxLeft, startLeft + delta));
+        setHandleLeft(left);
+        if (maxLeft > 0 && left >= maxLeft * 0.82) slider.classList.add("is-complete");
+        else slider.classList.remove("is-complete");
+        event.preventDefault();
+    });
+
+    function finishDrag(event) {
+        if (pointerId === null || (event && event.pointerId !== pointerId)) return;
+        const left = parseFloat(handle.style.left) || 0;
+        const completed = maxLeft > 0 && left >= maxLeft * 0.82;
+        const shouldOpen = dragged && completed;
+        pointerId = null;
+        slider.classList.remove("is-dragging");
+        if (shouldOpen) {
+            setHandleLeft(maxLeft, true);
+            slider.classList.add("is-complete");
+            window.setTimeout(openLastRead, 120);
+        } else {
+            reset();
+        }
+    }
+
+    handle.addEventListener("pointerup", finishDrag);
+    handle.addEventListener("pointercancel", finishDrag);
+    handle.addEventListener("lostpointercapture", function () {
+        if (pointerId !== null) finishDrag();
+    });
+    handle.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openLastRead();
+        }
+    });
+    window.addEventListener("resize", reset);
+    updateLastReadSlider();
+    reset();
+})();
+
+</script>
  </body>
 </html>
