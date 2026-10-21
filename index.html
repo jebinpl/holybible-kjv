@@ -9010,7 +9010,55 @@ body.dark-mode #introMusicPlayer .ipod-menu-button {
     border: none !important;
     box-shadow: none !important;
 }
-  </style>
+  
+
+/* BIBLE CARD: move the traveling gold animation to the OUTER BIBLE border.
+   The slider and BIBLE tap area stay inside the same card without their own rings. */
+body:not(.bible-reading-mode) .home-main-button.home-bible-button {
+    position: relative;
+    isolation: isolate;
+}
+body:not(.bible-reading-mode) .home-main-button.home-bible-button::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    box-sizing: border-box;
+    padding: 2px;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 5;
+    background: conic-gradient(
+        from var(--bible-gold-angle),
+        transparent 0deg,
+        transparent 278deg,
+        rgba(184, 134, 11, 0.04) 292deg,
+        rgba(218, 165, 32, 0.18) 308deg,
+        rgba(240, 190, 72, 0.48) 324deg,
+        rgba(255, 225, 145, 0.92) 338deg,
+        rgba(255, 248, 220, 0.98) 345deg,
+        rgba(218, 165, 32, 0.54) 352deg,
+        rgba(184, 134, 11, 0.12) 358deg,
+        transparent 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    filter: drop-shadow(0 0 1px rgba(218, 165, 32, 0.32))
+            drop-shadow(0 0 3px rgba(255, 210, 100, 0.16));
+    animation: bibleGoldEdgeTravel 1s linear 1 forwards;
+}
+/* Prevent separate rings around the BIBLE text button and slider handle. */
+body:not(.bible-reading-mode) .home-bible-button .home-bible-open-area::after,
+body:not(.bible-reading-mode) .home-bible-button .last-read-slider-handle::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+    background: none !important;
+    filter: none !important;
+}
+
+</style>
  </head>
  <body>
   <div id="startupSplash">
