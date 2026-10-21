@@ -8822,6 +8822,39 @@ body.dark-mode #introMusicPlayer .ipod-song-back-button {
     box-shadow: none !important;
 }
 #introMusicPlayer .ipod-song-back-button { pointer-events: auto; }
+#introMusicPlayer .ipod-menu-button {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 8%;
+    transform: translateX(-50%);
+    z-index: 6;
+    border: none !important;
+    outline: none !important;
+    border-radius: 0;
+    padding: 5px 12px;
+    margin: 0;
+    background: transparent !important;
+    color: #35200e;
+    box-shadow: none !important;
+    font: bold 13px/1.2 Georgia, "Times New Roman", serif;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+#introMusicPlayer .ipod-menu-button:active {
+    transform: translateX(-50%) scale(.96);
+}
+#introMusicPlayer.song-page-navigation .ipod-menu-button {
+    display: none !important;
+}
+body.dark-mode #introMusicPlayer .ipod-menu-button {
+    background: transparent !important;
+    color: #fff0c5;
+    border: none !important;
+    box-shadow: none !important;
+}
   </style>
  </head>
  <body>
@@ -9135,11 +9168,9 @@ body.dark-mode #introMusicPlayer .ipod-song-back-button {
      </div>
     </div>
     <div aria-label="Intro music controls" class="ipod-wheel" role="group">
-     <div aria-hidden="true" class="ipod-swipe-instruction" id="ipodSwipeInstruction">
-      Swipe
-      <br/>
-      up
-     </div>
+     <button aria-label="Menu: return to Home screen" class="ipod-menu-button" id="ipodMenuButton" title="Menu" type="button">
+      Menu
+     </button>
      <button aria-label="Back to song categories" class="ipod-song-back-button" id="ipodSongBackButton" title="Back to Songs" type="button">
       Back
      </button>
@@ -21474,6 +21505,20 @@ if (introPlayer) {
         homePage.dataset.jesusIntroReady = "no";
     }, 1050);
 }
+
+    // The iPod wheel's Menu button uses the same dismissal animation as an upward swipe.
+    // The existing swipe gesture on the Jesus Time image remains unchanged.
+    const ipodMenuButton = document.getElementById("ipodMenuButton");
+    if (ipodMenuButton && ipodMenuButton.dataset.menuHandler !== "yes") {
+        ipodMenuButton.dataset.menuHandler = "yes";
+        ipodMenuButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (introMusicAppLocked) return;
+            if (homePage.dataset.jesusIntroReady !== "yes") return;
+            dismissImage();
+        });
+    }
 
     function returnImageToStart() {
         clearTimeout(finishTimer);
