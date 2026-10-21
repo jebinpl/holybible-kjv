@@ -8789,6 +8789,40 @@ body.dark-mode #songsPage .songs-page-header #songsPageTitle {
 }
 
 </style>
+  <style id="ipod-song-back-control">
+
+
+/* Songs subpages use the iPod wheel's Back control instead of a header back icon. */
+#introMusicPlayer .ipod-song-back-button {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 8%;
+    transform: translateX(-50%);
+    z-index: 6;
+    /* Text-only Back control: remove the rectangular outline/ring. */
+    border: none !important;
+    outline: none !important;
+    border-radius: 0;
+    padding: 5px 12px;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #35200e;
+    font: bold 13px/1.2 Georgia, "Times New Roman", serif;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+#introMusicPlayer.song-page-navigation .ipod-song-back-button { display: block; }
+#introMusicPlayer.song-page-navigation .ipod-swipe-instruction { display: none !important; }
+#introMusicPlayer .ipod-song-back-button:active { transform: translateX(-50%) scale(.96); }
+body.dark-mode #introMusicPlayer .ipod-song-back-button {
+    background: transparent !important;
+    color: #fff0c5;
+    border: none !important;
+    box-shadow: none !important;
+}
+#introMusicPlayer .ipod-song-back-button { pointer-events: auto; }
+  </style>
  </head>
  <body>
   <div id="startupSplash">
@@ -9101,11 +9135,14 @@ body.dark-mode #songsPage .songs-page-header #songsPageTitle {
      </div>
     </div>
     <div aria-label="Intro music controls" class="ipod-wheel" role="group">
-     <div aria-hidden="true" class="ipod-swipe-instruction">
+     <div aria-hidden="true" class="ipod-swipe-instruction" id="ipodSwipeInstruction">
       Swipe
       <br/>
       up
      </div>
+     <button aria-label="Back to song categories" class="ipod-song-back-button" id="ipodSongBackButton" title="Back to Songs" type="button">
+      Back
+     </button>
      <button aria-label="Previous track" class="ipod-button ipod-previous" id="introMusicPreviousButton" title="Previous track" type="button">
       <span aria-hidden="true" class="ipod-skip-icon">
        <span class="skip-bar">
@@ -9440,9 +9477,6 @@ body.dark-mode #songsPage .songs-page-header #songsPageTitle {
       SONGS
      </h2>
      <div class="songs-header-actions">
-      <button aria-label="Back to song categories" class="songs-header-back-button" id="songsHeaderBackButton" onclick="showSongCategories()" style="display:none" title="Back to Songs" type="button">
-       ‹
-      </button>
       <button class="songs-action-button" id="addLocalSongsButton" onclick="window.__holyBibleAddLocalSongs && window.__holyBibleAddLocalSongs()" style="display:none" type="button">
        ＋ Add Song
       </button>
@@ -15122,8 +15156,7 @@ function showSongCategories() {
     const addButton = document.getElementById("addLocalSongsButton");
     const title = document.getElementById("songsPageTitle");
     const player = document.getElementById("introMusicPlayer");
-    const headerBack = document.getElementById("songsHeaderBackButton");
-    if (headerBack) headerBack.style.display = "none";
+    if (player) player.classList.remove("song-page-navigation");
     if (menu) menu.style.display = "grid";
     if (usersPanel) usersPanel.style.display = "none";
     if (categoryPanel) {
@@ -15147,9 +15180,8 @@ function openSongCategory(category) {
     const addButton = document.getElementById("addLocalSongsButton");
     const title = document.getElementById("songsPageTitle");
     const player = document.getElementById("introMusicPlayer");
-    const headerBack = document.getElementById("songsHeaderBackButton");
     const labels = { tamil:"TPM Tamil", malayalam:"TPM Malayalam", english:"TPM English", others:"Chores / Others", users:"Users songs" };
-    if (headerBack) headerBack.style.display = "inline-flex";
+    if (player) player.classList.add("song-page-navigation");
     if (menu) menu.style.display = "none";
     if (title) title.textContent = "SONGS";
 
@@ -15194,6 +15226,8 @@ async function playAllSongCategories() {
     updateHomeHeader("home");
     sessionStorage.setItem("page", "home");
     window.__holyBibleMusicMode = "default";
+    const musicPlayer = document.getElementById("introMusicPlayer");
+    if (musicPlayer) musicPlayer.classList.remove("song-page-navigation");
     setupIntroMusicPlayer();
     if (typeof window.__holyBibleSetMusicMode === "function") {
         await window.__holyBibleSetMusicMode("default");
@@ -19717,6 +19751,16 @@ function setupIntroMusicPlayer() {
         return;
     }
     player.dataset.handlersReady = "yes";
+
+    const songBackButton = document.getElementById("ipodSongBackButton");
+    if (songBackButton) {
+        songBackButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (introMusicAppLocked) return;
+            showSongCategories();
+        });
+    }
 
     // Built-in songs are organized by language/category and matching folders in ./songs/.
     const ENGLISH_TRACKS = [
