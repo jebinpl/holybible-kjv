@@ -22686,49 +22686,57 @@ function backToTreasureMenu() {
     }
 
     window.addEventListener("popstate", function (event) {
-        const previousPage = event.state && event.state.holyBiblePage;
-        const visiblePage = sessionStorage.getItem(PAGE_KEY) || currentPage;
+    const previousPage = event.state && event.state.holyBiblePage;
+    const visiblePage = sessionStorage.getItem(PAGE_KEY) || currentPage;
 
-        if (visiblePage === "home" || (!previousPage && currentPage === "home")) {
-            currentPage = "home";
-            const now = Date.now();
+    // HOME: require a fresh double-back confirmation every time.
+    if (visiblePage === "home" || (!previousPage && currentPage === "home")) {
+        currentPage = "home";
 
-            // Second press within two seconds: let the Android host handle Back.
-            // Whether this minimizes rather than closes the activity depends on the
-            // native TWA/APK host; webpage JavaScript cannot force native minimization.
-            if (lastBackPressTime && now - lastBackPressTime <= 2000) {
-                lastBackPressTime = 0;
-                if (backMessageTimer !== null) {
-                    clearTimeout(backMessageTimer);
-                    backMessageTimer = null;
-                }
-                hideBackExitMessage();
-                return;
+        // First press: show the message.
+        // Second press within 2 seconds: let Android handle Back.
+        const now = Date.now();
+
+        if (lastBackPressTime && now - lastBackPressTime <= 2000) {
+            lastBackPressTime = 0;
+
+            if (backMessageTimer !== null) {
+                clearTimeout(backMessageTimer);
+                backMessageTimer = null;
             }
 
-            // First press: show the message and re-arm one history entry so a
-            // second device Back press can be detected without leaving the app.
-            lastBackPressTime = now;
-            showBackExitMessage();
-            history.pushState({ holyBiblePage: "home" }, "", location.href);
-
-            if (backMessageTimer !== null) clearTimeout(backMessageTimer);
-            backMessageTimer = setTimeout(function () {
-                lastBackPressTime = 0;
-                backMessageTimer = null;
-                hideBackExitMessage();
-            }, 2000);
-
+            hideBackExitMessage();
             return;
         }
 
-        handlingPopState = true;
-        try {
-            returnToPreviousPage(visiblePage);
-            currentPage = sessionStorage.getItem(PAGE_KEY) || "home";
-        } finally {
-            handlingPopState = false;
+        lastBackPressTime = now;
+        showBackExitMessage();
+
+        // Re-arm browser history so the next device Back is detected.
+        history.pushState({ holyBiblePage: "home" }, "", location.href);
+
+        if (backMessageTimer !== null) {
+            clearTimeout(backMessageTimer);
         }
+
+        backMessageTimer = setTimeout(function () {
+            lastBackPressTime = 0;
+            backMessageTimer = null;
+            hideBackExitMessage();
+        }, 2000);
+
+        return;
+    }
+
+    // OTHER PAGES: preserve the existing navigation.
+    handlingPopState = true;
+
+    try {
+        returnToPreviousPage(visiblePage);
+        currentPage = sessionStorage.getItem(PAGE_KEY) || "home";
+    } finally {
+        handlingPopState = false;
+    }
     });
 })();
 
