@@ -22648,61 +22648,79 @@ function backToTreasureMenu() {
     }
 
     let lastBackPressTime = 0;
+    let backMessageTimer = null;
 
-function showBackExitMessage() {
-    let message = document.getElementById("backExitMessage");
+    function showBackExitMessage() {
+        let message = document.getElementById("backExitMessage");
 
-    if (!message) {
-        message = document.createElement("div");
-        message.id = "backExitMessage";
+        if (!message) {
+            message = document.createElement("div");
+            message.id = "backExitMessage";
 
-        Object.assign(message.style, {
-            position: "fixed",
-            bottom: "35px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "#333",
-            color: "#fff",
-            padding: "12px 20px",
-            borderRadius: "8px",
-            fontFamily: "Arial, sans-serif",
-            fontSize: "14px",
-            whiteSpace: "nowrap",
-            zIndex: "100000",
-            boxShadow: "0 3px 10px rgba(0,0,0,0.3)"
-        });
+            Object.assign(message.style, {
+                position: "fixed",
+                bottom: "35px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                background: "#333",
+                color: "#fff",
+                padding: "12px 20px",
+                borderRadius: "8px",
+                fontFamily: "Arial, sans-serif",
+                fontSize: "14px",
+                whiteSpace: "nowrap",
+                zIndex: "100000",
+                boxShadow: "0 3px 10px rgba(0,0,0,0.3)"
+            });
 
-        document.body.appendChild(message);
+            document.body.appendChild(message);
+        }
+
+        message.textContent = "Press back again to exit";
+        message.style.display = "block";
     }
 
-    message.textContent = "Press back again to exit";
-    message.style.display = "block";
-}
+    function hideBackExitMessage() {
+        const message = document.getElementById("backExitMessage");
+        if (message) message.style.display = "none";
+    }
 
     window.addEventListener("popstate", function (event) {
         const previousPage = event.state && event.state.holyBiblePage;
         const visiblePage = sessionStorage.getItem(PAGE_KEY) || currentPage;
 
-        // At Home, do not push another history entry: let Android minimize/background
-        // the app normally, preserving the running task instead of restarting it.
-        // Home page: require two Back presses to exit.
-    if (visiblePage === "home" || (!previousPage && currentPage === "home")) {
-    currentPage = "home";
+        if (visiblePage === "home" || (!previousPage && currentPage === "home")) {
+            currentPage = "home";
+            const now = Date.now();
 
-    const now = Date.now();
+            // Second press within two seconds: let the Android host handle Back.
+            // Whether this minimizes rather than closes the activity depends on the
+            // native TWA/APK host; webpage JavaScript cannot force native minimization.
+            if (lastBackPressTime && now - lastBackPressTime <= 2000) {
+                lastBackPressTime = 0;
+                if (backMessageTimer !== null) {
+                    clearTimeout(backMessageTimer);
+                    backMessageTimer = null;
+                }
+                hideBackExitMessage();
+                return;
+            }
 
-    if (now - lastBackPressTime < 2000) {
-        // Second press: allow the Android app to move to background.
-        lastBackPressTime = 0;
-        return;
-    }
+            // First press: show the message and re-arm one history entry so a
+            // second device Back press can be detected without leaving the app.
+            lastBackPressTime = now;
+            showBackExitMessage();
+            history.pushState({ holyBiblePage: "home" }, "", location.href);
 
-    lastBackPressTime = now;
+            if (backMessageTimer !== null) clearTimeout(backMessageTimer);
+            backMessageTimer = setTimeout(function () {
+                lastBackPressTime = 0;
+                backMessageTimer = null;
+                hideBackExitMessage();
+            }, 2000);
 
-    showBackExitMessage();
-
-    return;
-}
+            return;
+        }
 
         handlingPopState = true;
         try {
