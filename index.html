@@ -20383,6 +20383,8 @@ function setupIntroMusicPlayer() {
     let history = [];
     let historyPosition = -1;
     let currentTrackId = null;
+    // Prevent duplicate ended/error events from starting overlapping track changes.
+    let advancingMusicTrack = false;
     const personalObjectUrls = new Map();
     // Browsers without persistent file handles keep selected files only for this page session.
     const sessionSongs = new Map();
@@ -20828,12 +20830,16 @@ if (!navigator.onLine && musicMode !== "users") {
         if (!tracks.length || !currentTrackId) {
             updatePlayButton(false);
             if (libraryStatus) libraryStatus.textContent = "Add an MP3 or choose Default Songs to start listening.";
-            return;
+            return false;
         }
         try {
-            // If a track has reached its end, restart it when Play is tapped.
-            // Some mobile browsers keep the ended position after an interruption.
+            // Recover a stale/ended media element before asking mobile browsers to play.
             if (audio.ended) audio.currentTime = 0;
+            if (!audio.getAttribute("src") && tracks.some(function (track) { return track.id === currentTrackId && track.src; })) {
+                const current = tracks.find(function (track) { return track.id === currentTrackId; });
+                audio.src = current.src;
+                audio.load();
+            }
             await audio.play();
             updatePlayButton(true);
             updateMediaSessionPlaybackState();
@@ -20843,11 +20849,13 @@ if (!navigator.onLine && musicMode !== "users") {
             } else {
                 await releaseIntroMusicWakeLock();
             }
+            return true;
         } catch (error) {
             updatePlayButton(false);
             await releaseIntroMusicWakeLock();
             console.error("Intro music playback failed:", error);
-            if (libraryStatus) libraryStatus.textContent = "Could not play this track. Check the file and try another song.";
+            if (libraryStatus) libraryStatus.textContent = "This song could not start. Trying another song…";
+            return false;
         }
     }
 
@@ -20861,22 +20869,57 @@ if (!navigator.onLine && musicMode !== "users") {
         if (loadTrack(id)) await playCurrentTrack();
     }
 
-    async function playNextUnusedTrack() {
-        await refreshTracks();
-        if (!tracks.length) {
-            currentTrackId = null;
-            audio.pause();
+    async function playNextUnusedTrack(skipTrackId) {
+        if (advancingMusicTrack) return;
+        advancingMusicTrack = true;
+        try {
+            await refreshTracks();
+            if (!tracks.length) {
+                currentTrackId = null;
+                audio.pause();
+                updatePlayButton(false);
+                if (libraryStatus) libraryStatus.textContent = "Your personal playlist is empty. Add an MP3 or choose Default Songs.";
+                return;
+            }
+
+            const excludedIds = new Set();
+            if (skipTrackId) excludedIds.add(skipTrackId);
+            // Try each available song at most once in this transition. A bad or
+            // missing file therefore cannot strand the player on a dead track.
+            for (let attempt = 0; attempt < tracks.length; attempt++) {
+                remainingTracks = remainingTracks.filter(function (id) {
+                    return !excludedIds.has(id) && tracks.some(function (track) { return track.id === id; });
+                });
+                if (remainingTracks.length === 0) {
+                    shuffleTracks();
+                    remainingTracks = remainingTracks.filter(function (id) { return !excludedIds.has(id); });
+                }
+
+                let id = remainingTracks.pop();
+                // A one-track playlist repeats after it ends.
+                if (!id && tracks.length === 1 && attempt === 0) id = tracks[0].id;
+                if (!id) break;
+
+                if (!loadTrack(id)) {
+                    excludedIds.add(id);
+                    continue;
+                }
+                history = history.slice(0, historyPosition + 1);
+                history.push(id);
+                historyPosition = history.length - 1;
+                const started = await playCurrentTrack();
+                if (started) return;
+                excludedIds.add(id);
+            }
+
             updatePlayButton(false);
-            if (libraryStatus) libraryStatus.textContent = "Your personal playlist is empty. Add an MP3 or choose Default Songs.";
-            return;
+            if (libraryStatus) libraryStatus.textContent = "No playable song could be started. Check the audio files and try again.";
+        } catch (error) {
+            console.error("Could not start the next song:", error);
+            updatePlayButton(false);
+        } finally {
+            advancingMusicTrack = false;
         }
-        if (remainingTracks.length === 0) shuffleTracks();
-        const id = remainingTracks.pop();
-        if (!id || !loadTrack(id)) return;
-        history = history.slice(0, historyPosition + 1);
-        history.push(id);
-        historyPosition = history.length - 1;
-        await playCurrentTrack();
     }
 
     function updateCategoryNowPlaying() {
@@ -21159,21 +21202,20 @@ if (!navigator.onLine && musicMode !== "users") {
     };
     window.__holyBibleStartDefaultSongs = async function () {
         window.__holyBibleMusicMode = "default";
-        if (navigator.onLine) {
-            await maintainActiveBuiltInCache(DEFAULT_TRACKS, "default", false);
-        }
         await refreshTracks();
         history = [];
         historyPosition = -1;
         remainingTracks = [];
         currentTrackId = null;
         await playNextUnusedTrack();
+        if (navigator.onLine) {
+            maintainActiveBuiltInCache(DEFAULT_TRACKS, "default", false).catch(function (error) {
+                console.warn("Background music cache update failed:", error);
+            });
+        }
     };
     window.__holyBibleStartCategorySongs = async function (category) {
         window.__holyBibleMusicMode = "category:" + category;
-        if (navigator.onLine) {
-            await maintainActiveBuiltInCache(DEFAULT_TRACKS, window.__holyBibleMusicMode, false);
-        }
         await refreshTracks();
         history = [];
         historyPosition = -1;
@@ -21185,6 +21227,11 @@ if (!navigator.onLine && musicMode !== "users") {
             return;
         }
         await playNextUnusedTrack();
+        if (navigator.onLine) {
+            maintainActiveBuiltInCache(DEFAULT_TRACKS, window.__holyBibleMusicMode, false).catch(function (error) {
+                console.warn("Background music cache update failed:", error);
+            });
+        }
     };
 
     if (libraryList) {
@@ -21400,7 +21447,8 @@ if (!navigator.onLine && musicMode !== "users") {
         if (currentTrackId && tracks.some(function (track) {
             return track.id === currentTrackId;
         })) {
-            await playCurrentTrack();
+            const resumed = await playCurrentTrack();
+            if (!resumed) await playNextUnusedTrack(currentTrackId);
             return;
         }
 
@@ -21468,22 +21516,15 @@ if (!navigator.onLine && musicMode !== "users") {
     });
 
     audio.addEventListener("ended", async function () {
-        // Start the next song as soon as possible. Cache maintenance can take
-        // several seconds on mobile and must never delay continuous playback.
+        // Do not wait for cache maintenance before continuing to the next track.
+        const endedTrackId = currentTrackId;
         try {
-            await refreshTracks();
-            if (tracks.length) {
-                await playNextUnusedTrack();
-            } else {
-                updatePlayButton(false);
-                if (libraryStatus) libraryStatus.textContent = "No playable songs remain in this playlist.";
-            }
+            await playNextUnusedTrack(endedTrackId);
         } catch (error) {
             console.error("Could not continue to the next song:", error);
             updatePlayButton(false);
         }
-
-        // Maintain the offline cache in the background, without holding up playback.
+        // Cache maintenance is best-effort and must not block playback.
         if (navigator.onLine) {
             maintainActiveBuiltInCache(
                 DEFAULT_TRACKS,
@@ -21493,6 +21534,13 @@ if (!navigator.onLine && musicMode !== "users") {
                 console.warn("Background music cache update failed:", error);
             });
         }
+    });
+
+    audio.addEventListener("error", function () {
+        const failedTrackId = currentTrackId;
+        if (!failedTrackId || advancingMusicTrack) return;
+        console.warn("Audio file failed; moving to the next track.", audio.error || "Unknown audio error");
+        playNextUnusedTrack(failedTrackId);
     });
 
     audio.addEventListener("timeupdate", function () {
@@ -22737,15 +22785,15 @@ function backToTreasureMenu() {
 
     window.addEventListener("popstate", function (event) {
     const previousPage = event.state && event.state.holyBiblePage;
+    const storedPage = sessionStorage.getItem(PAGE_KEY) || currentPage;
     const homeElement = document.getElementById("homePage");
     const homeIsVisible = !!(homeElement && getComputedStyle(homeElement).display !== "none");
-    const visiblePage = homeIsVisible
-        ? "home"
-        : (sessionStorage.getItem(PAGE_KEY) || currentPage);
+    // The page key is authoritative. Only use the visible Home screen as a
+    // fallback when navigation state is missing, not while another page is active.
+    const visiblePage = storedPage || (homeIsVisible ? "home" : currentPage);
 
     // HOME: require a fresh double-back confirmation every time.
-    // Check the visible screen too, because the stored page can lag after navigation.
-    if (visiblePage === "home" || (!previousPage && currentPage === "home") || homeIsVisible) {
+    if (visiblePage === "home" || (!previousPage && currentPage === "home" && homeIsVisible)) {
         currentPage = "home";
 
         // First press: show the message.
@@ -22778,20 +22826,8 @@ function backToTreasureMenu() {
             lastBackPressTime = 0;
             backMessageTimer = null;
             hideBackExitMessage();
-
-            // Keep a fresh Home history entry armed after the warning expires.
-            // This makes the next Back press show the warning again instead of
-            // falling through to the Android/TWA close behavior.
-            const home = document.getElementById("homePage");
-            if (home && getComputedStyle(home).display !== "none") {
-                try {
-                    history.replaceState({ holyBiblePage: "home" }, "", location.href);
-                    history.pushState({ holyBiblePage: "home" }, "", location.href);
-                    currentPage = "home";
-                } catch (error) {
-                    console.warn("Could not re-arm Home back navigation:", error);
-                }
-            }
+            // The sentinel was pushed immediately after the first Back press.
+            // Keep it in place; do not grow the history stack every two seconds.
         }, 2000);
 
         return;
@@ -22803,6 +22839,11 @@ function backToTreasureMenu() {
     try {
         returnToPreviousPage(visiblePage);
         currentPage = sessionStorage.getItem(PAGE_KEY) || "home";
+        if (currentPage === "home") {
+            // After returning from an inner page, keep one Home sentinel so the
+            // next hardware Back is handled by this confirmation logic.
+            history.pushState({ holyBiblePage: "home" }, "", location.href);
+        }
     } finally {
         handlingPopState = false;
     }
