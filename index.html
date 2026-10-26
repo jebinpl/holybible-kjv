@@ -20831,6 +20831,9 @@ if (!navigator.onLine && musicMode !== "users") {
             return;
         }
         try {
+            // If a track has reached its end, restart it when Play is tapped.
+            // Some mobile browsers keep the ended position after an interruption.
+            if (audio.ended) audio.currentTime = 0;
             await audio.play();
             updatePlayButton(true);
             updateMediaSessionPlaybackState();
@@ -21465,15 +21468,31 @@ if (!navigator.onLine && musicMode !== "users") {
     });
 
     audio.addEventListener("ended", async function () {
-        // Replenish the active playlist first. The service worker downloads a
-        // replacement successfully before removing an older cached song.
-        await maintainActiveBuiltInCache(
-            DEFAULT_TRACKS,
-            window.__holyBibleMusicMode || "default",
-            true
-        );
-        await refreshTracks();
-        await playNextUnusedTrack();
+        // Start the next song as soon as possible. Cache maintenance can take
+        // several seconds on mobile and must never delay continuous playback.
+        try {
+            await refreshTracks();
+            if (tracks.length) {
+                await playNextUnusedTrack();
+            } else {
+                updatePlayButton(false);
+                if (libraryStatus) libraryStatus.textContent = "No playable songs remain in this playlist.";
+            }
+        } catch (error) {
+            console.error("Could not continue to the next song:", error);
+            updatePlayButton(false);
+        }
+
+        // Maintain the offline cache in the background, without holding up playback.
+        if (navigator.onLine) {
+            maintainActiveBuiltInCache(
+                DEFAULT_TRACKS,
+                window.__holyBibleMusicMode || "default",
+                true
+            ).catch(function (error) {
+                console.warn("Background music cache update failed:", error);
+            });
+        }
     });
 
     audio.addEventListener("timeupdate", function () {
@@ -22718,10 +22737,15 @@ function backToTreasureMenu() {
 
     window.addEventListener("popstate", function (event) {
     const previousPage = event.state && event.state.holyBiblePage;
-    const visiblePage = sessionStorage.getItem(PAGE_KEY) || currentPage;
+    const homeElement = document.getElementById("homePage");
+    const homeIsVisible = !!(homeElement && getComputedStyle(homeElement).display !== "none");
+    const visiblePage = homeIsVisible
+        ? "home"
+        : (sessionStorage.getItem(PAGE_KEY) || currentPage);
 
     // HOME: require a fresh double-back confirmation every time.
-    if (visiblePage === "home" || (!previousPage && currentPage === "home")) {
+    // Check the visible screen too, because the stored page can lag after navigation.
+    if (visiblePage === "home" || (!previousPage && currentPage === "home") || homeIsVisible) {
         currentPage = "home";
 
         // First press: show the message.
@@ -22754,6 +22778,20 @@ function backToTreasureMenu() {
             lastBackPressTime = 0;
             backMessageTimer = null;
             hideBackExitMessage();
+
+            // Keep a fresh Home history entry armed after the warning expires.
+            // This makes the next Back press show the warning again instead of
+            // falling through to the Android/TWA close behavior.
+            const home = document.getElementById("homePage");
+            if (home && getComputedStyle(home).display !== "none") {
+                try {
+                    history.replaceState({ holyBiblePage: "home" }, "", location.href);
+                    history.pushState({ holyBiblePage: "home" }, "", location.href);
+                    currentPage = "home";
+                } catch (error) {
+                    console.warn("Could not re-arm Home back navigation:", error);
+                }
+            }
         }, 2000);
 
         return;
