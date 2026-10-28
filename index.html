@@ -7452,24 +7452,50 @@ body.dark-mode .gregorian-month-controls select {
     border: 2px solid currentColor;
     border-radius: 7px;
     overflow: hidden;
-    text-align: center;
     box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
     line-height: 1;
 }
 
-#calendarMonth {
-    background: #c62828;
-    color: white;
-    font-size: 10px;
+/* Weekday: Wed */
+#calendarWeek {
+    height: 11px;
+    flex: 0 0 11px;
+    font-size: 9px;
     font-weight: bold;
-    padding: 4px 0 3px;
+    line-height: 11px;
+    padding: 0;
 }
 
-#calendarDay {
-    font-size: 19px;
+/* Month: OCT */
+#calendarMonth {
+    height: 12px;
+    flex: 0 0 12px;
+    background: #c62828;
+    color: white;
+    font-size: 9px;
     font-weight: bold;
-    padding-top: 4px;
-    transform: translateY(-3px);
+    line-height: 12px;
+    padding: 0;
+}
+
+/* Date: 28 */
+#calendarDay {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+    transform: none;
 }
 
 .gregorian-calendar-toolbar select {
@@ -9327,11 +9353,10 @@ body:not(.bible-reading-mode) .home-bible-button .last-read-slider-handle::after
      <button class="home-main-button" onclick="openGregorianCalendar()">
       <div class="home-main-icon">
        <div class="custom-calendar-icon">
-        <div id="calendarMonth">
-        </div>
-        <div id="calendarDay">
-        </div>
-       </div>
+    <div id="calendarWeek"></div>
+    <div id="calendarMonth"></div>
+    <div id="calendarDay"></div>
+</div>
       </div>
       <div class="home-main-title">
        CALENDAR
@@ -25470,14 +25495,21 @@ function openGregorianSelectedDate(year, month, day) {
 function updateCalendarIcon() {
     const today = new Date();
 
+    const weekElement = document.getElementById("calendarWeek");
     const monthElement = document.getElementById("calendarMonth");
     const dayElement = document.getElementById("calendarDay");
 
-    if (!monthElement || !dayElement) return;
+    if (!weekElement || !monthElement || !dayElement) return;
 
+    // Weekday (Wed)
+    weekElement.textContent =
+        today.toLocaleDateString("en-US", { weekday: "short" });
+
+    // Month (OCT)
     monthElement.textContent =
         today.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
 
+    // Date (28)
     dayElement.textContent = today.getDate();
 }
 
