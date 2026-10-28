@@ -25855,3 +25855,47 @@ function updateLastReadSlider() {
     animation: none !important;
 }
 </style>
+
+<style id="video-maximized-fill-screen-and-zoom-fix">
+/* Maximized video: use the full available screen and enlarge the 16:9 video
+   to cover it, so text and imagery are easier to see. Some side cropping
+   can occur on portrait screens because the source video is widescreen. */
+#videoPlayerContainer.video-maximized {
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    min-width: 100vw !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+}
+#videoPlayerContainer.video-maximized .video-player {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+}
+#videoPlayerContainer.video-maximized .video-player iframe {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: max(100vw, 177.78dvh) !important;
+    height: max(100dvh, 56.25vw) !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: translate(-50%, -50%) !important;
+    border-radius: 0 !important;
+}
+</style>
