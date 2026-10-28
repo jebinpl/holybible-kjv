@@ -25781,99 +25781,29 @@ function updateLastReadSlider() {
 
 </script>
  </body>
-</html>
-<style id="disable-gold-animation-chapter-read-only">
-/* Disable the gold border animation ONLY within the Chapter Read page,
-   including the Read/Video toggle and every button/control on that page.
-   Home page and other app pages keep their original animation. */
-#chapterPage button::after,
-#chapterPage input[type="button"]::after,
-#chapterPage input[type="submit"]::after,
-#chapterPage input[type="reset"]::after,
-#chapterPage [role="button"]::after,
-#chapterPage .video-button::after,
-#chapterPage .video-buttons::after,
-#chapterPage .video-button-list::after {
-    content: none !important;
-    display: none !important;
-    animation: none !important;
-    opacity: 0 !important;
-    background: none !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    filter: none !important;
-}
-#chapterPage button,
-#chapterPage input[type="button"],
-#chapterPage input[type="submit"],
-#chapterPage input[type="reset"],
-#chapterPage [role="button"] {
-    animation: none !important;
-}
-</style>
 
-<style id="disable-gold-animation-in-chapter-read-video-page">
-/* Chapter Read: disable gold border animation in both Read and Video views. */
-#chapterReadPage button::before,
-#chapterReadPage button::after,
-#chapterReadPage [role="button"]::before,
-#chapterReadPage [role="button"]::after,
-#chapterReadPage input[type="button"]::before,
-#chapterReadPage input[type="button"]::after,
-#chapterReadPage input[type="submit"]::before,
-#chapterReadPage input[type="submit"]::after,
-#videoPage button::before,
-#videoPage button::after,
-#videoPage [role="button"]::before,
-#videoPage [role="button"]::after,
-#videoPage input[type="button"]::before,
-#videoPage input[type="button"]::after,
-#videoPage input[type="submit"]::before,
-#videoPage input[type="submit"]::after,
-#videoPlayerContainer button::before,
-#videoPlayerContainer button::after,
-#videoPlayerContainer [role="button"]::before,
-#videoPlayerContainer [role="button"]::after {
-    animation: none !important;
-    transition: none !important;
-    box-shadow: none !important;
-    filter: none !important;
-    background-image: none !important;
-    content: none !important;
-    display: none !important;
-}
-#chapterReadPage button,
-#chapterReadPage [role="button"],
-#chapterReadPage input[type="button"],
-#chapterReadPage input[type="submit"],
-#videoPage button,
-#videoPage [role="button"],
-#videoPage input[type="button"],
-#videoPage input[type="submit"],
-#videoPlayerContainer button,
-#videoPlayerContainer [role="button"] {
-    animation: none !important;
-}
-</style>
-
-<style id="video-maximized-fill-screen-and-zoom-fix">
-/* Maximized video: use the full available screen and enlarge the 16:9 video
-   to cover it, so text and imagery are easier to see. Some side cropping
-   can occur on portrait screens because the source video is widescreen. */
-#videoPlayerContainer.video-maximized {
+<style id="mobile-youtube-fullscreen-fix">
+/* Mobile maximize: let the player occupy the entire phone viewport, not a 16:9 strip. */
+@media (max-width: 768px) {
+  #videoPlayerContainer.video-maximized {
+    position: fixed !important;
+    inset: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
     height: 100dvh !important;
-    min-width: 100vw !important;
     min-height: 100vh !important;
     min-height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
     padding: 0 !important;
+    margin: 0 !important;
     display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
     overflow: hidden !important;
-}
-#videoPlayerContainer.video-maximized .video-player {
+    background: #000 !important;
+  }
+  #videoPlayerContainer.video-maximized .video-player {
     position: absolute !important;
     inset: 0 !important;
     width: 100vw !important;
@@ -25883,19 +25813,86 @@ function updateLastReadSlider() {
     max-height: none !important;
     aspect-ratio: auto !important;
     margin: 0 !important;
-    overflow: hidden !important;
-}
-#videoPlayerContainer.video-maximized .video-player iframe {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    width: max(100vw, 177.78dvh) !important;
-    height: max(100dvh, 56.25vw) !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    max-width: none !important;
-    max-height: none !important;
-    transform: translate(-50%, -50%) !important;
+    flex: none !important;
     border-radius: 0 !important;
+  }
+  #videoPlayerContainer.video-maximized .video-player iframe {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
+  #videoPlayerContainer.video-maximized .video-player-actions {
+    top: max(12px, env(safe-area-inset-top)) !important;
+    right: max(12px, env(safe-area-inset-right)) !important;
+  }
+}
+</style>
+</html>
+<style>
+
+
+/* Chapter Read > Video controls only: suppress the gold ring on video buttons. */
+.video-button::after,
+#videoPage button::after,
+#videoPage [role="button"]::after,
+#videoPlayerContainer button::after,
+#videoPlayerContainer [role="button"]::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+    background: none !important;
+    filter: none !important;
+}
+
+.video-button,
+#videoPage button,
+#videoPlayerContainer button {
+    animation: none !important;
+}
+
+</style>
+
+<style>
+/* Chapter Read > Video view only: suppress the gold ring on the shared
+   header HOME control and the testament navigation/back controls.
+   Keep chapter-number buttons and all other pages' animation unchanged. */
+body.bible-reading-mode #homeButton::after,
+body.bible-reading-mode .home-header-button::after,
+body.bible-reading-mode .nav-back-button::after,
+body.bible-reading-mode .testament-nav-button::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+    background: none !important;
+    filter: none !important;
+}
+body.bible-reading-mode #homeButton,
+body.bible-reading-mode .home-header-button,
+body.bible-reading-mode .nav-back-button,
+body.bible-reading-mode .testament-nav-button {
+    animation: none !important;
+}
+</style>
+
+
+<style>
+/* FIX: Chapter Read > VIDEO view.
+   The Read button closes bible-reading-mode before showing #videoPage,
+   so target the visible video page itself. Remove only the animated gold
+   ring from the Back / Old Testament / New Testament navigation controls.
+   Leave chapter-number buttons and all other pages untouched. */
+body:has(#videoPage[style*="display: block"]) .testament-navigation .nav-back-button::after,
+body:has(#videoPage[style*="display: block"]) .testament-navigation .testament-nav-button::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+    background: none !important;
+    filter: none !important;
+}
+body:has(#videoPage[style*="display: block"]) .testament-navigation .nav-back-button,
+body:has(#videoPage[style*="display: block"]) .testament-navigation .testament-nav-button {
+    animation: none !important;
 }
 </style>
