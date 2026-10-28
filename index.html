@@ -9084,6 +9084,93 @@ body:not(.bible-reading-mode) .home-bible-button .last-read-slider-handle::after
     filter: none !important;
 }
 
+
+
+/* =========================================================
+   VIDEO PLAYER: MAXIMIZE / RESTORE (Android + iOS)
+   Uses a fixed layout instead of the Fullscreen API, which is
+   inconsistent for regular elements on iOS Safari.
+========================================================= */
+#videoPlayerContainer.video-maximized {
+    position: fixed !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    z-index: 99999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    background: #000 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+
+
+#videoPlayerContainer.video-maximized .video-player {
+    position: relative !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: auto !important;
+    max-height: 100dvh !important;
+    aspect-ratio: 16 / 9 !important;
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+    border-radius: 0 !important;
+}
+
+
+#videoPlayerContainer.video-maximized .video-player iframe {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+
+#videoPlayerContainer.video-maximized .video-player-actions {
+    position: absolute !important;
+    top: max(12px, env(safe-area-inset-top)) !important;
+    right: max(12px, env(safe-area-inset-right)) !important;
+    z-index: 100002 !important;
+}
+
+
+#videoPlayerContainer.video-maximized .close-video {
+    position: absolute !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 100001 !important;
+}
+
+
+/* =========================================================
+   REMOVE GOLD BORDER ANIMATION FROM VIDEO BUTTON AND VIDEO PAGE
+   All other app buttons retain their existing gold animation.
+========================================================= */
+.video-button::after,
+#videoPage button::after,
+#videoPage input[type="button"]::after,
+#videoPage input[type="submit"]::after,
+#videoPage input[type="reset"]::after,
+#videoPage [role="button"]::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+    background: none !important;
+    filter: none !important;
+}
+
 </style>
  </head>
  <body>
@@ -16184,6 +16271,14 @@ function closeBibleVideo() {
         youtubePlayer.stopVideo(); 
     } 
  
+    // Reset maximized state before hiding so the next video opens normally.
+    container.classList.remove("video-maximized");
+    const maximizeButton = container.querySelector(".video-player-actions button");
+    if (maximizeButton) {
+        maximizeButton.title = "Maximize";
+        maximizeButton.setAttribute("aria-label", "Maximize video");
+    }
+
     container.style.display = "none"; 
  
 } 
@@ -24977,14 +25072,21 @@ function pauseBibleVideo() {
 }
 
 function maximizeBibleVideo() {
-    const player = document.querySelector(
-        "#videoPlayerContainer .video-player"
-    );
+    const container = document.getElementById("videoPlayerContainer");
+    const player = container?.querySelector(".video-player");
 
-    if (!player) return;
+    if (!container || !player) return;
 
-    if (player.requestFullscreen) {
-        player.requestFullscreen();
+    // Toggle between the maximized layout and the original player position.
+    const isMaximized = container.classList.toggle("video-maximized");
+    const button = container.querySelector(".video-player-actions button");
+
+    if (button) {
+        button.title = isMaximized ? "Restore" : "Maximize";
+        button.setAttribute(
+            "aria-label",
+            isMaximized ? "Restore video size" : "Maximize video"
+        );
     }
 }
 
@@ -25680,3 +25782,76 @@ function updateLastReadSlider() {
 </script>
  </body>
 </html>
+<style id="disable-gold-animation-chapter-read-only">
+/* Disable the gold border animation ONLY within the Chapter Read page,
+   including the Read/Video toggle and every button/control on that page.
+   Home page and other app pages keep their original animation. */
+#chapterPage button::after,
+#chapterPage input[type="button"]::after,
+#chapterPage input[type="submit"]::after,
+#chapterPage input[type="reset"]::after,
+#chapterPage [role="button"]::after,
+#chapterPage .video-button::after,
+#chapterPage .video-buttons::after,
+#chapterPage .video-button-list::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+    opacity: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+#chapterPage button,
+#chapterPage input[type="button"],
+#chapterPage input[type="submit"],
+#chapterPage input[type="reset"],
+#chapterPage [role="button"] {
+    animation: none !important;
+}
+</style>
+
+<style id="disable-gold-animation-in-chapter-read-video-page">
+/* Chapter Read: disable gold border animation in both Read and Video views. */
+#chapterReadPage button::before,
+#chapterReadPage button::after,
+#chapterReadPage [role="button"]::before,
+#chapterReadPage [role="button"]::after,
+#chapterReadPage input[type="button"]::before,
+#chapterReadPage input[type="button"]::after,
+#chapterReadPage input[type="submit"]::before,
+#chapterReadPage input[type="submit"]::after,
+#videoPage button::before,
+#videoPage button::after,
+#videoPage [role="button"]::before,
+#videoPage [role="button"]::after,
+#videoPage input[type="button"]::before,
+#videoPage input[type="button"]::after,
+#videoPage input[type="submit"]::before,
+#videoPage input[type="submit"]::after,
+#videoPlayerContainer button::before,
+#videoPlayerContainer button::after,
+#videoPlayerContainer [role="button"]::before,
+#videoPlayerContainer [role="button"]::after {
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    background-image: none !important;
+    content: none !important;
+    display: none !important;
+}
+#chapterReadPage button,
+#chapterReadPage [role="button"],
+#chapterReadPage input[type="button"],
+#chapterReadPage input[type="submit"],
+#videoPage button,
+#videoPage [role="button"],
+#videoPage input[type="button"],
+#videoPage input[type="submit"],
+#videoPlayerContainer button,
+#videoPlayerContainer [role="button"] {
+    animation: none !important;
+}
+</style>
