@@ -16268,14 +16268,22 @@ function onYouTubeIframeAPIReady() {
 function onPlayerStateChange(event) {
     updateCenterPlayPauseButton(event.data);
 
-    // Turn off captions when playback starts
+    // When playback starts, clear the temporary mobile visibility timer.
+    // Keep the normal CSS fade-out and desktop hover behavior intact.
     if (event.data === YT.PlayerState.PLAYING) {
+        const centerButton = document.getElementById("youtubeCenterToggle");
+        if (centerButton) {
+            centerButton.classList.remove("touch-visible");
+        }
+        clearTimeout(window.youtubeButtonHideTimer);
+        window.youtubeButtonHideTimer = null;
+
+        // Turn off captions when playback starts
         if (youtubePlayer && youtubePlayer.unloadModule) {
             youtubePlayer.unloadModule("captions");
         }
     }
 
-    // Play the next video when the current video ends
     if (event.data === YT.PlayerState.ENDED) {
         playNextVideo();
     }
