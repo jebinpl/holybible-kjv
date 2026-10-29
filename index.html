@@ -8746,6 +8746,52 @@ body.dark-mode #songsPage #songCategoryPlayerPanel .song-category-now-playing {
 }
 
 
+
+/* Previous / Next chapter navigation */
+.chapter-prev-next {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 850px;
+    margin: 24px auto;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+.chapter-prev-next button {
+    padding: 10px 20px;
+    border: 2px solid #c7a85b;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #fffdf5, #f3e3bd);
+    color: #4b3018;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.chapter-prev-next button:hover {
+    background: #d4af37;
+    color: white;
+}
+
+/* Previous / Next chapter navigation — dark mode */
+body.dark-mode .chapter-prev-next button {
+    background: linear-gradient(135deg, #303030, #222222);
+    color: #f3dfaa;
+    border-color: #b8943d;
+}
+
+body.dark-mode .chapter-prev-next button:hover {
+    background: #b8943d;
+    color: #171717;
+    border-color: #d4af37;
+}
+body.dark-mode .chapter-prev-next button:focus-visible {
+    outline: 2px solid #d4af37;
+    outline-offset: 3px;
+}
+
 </style>
   <style id="songs-page-layout-refinement">
    #songsPage .songs-page-header { top: 105px; }
@@ -9329,6 +9375,7 @@ body:not(.bible-reading-mode) .home-bible-button .last-read-slider-handle::after
      <!-- Bible text -->
      <div class="bible-text" id="bibleText">
      </div>
+      
     </div>
     <!-- BIBLE SPEECH PLAYER -->
     <!-- =====================================
@@ -10013,6 +10060,10 @@ body:not(.bible-reading-mode) .home-bible-button .last-read-slider-handle::after
     ========================= -->
     <div class="video-list" id="videoList">
     </div>
+     <div class="chapter-prev-next">
+      <button type="button" onclick="navigateBibleChapter(-1)">Previous</button>
+      <button type="button" onclick="navigateBibleChapter(1)">Next</button>
+     </div>
    </section>
    <!-- =========================
      FAVORITES PAGE
@@ -14502,6 +14553,32 @@ button.onclick = function() {
    OPEN CHAPTER 
 ========================================================= */ 
  
+function navigateBibleChapter(direction) {
+    const bookName = sessionStorage.getItem("book");
+    const chapterNumber = Number(sessionStorage.getItem("chapter"));
+
+    if (!bookName || !chapterNumber || !Array.isArray(bible.old) || !Array.isArray(bible.new)) return;
+
+    const allBooks = [...bible.old, ...bible.new];
+    const bookIndex = allBooks.findIndex(item => item[0] === bookName);
+    if (bookIndex === -1) return;
+
+    let nextBookIndex = bookIndex;
+    let nextChapter = chapterNumber + direction;
+
+    if (nextChapter < 1) {
+        if (bookIndex === 0) return;
+        nextBookIndex = bookIndex - 1;
+        nextChapter = allBooks[nextBookIndex][1];
+    } else if (nextChapter > allBooks[bookIndex][1]) {
+        if (bookIndex === allBooks.length - 1) return;
+        nextBookIndex = bookIndex + 1;
+        nextChapter = 1;
+    }
+
+    openChapter(allBooks[nextBookIndex][0], nextChapter);
+}
+
 function openChapter(book, chapter, verseNumber = null) {
 
     // Persist the most recently opened chapter for the home-screen slider.
