@@ -5,7 +5,7 @@
    Daily Promise, backgrounds, and fonts
 ===================================================== */
 
-const CACHE_NAME = "holy-bible-v145";
+const CACHE_NAME = "holy-bible-v146";
 
 /* =====================================================
    APP FILES
