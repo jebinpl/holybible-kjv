@@ -23454,7 +23454,7 @@ let speechResumePosition = 0;
 let speechResumeText = "";
 let speechResumeVoice = null;
 let speechResumeLang = "";
-async function startSpeech() {
+function startSpeech() {
 
     const speechPlayer =
         document.getElementById("speechPlayer");
@@ -23570,7 +23570,7 @@ speechResumePosition = 0;
         // Remember the complete text for mobile pause/resume
         speechResumeText = text;
 
-        const voices = await getSpeechVoices();
+        const voices = window.speechSynthesis.getVoices();
 
 if (!bibleReaderOpen) {
     return;
