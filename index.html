@@ -23570,247 +23570,37 @@ speechResumePosition = 0;
         // Remember the complete text for mobile pause/resume
         speechResumeText = text;
 
+        // iOS Safari can expose an empty or incomplete voice list. Do not abort
+        // speech merely because a matching installed voice is not enumerated.
         const voices = window.speechSynthesis.getVoices();
 
 if (!bibleReaderOpen) {
     return;
 }
 
+const languageConfig = {
+    english:   { lang: "en-IN", candidates: ["en-IN", "en-US", "en-GB", "en"] },
+    tamil:    { lang: "ta-IN", candidates: ["ta-IN", "ta"] },
+    malayalam:{ lang: "ml-IN", candidates: ["ml-IN", "ml"] },
+    hindi:    { lang: "hi-IN", candidates: ["hi-IN", "hi"] }
+};
 
-if (selectedBibleLanguage === "tamil") {
+const speechLanguage = languageConfig[selectedBibleLanguage] ||
+    languageConfig[allLanguageIndex === 1 ? "tamil" :
+                  allLanguageIndex === 2 ? "malayalam" :
+                  allLanguageIndex === 3 ? "hindi" : "english"];
 
+// Set the locale even when iOS has not populated getVoices() yet.
+speech.lang = speechLanguage.lang;
 
-    const tamilVoice = findBestVoice(
-    voices,
-    ["ta-IN", "ta"]
-);
-
-if (tamilVoice) {
-
-    speech.voice = tamilVoice;
-    speech.lang = tamilVoice.lang;
-
+const matchedVoice = findBestVoice(voices, speechLanguage.candidates);
+if (matchedVoice) {
+    speech.voice = matchedVoice;
+    speech.lang = matchedVoice.lang || speechLanguage.lang;
 }
 
-else {
-
-    resetSpeechButton();
-
-    showDialog(
-        
-
-"Tamil voice! Please install Tamil voice from your device Text-to-Speech settings and try again."
-    );
-
-    return;
-
-}
-
-
-}
-
-
-else if (selectedBibleLanguage === "hindi") {
-
-    const hindiVoice = findBestVoice(
-    voices,
-    ["hi-IN", "hi"]
-);
-
-if (hindiVoice) {
-
-    speech.voice = hindiVoice;
-    speech.lang = hindiVoice.lang;
-
-}
-
-else {
-
-    resetSpeechButton();
-
-    showDialog(
-    "Hindi voice! Please install Hindi voice from your device Text-to-Speech settings and try again."
-);
-
-    return;
-
-}
-    
-}
-
-else if (selectedBibleLanguage === "malayalam") {
-    const malayalamVoice = findBestVoice(
-    voices,
-    ["ml-IN", "ml"]
-);
-    if (malayalamVoice) {
-
-        speech.voice = malayalamVoice;
-        speech.lang = malayalamVoice.lang;
-
-    }
-
-    else {
-
-        resetSpeechButton();
-
-        showDialog(
-    "Malayalam voice! Please install Malayalam voice from your device Text-to-Speech settings and try again."
-);
-
-        return;
-
-    }
-
-}
-
-else if (selectedBibleLanguage === "all") {
-
-
-    if (allLanguageIndex === 0) {
-
-        const englishVoice = findBestVoice(
-    voices,
-    ["en-IN", "en-US", "en-GB", "en"]
-);
-
-if (englishVoice) {
-
-    speech.voice = englishVoice;
-    speech.lang = englishVoice.lang;
-
-}
-
-else {
-
-    resetSpeechButton();
-
-    showDialog(
-        "English voice! Please install English voice from your device Text-to-Speech settings and try again."
-    );
-
-    return;
-
-}
-
-        
-
-    }
-
-
-    else if (allLanguageIndex === 1) {
-
-        const tamilVoice = findBestVoice(
-    voices,
-    ["ta-IN", "ta"]
-);
-
-if (tamilVoice) {
-
-    speech.voice = tamilVoice;
-    speech.lang = tamilVoice.lang;
-
-}
-else {
-
-    resetSpeechButton();
-
-    showDialog(
-        "Tamil voice! Please install Tamil voice from your device Text-to-Speech settings and try again."
-    );
-
-    return;
-
-}
-
-        
-
-    }
-
-
-    else if (allLanguageIndex === 2) {
-
-    const malayalamVoice = findBestVoice(
-        voices,
-        ["ml-IN", "ml"]
-    );
-
-    if (malayalamVoice) {
-
-        speech.voice = malayalamVoice;
-        speech.lang = malayalamVoice.lang;
-
-    }
-
-    else {
-
-        resetSpeechButton();
-
-        showDialog(
-            "Malayalam voice! Please install Malayalam voice from your device Text-to-Speech settings and try again."
-        );
-
-        return;
-    }
-}
-
-else if (allLanguageIndex === 3) {
-
-    const hindiVoice = findBestVoice(
-        voices,
-        ["hi-IN", "hi"]
-    );
-
-    if (hindiVoice) {
-
-        speech.voice = hindiVoice;
-        speech.lang = hindiVoice.lang;
-
-    }
-
-    else {
-
-        resetSpeechButton();
-
-        showDialog(
-            "Hindi voice! Please install Hindi voice from your device Text-to-Speech settings and try again."
-        );
-
-        return;
-    }
-}
-
-}
-
-else {
-
-
-    const englishVoice = findBestVoice(
-    voices,
-    ["en-IN", "en-US", "en-GB", "en"]
-);
-
-if (englishVoice) {
-
-    speech.voice = englishVoice;
-    speech.lang = englishVoice.lang;
-
-}
-
-else {
-
-    resetSpeechButton();
-
-    showDialog(
-        "English voice! Please install English voice from your device Text-to-Speech settings and try again."
-    );
-
-    return;
-
-}
-
-
-}
+// If no voice matches, let the OS choose using speech.lang. This is especially
+// important on iPhone, where getVoices() may omit voices that Safari can speak.
 
 speechResumeVoice = speech.voice;
 speechResumeLang = speech.lang;
@@ -23833,6 +23623,10 @@ speech.onboundary = function(event) {
 
 console.log("4 - Speaking:", text);
 
+// Clear stale/cancelled utterances before queuing the new one. Keep speak()
+// synchronous in this Play-button call path for iOS user-activation handling.
+window.speechSynthesis.cancel();
+
 speech.onstart = function(){
 
     playButton.textContent = "❚❚";
@@ -23843,6 +23637,14 @@ speech.onstart = function(){
 
     console.log("Speech started");
 
+};
+
+speech.onerror = function(event) {
+    console.error("Speech synthesis error:", event.error, event);
+    speechPaused = false;
+    if (playButton) playButton.textContent = "▶";
+    setBibleLanguageSelectionEnabled(true);
+    releaseBibleScreenAwake();
 };
 
 
