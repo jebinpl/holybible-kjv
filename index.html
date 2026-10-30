@@ -16320,6 +16320,9 @@ function onPlayerStateChange(event) {
     // When playback starts, clear the temporary mobile visibility timer.
     // Keep the normal CSS fade-out and desktop hover behavior intact.
     if (event.data === YT.PlayerState.PLAYING) {
+        // Prevent the iPhone from auto-locking while the video is playing.
+        requestBibleVideoWakeLock();
+
         const centerButton = document.getElementById("youtubeCenterToggle");
         if (centerButton) {
             centerButton.classList.remove("touch-visible");
@@ -16331,6 +16334,11 @@ function onPlayerStateChange(event) {
         if (youtubePlayer && youtubePlayer.unloadModule) {
             youtubePlayer.unloadModule("captions");
         }
+    }
+
+    if (event.data === YT.PlayerState.PAUSED ||
+        event.data === YT.PlayerState.ENDED) {
+        releaseBibleVideoWakeLock();
     }
 
     if (event.data === YT.PlayerState.ENDED) {
@@ -16932,6 +16940,43 @@ let speechPaused = false;
 let allLanguageIndex = 0;
 let currentSpeechLanguage = "english";
 let bibleWakeLock = null;
+let bibleVideoWakeLock = null;
+
+// Keep the iPhone screen awake while a Bible YouTube video is playing.
+async function requestBibleVideoWakeLock() {
+    if (!("wakeLock" in navigator) || document.visibilityState !== "visible") return;
+    if (bibleVideoWakeLock && !bibleVideoWakeLock.released) return;
+
+    try {
+        bibleVideoWakeLock = await navigator.wakeLock.request("screen");
+        bibleVideoWakeLock.addEventListener("release", () => {
+            bibleVideoWakeLock = null;
+        }, { once: true });
+        console.log("Bible video screen wake lock active");
+    } catch (err) {
+        console.log("Bible video wake lock unavailable:", err);
+    }
+}
+
+async function releaseBibleVideoWakeLock() {
+    const lock = bibleVideoWakeLock;
+    bibleVideoWakeLock = null;
+    if (lock && !lock.released) {
+        try { await lock.release(); } catch (err) {
+            console.log("Bible video wake lock release error:", err);
+        }
+    }
+}
+
+// iOS releases screen wake locks when the page is backgrounded/hidden.
+// Re-request when the app becomes visible again and the video is still playing.
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState !== "visible") return;
+    if (youtubePlayer && youtubePlayer.getPlayerState &&
+        youtubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+        requestBibleVideoWakeLock();
+    }
+});
 
 async function updateBibleReader(book, chapter) {
 
