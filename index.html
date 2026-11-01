@@ -14674,6 +14674,20 @@ async function navigateBibleChapter(direction) {
         const title = document.getElementById("bibleReaderTitle");
         const fixedChapterTitle = document.getElementById("videoPageTitle");
 
+        // If the Chapter Read speech player is actively playing, restart it
+        // from verse 1 after the destination chapter has loaded.
+        const speechPlayer = document.getElementById("speechPlayer");
+        const speechWasPlaying = Boolean(
+            speechPlayer &&
+            speechPlayer.style.display !== "none" &&
+            window.speechSynthesis &&
+            window.speechSynthesis.speaking &&
+            !speechPaused
+        );
+        if (speechWasPlaying) {
+            window.speechSynthesis.cancel();
+        }
+
         // Calculate transition timing from the verse currently visible on the
         // user's screen. Progress is measured across the current chapter.
         // NEXT: verse 1 = 100% current-chapter timing; 25% = 75%; 50% = 50%;
@@ -14753,6 +14767,18 @@ async function navigateBibleChapter(direction) {
         }
 
         await updateBibleReader(nextBook, nextChapter);
+
+        // Restart continuous speech from the destination chapter's first verse.
+        // Keep the player visible and reset language rotation / verse index.
+        if (speechWasPlaying && BibleSpeech.verses.length) {
+            BibleSpeech.currentIndex = 0;
+            allLanguageIndex = 0;
+            speechPaused = false;
+            const speechPlayButton = document.getElementById("speechPlayButton");
+            if (speechPlayButton) speechPlayButton.textContent = "▶";
+            startSpeech();
+        }
+
 
         // Update BOTH chapter headings: the title inside the reader and the
         // fixed chapter heading beneath the navigation bar.
