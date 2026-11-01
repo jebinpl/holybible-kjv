@@ -1232,8 +1232,8 @@ textarea,
 
 /* Chapter Read: continuous chapter text scroll */
 #bibleReaderContainer { position: relative; }
-#bibleText.chapter-scroll-in-next { animation: chapterTextInUp 1.35s ease-in-out both; }
-#bibleText.chapter-scroll-in-previous { animation: chapterTextInDown 1.35s ease-in-out both; }
+#bibleText.chapter-scroll-in-next { animation: chapterTextInUp var(--chapter-scroll-duration, 1.35s) linear both; }
+#bibleText.chapter-scroll-in-previous { animation: chapterTextInDown var(--chapter-scroll-duration, 1.35s) linear both; }
 .chapter-text-scroll-overlay {
     position: absolute;
     left: 20px; right: 20px;
@@ -1242,11 +1242,19 @@ textarea,
     overflow: hidden;
     background: inherit;
 }
-.chapter-text-scroll-overlay.chapter-scroll-out-next { animation: chapterTextOutUp 1.35s ease-in-out both; }
-.chapter-text-scroll-overlay.chapter-scroll-out-previous { animation: chapterTextOutDown 1.35s ease-in-out both; }
-@keyframes chapterTextInUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.chapter-text-scroll-overlay.chapter-scroll-out-next { animation: chapterTextOutUp var(--chapter-scroll-duration, 1.35s) linear both; }
+.chapter-text-scroll-overlay.chapter-scroll-out-previous { animation: chapterTextOutDown var(--chapter-scroll-duration, 1.35s) linear both; }
+@keyframes chapterTextInUp {
+    0% { transform: translateY(100%); }
+    82% { transform: translateY(6%); }
+    100% { transform: translateY(0); animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+}
 @keyframes chapterTextOutUp { from { transform: translateY(0); } to { transform: translateY(-100%); } }
-@keyframes chapterTextInDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes chapterTextInDown {
+    0% { transform: translateY(-100%); }
+    82% { transform: translateY(-6%); }
+    100% { transform: translateY(0); animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+}
 @keyframes chapterTextOutDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
 
 /* =========================
@@ -14664,9 +14672,69 @@ async function navigateBibleChapter(direction) {
         const reader = document.getElementById("bibleReaderContainer");
         const textContainer = document.getElementById("bibleText");
         const title = document.getElementById("bibleReaderTitle");
+        const fixedChapterTitle = document.getElementById("videoPageTitle");
 
-        // Keep a snapshot of the currently visible chapter text so it can
-        // scroll away while the newly loaded chapter scrolls into its place.
+        // Calculate transition timing from the verse currently visible on the
+        // user's screen. Progress is measured across the current chapter.
+        // NEXT: verse 1 = 100% current-chapter timing; 25% = 75%; 50% = 50%;
+        // 75% = 25%; last verse = a brief finishing transition.
+        // PREVIOUS: always include 100% of the previous-chapter timing, PLUS
+        // the current-chapter timing multiplied by the current verse progress.
+        // Thus verse 1 = 0% + 100%; 25% = 25% + 100%; ... last verse = 100% + 100%.
+        const MAX_CHAPTER_SCROLL_MS = 1350;
+        const EDGE_SCROLL_MS = 450;
+        let chapterProgress = 0;
+
+        if (textContainer) {
+            const verses = Array.from(textContainer.querySelectorAll(".bible-verse"));
+            if (verses.length > 1) {
+                const viewportTop = 0;
+                const viewportBottom = window.innerHeight;
+                let visibleVerseIndex = 0;
+                let bestVisibleArea = -1;
+
+                verses.forEach((verse, index) => {
+                    const rect = verse.getBoundingClientRect();
+                    const visibleTop = Math.max(rect.top, viewportTop);
+                    const visibleBottom = Math.min(rect.bottom, viewportBottom);
+                    const visibleArea = Math.max(0, visibleBottom - visibleTop);
+                    if (visibleArea > bestVisibleArea) {
+                        bestVisibleArea = visibleArea;
+                        visibleVerseIndex = index;
+                    }
+                });
+
+                chapterProgress = visibleVerseIndex / (verses.length - 1);
+            }
+        }
+
+
+        let chapterScrollDuration;
+        if (direction > 0) {
+            // NEXT: the current chapter contributes less timing as the reader
+            // advances; at the final verse, use only the brief transition.
+            const timingProgress = 1 - chapterProgress;
+            chapterScrollDuration = timingProgress <= 0.001
+                ? EDGE_SCROLL_MS
+                : Math.round(MAX_CHAPTER_SCROLL_MS * timingProgress);
+        } else {
+            // PREVIOUS: add the current chapter's progress-based timing to
+            // one full previous-chapter scroll timing.
+            const currentChapterTiming = Math.round(MAX_CHAPTER_SCROLL_MS * chapterProgress);
+            const previousChapterTiming = MAX_CHAPTER_SCROLL_MS;
+            chapterScrollDuration = currentChapterTiming + previousChapterTiming;
+        }
+
+
+        const chapterScrollDurationCss = chapterScrollDuration + "ms";
+
+
+        // Preserve the current text at its actual screen position. This snapshot
+        // is the outgoing layer for the scroll animation; do not jump the old
+        // chapter to a verse-number anchor.
+
+        // Snapshot the old chapter at the reader's current scroll position.
+        // It remains visible while the replacement chapter scrolls into view.
         let oldTextOverlay = null;
         if (reader && textContainer) {
             reader.querySelectorAll(".chapter-text-scroll-overlay").forEach(node => node.remove());
@@ -14680,22 +14748,38 @@ async function navigateBibleChapter(direction) {
             oldTextOverlay.style.margin = "0";
             oldTextOverlay.style.width = textRect.width + "px";
             oldTextOverlay.style.boxSizing = "border-box";
+            oldTextOverlay.style.setProperty("--chapter-scroll-duration", chapterScrollDurationCss);
             reader.appendChild(oldTextOverlay);
         }
 
         await updateBibleReader(nextBook, nextChapter);
 
-        if (title) title.textContent = nextBook + " - Ch " + nextChapter;
+        // Update BOTH chapter headings: the title inside the reader and the
+        // fixed chapter heading beneath the navigation bar.
+        const chapterHeading = nextBook + " - Ch " + nextChapter;
+        if (title) title.textContent = chapterHeading;
+        if (fixedChapterTitle) fixedChapterTitle.textContent = chapterHeading;
+
         if (textContainer) {
-            textContainer.scrollTop = 0;
             textContainer.classList.remove("chapter-scroll-in-next", "chapter-scroll-in-previous");
+            textContainer.style.setProperty("--chapter-scroll-duration", chapterScrollDurationCss);
+            // Both directions land at verse 1 of the destination chapter.
+            // The old chapter snapshot remains at the exact viewport position
+            // where the user was reading and scrolls upward out of view.
+            const firstVerse = textContainer.querySelector(".bible-verse");
+            if (firstVerse) {
+                firstVerse.scrollIntoView({ block: "start", behavior: "auto" });
+            }
             void textContainer.offsetWidth;
             textContainer.classList.add(direction > 0 ? "chapter-scroll-in-next" : "chapter-scroll-in-previous");
         }
-        window.scrollTo({ top: 0, behavior: "auto" });
 
         if (oldTextOverlay) {
-            oldTextOverlay.classList.add(direction > 0 ? "chapter-scroll-out-next" : "chapter-scroll-out-previous");
+            // The outgoing text moves opposite the incoming chapter:
+            // Next sends old text upward; Previous sends old text downward.
+            oldTextOverlay.classList.add(direction > 0
+                ? "chapter-scroll-out-next"
+                : "chapter-scroll-out-previous");
             oldTextOverlay.addEventListener("animationend", () => oldTextOverlay.remove(), { once: true });
         }
         if (textContainer) {
