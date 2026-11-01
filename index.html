@@ -1229,6 +1229,26 @@ textarea,
 }
 
 
+
+/* Chapter Read: continuous chapter text scroll */
+#bibleReaderContainer { position: relative; }
+#bibleText.chapter-scroll-in-next { animation: chapterTextInUp 1.35s ease-in-out both; }
+#bibleText.chapter-scroll-in-previous { animation: chapterTextInDown 1.35s ease-in-out both; }
+.chapter-text-scroll-overlay {
+    position: absolute;
+    left: 20px; right: 20px;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+    background: inherit;
+}
+.chapter-text-scroll-overlay.chapter-scroll-out-next { animation: chapterTextOutUp 1.35s ease-in-out both; }
+.chapter-text-scroll-overlay.chapter-scroll-out-previous { animation: chapterTextOutDown 1.35s ease-in-out both; }
+@keyframes chapterTextInUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes chapterTextOutUp { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+@keyframes chapterTextInDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes chapterTextOutDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
+
 /* =========================
    BIBLE READING BOX
 ========================= */
@@ -14602,7 +14622,7 @@ button.onclick = function() {
    OPEN CHAPTER 
 ========================================================= */ 
  
-function navigateBibleChapter(direction) {
+async function navigateBibleChapter(direction) {
     const bookName = sessionStorage.getItem("book");
     const chapterNumber = Number(sessionStorage.getItem("chapter"));
 
@@ -14625,7 +14645,69 @@ function navigateBibleChapter(direction) {
         nextChapter = 1;
     }
 
-    openChapter(allBooks[nextBookIndex][0], nextChapter);
+    const nextBook = allBooks[nextBookIndex][0];
+
+    // When Chapter Read is open, change the reader's chapter in place.
+    // Next (direction > 0) scrolls upward; Previous scrolls downward.
+    if (bibleReaderOpen) {
+        sessionStorage.setItem("book", nextBook);
+        sessionStorage.setItem("chapter", String(nextChapter));
+
+        try {
+            localStorage.setItem("selectedBook", String(nextBook));
+            localStorage.setItem("selectedChapter", String(nextChapter));
+            if (typeof updateLastReadSlider === "function") updateLastReadSlider();
+        } catch (error) {
+            console.warn("Could not save last-read chapter:", error);
+        }
+
+        const reader = document.getElementById("bibleReaderContainer");
+        const textContainer = document.getElementById("bibleText");
+        const title = document.getElementById("bibleReaderTitle");
+
+        // Keep a snapshot of the currently visible chapter text so it can
+        // scroll away while the newly loaded chapter scrolls into its place.
+        let oldTextOverlay = null;
+        if (reader && textContainer) {
+            reader.querySelectorAll(".chapter-text-scroll-overlay").forEach(node => node.remove());
+            const readerRect = reader.getBoundingClientRect();
+            const textRect = textContainer.getBoundingClientRect();
+            oldTextOverlay = textContainer.cloneNode(true);
+            oldTextOverlay.removeAttribute("id");
+            oldTextOverlay.classList.add("chapter-text-scroll-overlay");
+            oldTextOverlay.style.top = (textRect.top - readerRect.top) + "px";
+            oldTextOverlay.style.height = textRect.height + "px";
+            oldTextOverlay.style.margin = "0";
+            oldTextOverlay.style.width = textRect.width + "px";
+            oldTextOverlay.style.boxSizing = "border-box";
+            reader.appendChild(oldTextOverlay);
+        }
+
+        await updateBibleReader(nextBook, nextChapter);
+
+        if (title) title.textContent = nextBook + " - Ch " + nextChapter;
+        if (textContainer) {
+            textContainer.scrollTop = 0;
+            textContainer.classList.remove("chapter-scroll-in-next", "chapter-scroll-in-previous");
+            void textContainer.offsetWidth;
+            textContainer.classList.add(direction > 0 ? "chapter-scroll-in-next" : "chapter-scroll-in-previous");
+        }
+        window.scrollTo({ top: 0, behavior: "auto" });
+
+        if (oldTextOverlay) {
+            oldTextOverlay.classList.add(direction > 0 ? "chapter-scroll-out-next" : "chapter-scroll-out-previous");
+            oldTextOverlay.addEventListener("animationend", () => oldTextOverlay.remove(), { once: true });
+        }
+        if (textContainer) {
+            textContainer.addEventListener("animationend", () => {
+                textContainer.classList.remove("chapter-scroll-in-next", "chapter-scroll-in-previous");
+            }, { once: true });
+        }
+        return;
+    }
+
+    // Outside Chapter Read, retain the app's existing chapter/video navigation.
+    openChapter(nextBook, nextChapter);
 }
 
 function openChapter(book, chapter, verseNumber = null) {
