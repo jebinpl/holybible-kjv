@@ -10715,21 +10715,27 @@ document
         return;
     }
 
+    // WhatsApp receives this non-empty heading. The clipboard contains only
+    // the selected verse details, so the user can paste them after the heading.
+    const whatsappHeading = "VERSE TREASURE\n\n";
+    const pasteText = message.startsWith(whatsappHeading)
+        ? message.slice(whatsappHeading.length)
+        : message;
+
     try {
-        // Copy the COMPLETE text first. The share sheet is opened with a
-        // tiny placeholder so WhatsApp will not receive/truncate the long text.
         if (!navigator.clipboard || !navigator.clipboard.writeText) {
             throw new Error("Clipboard API is not available.");
         }
 
-        const copyPromise = navigator.clipboard.writeText(message);
+        // Copy the verse details before opening the native share menu.
+        const copyPromise = navigator.clipboard.writeText(pasteText);
 
         if (navigator.share) {
-            // Invoke share immediately from the button click while activation
-            // is still available. User chooses WhatsApp, then taps Paste.
+            // Send a real, non-empty message to WhatsApp, then the user pastes
+            // the copied verse details after this heading.
             const sharePromise = navigator.share({
                 title: "Verse Treasure",
-                text: " "
+                text: whatsappHeading.trimEnd()
             });
 
             await copyPromise;
@@ -10738,18 +10744,16 @@ document
         } else {
             await copyPromise;
             alert(
-                "All selected verses have been copied. " +
-                "Open WhatsApp, tap the message box, and select Paste."
+                "The verse details are copied. Paste them after VERSE TREASURE in WhatsApp."
             );
         }
 
     } catch (error) {
-        // Even if the share sheet is closed or fails, the text was copied
-        // first whenever clipboard access succeeded.
+        // Closing the share sheet is not a failure: the verse details remain
+        // copied and can still be pasted after the heading in WhatsApp.
         if (error && error.name === "AbortError") {
             alert(
-                "Your selected verses are copied. " +
-                "Open WhatsApp, tap the message box, and select Paste."
+                "Your verse details are copied. Paste them after VERSE TREASURE in WhatsApp."
             );
             return;
         }
@@ -10758,10 +10762,9 @@ document
 
         // Retry clipboard copy in case the first attempt failed.
         try {
-            await navigator.clipboard.writeText(message);
+            await navigator.clipboard.writeText(pasteText);
             alert(
-                "All selected verses have been copied. " +
-                "Open WhatsApp, tap the message box, and select Paste."
+                "The verse details are copied. Paste them after VERSE TREASURE in WhatsApp."
             );
         } catch (clipboardError) {
             console.error("Verse Treasure clipboard failed:", clipboardError);
@@ -20624,6 +20627,7 @@ function setupIntroMusicPlayer() {
         { id: "default-421", name: "421.mp3", src: "./songs/malayalam/421.mp3", kind: "default", category: "malayalam" },
         { id: "default-620", name: "620.mp3", src: "./songs/malayalam/620.mp3", kind: "default", category: "malayalam" },
         { id: "default-m416", name: "M416.mp3", src: "./songs/malayalam/M416.mp3", kind: "default", category: "malayalam" },
+        { id: "default-m307", name: "M307.mp3", src: "./songs/malayalam/M307.mp3", kind: "default", category: "malayalam" },
         { id: "default-laksholaksham", name: "Laksholaksham.mp3", src: "./songs/malayalam/Laksholaksham.mp3", kind: "default", category: "malayalam" }   
     ];
 
