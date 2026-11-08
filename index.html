@@ -10688,8 +10688,7 @@ document
 
     let message = "VERSE TREASURE\n\n";
 
-    // Include EVERY selected verse in the order selected by the user.
-    // No verse-count limit or text truncation is applied here.
+    // Keep the user's selection order and the original saved date/time.
     selectedVerseTreasures.forEach(function(v, index) {
 
         message +=
@@ -10709,66 +10708,82 @@ document
         message += "--------------------\n\n";
     });
 
+    message = message.trim();
+
+    if (!message) {
+        showDialog("No verse text is available to share.");
+        return;
+    }
+
     try {
-        // Share the complete treasure as a TEXT FILE. This avoids WhatsApp
-        // and other share targets cutting off long shared-text messages.
-        const fileName =
-            "Verse-Treasure-" +
-            new Date().toISOString().slice(0, 10) +
-            ".txt";
+        // Copy the COMPLETE text first. The share sheet is opened with a
+        // tiny placeholder so WhatsApp will not receive/truncate the long text.
+        if (!navigator.clipboard || !navigator.clipboard.writeText) {
+            throw new Error("Clipboard API is not available.");
+        }
 
-        const treasureFile = new File(
-            [message],
-            fileName,
-            { type: "text/plain;charset=utf-8" }
-        );
+        const copyPromise = navigator.clipboard.writeText(message);
 
-        if (
-            navigator.share &&
-            navigator.canShare &&
-            navigator.canShare({ files: [treasureFile] })
-        ) {
-            await navigator.share({
+        if (navigator.share) {
+            // Invoke share immediately from the button click while activation
+            // is still available. User chooses WhatsApp, then taps Paste.
+            const sharePromise = navigator.share({
                 title: "Verse Treasure",
-                files: [treasureFile]
+                text: " "
             });
+
+            await copyPromise;
+            await sharePromise;
+
+        } else {
+            await copyPromise;
+            alert(
+                "All selected verses have been copied. " +
+                "Open WhatsApp, tap the message box, and select Paste."
+            );
+        }
+
+    } catch (error) {
+        // Even if the share sheet is closed or fails, the text was copied
+        // first whenever clipboard access succeeded.
+        if (error && error.name === "AbortError") {
+            alert(
+                "Your selected verses are copied. " +
+                "Open WhatsApp, tap the message box, and select Paste."
+            );
             return;
         }
 
-        // Fallback: preserve the full text in the clipboard and download
-        // the same complete .txt file so it can be attached as a document.
-        let copied = false;
+        console.error("Verse Treasure share failed:", error);
+
+        // Retry clipboard copy in case the first attempt failed.
         try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                await navigator.clipboard.writeText(message);
-                copied = true;
-            }
+            await navigator.clipboard.writeText(message);
+            alert(
+                "All selected verses have been copied. " +
+                "Open WhatsApp, tap the message box, and select Paste."
+            );
         } catch (clipboardError) {
-            console.warn("Clipboard copy unavailable:", clipboardError);
-        }
+            console.error("Verse Treasure clipboard failed:", clipboardError);
 
-        const downloadUrl = URL.createObjectURL(treasureFile);
-        const downloadLink = document.createElement("a");
-        downloadLink.href = downloadUrl;
-        downloadLink.download = fileName;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        downloadLink.remove();
-        setTimeout(function() {
-            URL.revokeObjectURL(downloadUrl);
-        }, 1000);
+            const blob = new Blob([message + "\n"], {
+                type: "text/plain;charset=utf-8"
+            });
+            const downloadUrl = URL.createObjectURL(blob);
+            const downloadLink = document.createElement("a");
+            downloadLink.href = downloadUrl;
+            downloadLink.download = "Verse-Treasure.txt";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            downloadLink.remove();
+            setTimeout(function() {
+                URL.revokeObjectURL(downloadUrl);
+            }, 1000);
 
-        alert(
-            "Complete Verse Treasure (" + selectedVerseTreasures.length +
-            " verses) has been downloaded as a text file." +
-            (copied ? "\nThe full text is also copied to your clipboard." : "") +
-            "\nAttach the .txt file in WhatsApp as a document to send the full list."
-        );
-
-    } catch (error) {
-        if (error.name !== "AbortError") {
-            console.error("Share failed:", error);
-            alert("Unable to share Verse Treasure. Please try again.");
+            alert(
+                "Clipboard access was unavailable. " +
+                "Your complete Verse Treasure text has been downloaded as a TXT file."
+            );
         }
     }
 
