@@ -244,9 +244,14 @@ self.addEventListener("message", function (event) {
             ? data.urlsToRemove
             : [];
 
+        const urlsToRefresh = Array.isArray(data.urlsToRefresh)
+            ? data.urlsToRefresh
+            : [];
+
         /*
-         Finish every required download before deleting
-         any cached song.
+         Download missing songs and all replacement versions first.
+         Do not overwrite an existing cached song until its fresh
+         network response has been downloaded successfully.
         */
 
         for (const item of urlsToCache) {
@@ -270,6 +275,33 @@ self.addEventListener("message", function (event) {
             }
 
             await cache.put(url, response.clone());
+        }
+
+        // Stage fresh versions separately so a failed download never destroys
+        // the previous offline copy. A query token bypasses stale HTTP/CDN cache.
+        const refreshedResponses = [];
+        for (const item of urlsToRefresh) {
+            const url = new URL(item, self.location.href).href;
+            const refreshURL = new URL(url);
+            refreshURL.searchParams.set("__song_refresh", String(Date.now()) + Math.random());
+
+            const response = await fetch(refreshURL.href, {
+                cache: "no-store"
+            });
+
+            if (!response.ok || response.status !== 200) {
+                throw new Error("Song refresh failed: " + url);
+            }
+
+            refreshedResponses.push({
+                url: url,
+                response: response
+            });
+        }
+
+        // Replace cached versions only after all requested refresh downloads succeed.
+        for (const item of refreshedResponses) {
+            await cache.put(item.url, item.response.clone());
         }
 
         // Remove songs only after all downloads succeed.
