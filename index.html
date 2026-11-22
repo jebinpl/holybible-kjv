@@ -20672,6 +20672,11 @@ function setupIntroMusicPlayer() {
     let musicCacheSyncAgain = false;
     let sharedMusicCacheInitPromise = null;
 
+    // Recheck cached built-in songs periodically without changing CACHE_NAME.
+    // This refreshes the five (or fewer) songs retained for offline playback.
+    const MUSIC_AUTO_REFRESH_INTERVAL_MS = 10 * 60 * 1000;
+    let lastMusicAutoRefreshAt = 0;
+
     // Playlist membership is stored separately from MP3 bytes. The same URL can
     // belong to several playlists while its audio response exists only once.
     function getMusicCacheNameForMode(musicMode) {
@@ -20788,7 +20793,7 @@ function setupIntroMusicPlayer() {
         return sharedMusicCacheInitPromise;
     }
 
-    async function syncBuiltInMusicCache(urlsToCache, urlsToRemove, cacheName) {
+    async function syncBuiltInMusicCache(urlsToCache, urlsToRemove, cacheName, urlsToRefresh) {
         if (!navigator.onLine || !("serviceWorker" in navigator)) return false;
         try {
             const registration = await navigator.serviceWorker.ready;
@@ -20809,7 +20814,8 @@ function setupIntroMusicPlayer() {
                     type: "MUSIC_CACHE_SYNC",
                     cacheName: cacheName || getMusicCacheNameForMode("default"),
                     urlsToCache: urlsToCache || [],
-                    urlsToRemove: urlsToRemove || []
+                    urlsToRemove: urlsToRemove || [],
+                    urlsToRefresh: urlsToRefresh || []
                 }, [channel.port2]);
             });
         } catch (error) {
@@ -20897,15 +20903,31 @@ function setupIntroMusicPlayer() {
         nextMembership = Array.from(new Set(nextMembership)).slice(-MAX_CACHED_SONGS);
 
         const urlsToCache = [];
+        const urlsToRefresh = [];
         for (const url of nextMembership) {
-            if (!(await sharedCache.match(url))) urlsToCache.push(url);
+            if (await sharedCache.match(url)) {
+                // Refresh existing songs occasionally so replaced MP3 files are
+                // detected even though their GitHub URLs have not changed.
+                if (Date.now() - lastMusicAutoRefreshAt >= MUSIC_AUTO_REFRESH_INTERVAL_MS) {
+                    urlsToRefresh.push(url);
+                }
+            } else {
+                urlsToCache.push(url);
+            }
         }
 
         musicCacheSyncInProgress = true;
         try {
-            // First download every needed file. Failure leaves old membership intact.
-            const cacheSuccess = await syncBuiltInMusicCache(urlsToCache, [], playlistCacheName);
+            // Download missing files and refresh existing ones. The Service Worker
+            // keeps old cached audio if a refresh fails.
+            const cacheSuccess = await syncBuiltInMusicCache(
+                urlsToCache,
+                [],
+                playlistCacheName,
+                urlsToRefresh
+            );
             if (!cacheSuccess) return false;
+            if (urlsToRefresh.length) lastMusicAutoRefreshAt = Date.now();
             if (!savePlaylistMembership(playlistCacheName, nextMembership)) return false;
 
             // Remove only files no longer referenced by any playlist.
@@ -22305,6 +22327,20 @@ if (!navigator.onLine && musicMode !== "users") {
 
     updatePlayButton(false);
     updateMediaSessionPlaybackState();
+
+    // While the app remains open, check for replaced MP3 files every ten minutes.
+    // This stays inside the music-player scope and does not change CACHE_NAME.
+    setInterval(function () {
+        if (!document.hidden && navigator.onLine) {
+            maintainActiveBuiltInCache(
+                DEFAULT_TRACKS,
+                window.__holyBibleMusicMode || "default",
+                false
+            ).catch(function (error) {
+                console.warn("Automatic song refresh failed:", error);
+            });
+        }
+    }, MUSIC_AUTO_REFRESH_INTERVAL_MS);
 }
 
 function startJesusTimeIntro() {
