@@ -10,6 +10,7 @@
     {"id":"default-e377","name":"E377.mp3","src":"./songs/english/E377.mp3","category":"english"},
     {"id":"default-e436","name":"E436.mp3","src":"./songs/english/E436.mp3","category":"english"},
     {"id":"default-e413","name":"E413.mp3","src":"./songs/english/E413.mp3","category":"english"},
+    {"id":"default-e381","name":"E381.mp3","src":"./songs/english/E381.mp3","category":"english"},
     {"id":"default-e405","name":"E405.mp3","src":"./songs/english/E405.mp3","category":"english"},
 
     {"id":"default-m248","name":"M248.mp3","src":"./songs/malayalam/M248.mp3","category":"malayalam"},
@@ -37,3 +38,4 @@
     {"id":"default-njan","name":"Njan.mp3","src":"./songs/others/Njan.mp3","category":"others"}
   ]
 }
+
