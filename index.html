@@ -20611,58 +20611,125 @@ function setupIntroMusicPlayer() {
         });
     }
 
-    // Built-in songs are organized by language/category and matching folders in ./songs/.
-    const ENGLISH_TRACKS = [
-        { id: "default-e-098", name: "E-098.mp3", src: "./songs/english/E-098.mp3", kind: "default", category: "english" },
-        { id: "default-e267", name: "E267.mp3", src: "./songs/english/E267.mp3", kind: "default", category: "english" },
-        { id: "default-e344", name: "E344.mp3", src: "./songs/english/E344.mp3", kind: "default", category: "english" },
-        { id: "default-e356", name: "E356.mp3", src: "./songs/english/E356.mp3", kind: "default", category: "english" },
-        { id: "default-e16", name: "E16.mp3", src: "./songs/english/E16.mp3", kind: "default", category: "english" },
-        { id: "default-e377", name: "E377.mp3", src: "./songs/english/E377.mp3", kind: "default", category: "english" },
-        { id: "default-e436", name: "E436.mp3", src: "./songs/english/E436.mp3", kind: "default", category: "english" },
-        { id: "default-e413", name: "E413.mp3", src: "./songs/english/E413.mp3", kind: "default", category: "english" },
-        { id: "default-e405", name: "E405.mp3", src: "./songs/english/E405.mp3", kind: "default", category: "english" }
-    ];
+    // Default songs are loaded dynamically from songs.json.
+let DEFAULT_TRACKS = [];
+   
 
-    const MALAYALAM_TRACKS = [
-        { id: "default-m248", name: "M248.mp3", src: "./songs/malayalam/M248.mp3", kind: "default", category: "malayalam" },
-        { id: "default-m360", name: "M360.mp3", src: "./songs/malayalam/M360.mp3", kind: "default", category: "malayalam" },
-        { id: "default-m607", name: "M607.mp3", src: "./songs/malayalam/M607.mp3", kind: "default", category: "malayalam" },
-        { id: "default-m224", name: "M224.mp3", src: "./songs/malayalam/M224.mp3", kind: "default", category: "malayalam" },
-        { id: "default-421", name: "421.mp3", src: "./songs/malayalam/421.mp3", kind: "default", category: "malayalam" },
-        { id: "default-620", name: "620.mp3", src: "./songs/malayalam/620.mp3", kind: "default", category: "malayalam" },
-        { id: "default-m416", name: "M416.mp3", src: "./songs/malayalam/M416.mp3", kind: "default", category: "malayalam" },
-        { id: "default-m307", name: "M307.mp3", src: "./songs/malayalam/M307.mp3", kind: "default", category: "malayalam" },
-        { id: "default-m10", name: "M10.mp3", src: "./songs/malayalam/M10.mp3", kind: "default", category: "malayalam" },    
-        { id: "default-m413", name: "M413.mp3", src: "./songs/malayalam/M413.mp3", kind: "default", category: "malayalam" },  
-        { id: "default-laksholaksham", name: "Laksholaksham.mp3", src: "./songs/malayalam/Laksholaksham.mp3", kind: "default", category: "malayalam" }   
-    ];
+    const SONG_MANIFEST_URL = "./songs.json";
+const SONG_MANIFEST_STORAGE_KEY = "holyBibleSongManifest";
 
-    const TAMIL_TRACKS = [
-        { id: "default-t100", name: "T100.mp3", src: "./songs/tamil/T100.mp3", kind: "default", category: "tamil" },
-        { id: "default-t101", name: "T101.mp3", src: "./songs/tamil/T101.mp3", kind: "default", category: "tamil" },
-        { id: "default-t384", name: "T384.mp3", src: "./songs/tamil/T384.mp3", kind: "default", category: "tamil" },
-        { id: "default-110", name: "110.mp3", src: "./songs/tamil/110.mp3", kind: "default", category: "tamil" },
-        { id: "default-011", name: "011.mp3", src: "./songs/tamil/011.mp3", kind: "default", category: "tamil" },
-        { id: "default-045", name: "045.mp3", src: "./songs/tamil/045.mp3", kind: "default", category: "tamil" },
-        { id: "default-t433", name: "T433.mp3", src: "./songs/tamil/T433.mp3", kind: "default", category: "tamil" }
-    ];
+async function loadSongManifest() {
+    try {
+        if (!navigator.onLine) {
+            throw new Error("Offline");
+        }
 
-    const OTHERS_TRACKS = [
-        { id: "default-vana", name: "Vana.mp3", src: "./songs/others/Vana.mp3", kind: "default", category: "others" },
-        { id: "default-akkaraykku", name: "Akkaraykku.mp3", src: "./songs/others/Akkaraykku.mp3", kind: "default", category: "others" },
-        { id: "default-njan", name: "Njan.mp3", src: "./songs/others/Njan.mp3", kind: "default", category: "others" }
-        
-    ];
+        const response = await fetch(
+            SONG_MANIFEST_URL + "?_=" + Date.now(),
+            { cache: "no-store" }
+        );
 
-    // Default Song combines every built-in category. The player shuffles this list
-    // for random playback; category buttons filter it using each track's category.
-    const DEFAULT_TRACKS = [
-        ...ENGLISH_TRACKS,
-        ...MALAYALAM_TRACKS,
-        ...TAMIL_TRACKS,
-        ...OTHERS_TRACKS
-    ];
+        if (!response.ok) {
+            throw new Error("Could not download songs.json");
+        }
+
+        const manifest = await response.json();
+
+        if (!manifest || !Array.isArray(manifest.songs)) {
+            throw new Error("Invalid song manifest");
+        }
+
+        const validCategories = [
+            "english",
+            "tamil",
+            "malayalam",
+            "others"
+        ];
+
+        const newTracks = manifest.songs
+            .filter(function (song) {
+                return song &&
+                    typeof song.id === "string" &&
+                    typeof song.name === "string" &&
+                    typeof song.src === "string" &&
+                    validCategories.includes(song.category) &&
+                    /^\.\/songs\/(english|tamil|malayalam|others)\/[^/]+\.mp3$/i.test(song.src);
+            })
+            .map(function (song) {
+                return {
+                    id: song.id,
+                    name: song.name,
+                    src: song.src,
+                    kind: "default",
+                    category: song.category
+                };
+            });
+
+        const ids = newTracks.map(function (song) {
+            return song.id;
+        });
+
+        if (!newTracks.length || new Set(ids).size !== ids.length) {
+            throw new Error("Song list is empty or contains duplicate IDs");
+        }
+
+        DEFAULT_TRACKS = newTracks;
+
+        localStorage.setItem(
+            SONG_MANIFEST_STORAGE_KEY,
+            JSON.stringify(manifest)
+        );
+
+        console.log("Song playlist updated:", DEFAULT_TRACKS.length);
+
+        return true;
+
+    } catch (error) {
+        console.warn("Using saved song playlist:", error);
+
+        try {
+            const saved = JSON.parse(
+                localStorage.getItem(SONG_MANIFEST_STORAGE_KEY) || "null"
+            );
+
+            if (saved && Array.isArray(saved.songs)) {
+                const validCategories = [
+                    "english",
+                    "tamil",
+                    "malayalam",
+                    "others"
+                ];
+
+                const savedTracks = saved.songs
+                    .filter(function (song) {
+                        return song &&
+                            typeof song.id === "string" &&
+                            typeof song.name === "string" &&
+                            typeof song.src === "string" &&
+                            validCategories.includes(song.category) &&
+                            /^\.\/songs\/(english|tamil|malayalam|others)\/[^/]+\.mp3$/i.test(song.src);
+                    })
+                    .map(function (song) {
+                        return {
+                            id: song.id,
+                            name: song.name,
+                            src: song.src,
+                            kind: "default",
+                            category: song.category
+                        };
+                    });
+
+                if (savedTracks.length) {
+                    DEFAULT_TRACKS = savedTracks;
+                }
+            }
+        } catch (storageError) {
+            console.warn("Could not read saved song playlist.");
+        }
+
+        return false;
+    }
+}
 
     // Maximum number of built-in songs retained for offline playback.
     // Change this one value to 20 if you later want a larger cache.
@@ -22260,6 +22327,40 @@ if (!navigator.onLine && musicMode !== "users") {
     window.addEventListener("focus", resumeAfterSystemInterruption);
     window.addEventListener("pageshow", resumeAfterSystemInterruption);
 
+    // Refresh the built-in playlist when the internet connection returns.
+    // These listeners are inside setupIntroMusicPlayer(), so they can access
+    // DEFAULT_TRACKS, loadSongManifest(), refreshTracks(), and the cache helper.
+    window.addEventListener("online", async function () {
+        await loadSongManifest();
+        await maintainActiveBuiltInCache(
+            DEFAULT_TRACKS,
+            window.__holyBibleMusicMode || "default",
+            false
+        );
+        await refreshTracks();
+    });
+
+    window.addEventListener("offline", async function () {
+        await refreshTracks();
+    });
+
+    // Refresh the playlist when the user returns to the app.
+    // Keep the separate interruption listener below unchanged.
+    document.addEventListener("visibilitychange", async function () {
+        if (document.hidden) return;
+
+        if (navigator.onLine) {
+            await loadSongManifest();
+            await maintainActiveBuiltInCache(
+                DEFAULT_TRACKS,
+                window.__holyBibleMusicMode || "default",
+                false
+            );
+        }
+
+        await refreshTracks();
+    });
+
     document.addEventListener("visibilitychange", function () {
         if (document.hidden) {
             // Use the last saved playback position even if the call already
@@ -22307,8 +22408,11 @@ if (!navigator.onLine && musicMode !== "users") {
         }
     });
 
-    refreshTracks()
-        .then(async function () {
+    loadSongManifest()
+    .then(function () {
+        return refreshTracks();
+    })
+    .then(async function () {
             if (navigator.onLine) {
                 await maintainActiveBuiltInCache(
                     DEFAULT_TRACKS,
@@ -25898,33 +26002,6 @@ function updateCalendarIcon() {
 
 updateCalendarIcon();
 
-/* Refresh playlist when internet connectivity changes. */
-window.addEventListener("online", async function () {
-    await maintainActiveBuiltInCache(
-        DEFAULT_TRACKS,
-        window.__holyBibleMusicMode || "default",
-        false
-    );
-    await refreshTracks();
-});
-
-window.addEventListener("offline", async function () {
-    await refreshTracks();
-});
-
-/* Refresh playlist when returning to the app. */
-document.addEventListener("visibilitychange", async function () {
-    if (!document.hidden) {
-        if (navigator.onLine) {
-            await maintainActiveBuiltInCache(
-                DEFAULT_TRACKS,
-                window.__holyBibleMusicMode || "default",
-                false
-            );
-        }
-        await refreshTracks();
-    }
-});
   
 /* =========================================================
    HOME LAST-READ SLIDE CONTROL
