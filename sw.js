@@ -401,6 +401,64 @@ self.addEventListener("fetch", function (event) {
     }
 
     /* =================================================
+   SONG PLAYLIST MANIFEST
+   Network first when online; cached fallback offline.
+================================================= */
+
+
+if (
+    requestURL.origin === self.location.origin &&
+    requestURL.pathname.endsWith("/songs.json")
+) {
+    event.respondWith(
+        (async function () {
+            const cache = await caches.open(CACHE_NAME);
+
+            // Always use one stable cache key, without timestamp parameters.
+            const manifestCacheKey = new URL(
+                "./songs.json",
+                self.registration.scope
+            ).href;
+
+            try {
+                const response = await fetch(request, {
+                    cache: "no-store"
+                });
+
+                if (response && response.ok && response.status === 200) {
+                    await cache.put(
+                        manifestCacheKey,
+                        response.clone()
+                    );
+                }
+
+                return response;
+
+            } catch (error) {
+                const cachedResponse = await cache.match(
+                    manifestCacheKey
+                );
+
+                if (cachedResponse) {
+                    return cachedResponse;
+                }
+
+                return new Response(
+                    "Song playlist is not available offline yet.",
+                    {
+                        status: 503,
+                        statusText: "Playlist Unavailable"
+                    }
+                );
+            }
+        })()
+    );
+
+    return;
+}
+
+
+    /* =================================================
        BUILT-IN MUSIC
 
        Network first; uncached songs stream online.
