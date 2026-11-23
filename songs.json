@@ -1,0 +1,39 @@
+
+{
+  "version": 1,
+  "songs": [
+    {"id":"default-e-098","name":"E-098.mp3","src":"./songs/english/E-098.mp3","category":"english"},
+    {"id":"default-e267","name":"E267.mp3","src":"./songs/english/E267.mp3","category":"english"},
+    {"id":"default-e344","name":"E344.mp3","src":"./songs/english/E344.mp3","category":"english"},
+    {"id":"default-e356","name":"E356.mp3","src":"./songs/english/E356.mp3","category":"english"},
+    {"id":"default-e16","name":"E16.mp3","src":"./songs/english/E16.mp3","category":"english"},
+    {"id":"default-e377","name":"E377.mp3","src":"./songs/english/E377.mp3","category":"english"},
+    {"id":"default-e436","name":"E436.mp3","src":"./songs/english/E436.mp3","category":"english"},
+    {"id":"default-e413","name":"E413.mp3","src":"./songs/english/E413.mp3","category":"english"},
+    {"id":"default-e405","name":"E405.mp3","src":"./songs/english/E405.mp3","category":"english"},
+
+    {"id":"default-m248","name":"M248.mp3","src":"./songs/malayalam/M248.mp3","category":"malayalam"},
+    {"id":"default-m360","name":"M360.mp3","src":"./songs/malayalam/M360.mp3","category":"malayalam"},
+    {"id":"default-m607","name":"M607.mp3","src":"./songs/malayalam/M607.mp3","category":"malayalam"},
+    {"id":"default-m224","name":"M224.mp3","src":"./songs/malayalam/M224.mp3","category":"malayalam"},
+    {"id":"default-421","name":"421.mp3","src":"./songs/malayalam/421.mp3","category":"malayalam"},
+    {"id":"default-620","name":"620.mp3","src":"./songs/malayalam/620.mp3","category":"malayalam"},
+    {"id":"default-m416","name":"M416.mp3","src":"./songs/malayalam/M416.mp3","category":"malayalam"},
+    {"id":"default-m307","name":"M307.mp3","src":"./songs/malayalam/M307.mp3","category":"malayalam"},
+    {"id":"default-m10","name":"M10.mp3","src":"./songs/malayalam/M10.mp3","category":"malayalam"},
+    {"id":"default-m413","name":"M413.mp3","src":"./songs/malayalam/M413.mp3","category":"malayalam"},
+    {"id":"default-laksholaksham","name":"Laksholaksham.mp3","src":"./songs/malayalam/Laksholaksham.mp3","category":"malayalam"},
+
+    {"id":"default-t100","name":"T100.mp3","src":"./songs/tamil/T100.mp3","category":"tamil"},
+    {"id":"default-t101","name":"T101.mp3","src":"./songs/tamil/T101.mp3","category":"tamil"},
+    {"id":"default-t384","name":"T384.mp3","src":"./songs/tamil/T384.mp3","category":"tamil"},
+    {"id":"default-110","name":"110.mp3","src":"./songs/tamil/110.mp3","category":"tamil"},
+    {"id":"default-011","name":"011.mp3","src":"./songs/tamil/011.mp3","category":"tamil"},
+    {"id":"default-045","name":"045.mp3","src":"./songs/tamil/045.mp3","category":"tamil"},
+    {"id":"default-t433","name":"T433.mp3","src":"./songs/tamil/T433.mp3","category":"tamil"},
+
+    {"id":"default-vana","name":"Vana.mp3","src":"./songs/others/Vana.mp3","category":"others"},
+    {"id":"default-akkaraykku","name":"Akkaraykku.mp3","src":"./songs/others/Akkaraykku.mp3","category":"others"},
+    {"id":"default-njan","name":"Njan.mp3","src":"./songs/others/Njan.mp3","category":"others"}
+  ]
+}
